@@ -13,7 +13,7 @@
 
         /* HERO */
         .hero {
-            min-height: 750px;
+            min-height: 650px;
 
             display: flex;
             align-items: center;
@@ -38,8 +38,8 @@
         }
 
         .hero-content {
-            width: 700px;
-            padding: 70px;
+            width: 650px;
+            padding: 60px;
             position: relative;
             z-index: 2;
         }
@@ -54,9 +54,9 @@
         }
 
         .hero h1 {
-            font-size: 65px;
-            line-height: 1;
-            margin: 0 0 25px;
+            font-size: 52px;
+            line-height: 1.2;
+            margin: 0 0 22px;
             font-weight: 900;
         }
 
@@ -66,16 +66,16 @@
 
         .hero p {
             color: #ddd;
-            font-size: 18px;
+            font-size: 16px;
             line-height: 1.7;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
         }
 
         .btn-red {
             display: inline-block;
             background: #e50914;
             color: #fff;
-            padding: 15px 30px;
+            padding: 13px 26px;
             text-decoration: none;
             font-weight: bold;
             border-radius: 5px;
@@ -93,7 +93,7 @@
             display: inline-block;
             border: 1px solid #fff;
             color: #fff;
-            padding: 14px 30px;
+            padding: 12px 26px;
             text-decoration: none;
             font-weight: bold;
             border-radius: 5px;

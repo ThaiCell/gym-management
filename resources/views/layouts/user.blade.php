@@ -19,14 +19,38 @@
         }
 
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: #0b0b0b;
             color: #fff;
+            line-height: 1.5;
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font-family: inherit;
         }
 
         a {
             text-decoration: none;
         }
+        
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        a,
+        button,
+        input,
+        textarea,
+        select {
+            font-family: inherit;
+        }
+
 
         /* =========================================================
    HEADER NGƯỜI DÙNG

@@ -289,14 +289,14 @@
 
                 <div class="trainer-image">
                     <img
-                        src="{{ asset('img/strength.jpg') }}"
+                        src="{{ asset('img/trainer1.jpg') }}"
                         alt="Huấn luyện viên">
                 </div>
 
                 <div class="trainer-body">
 
                     <h3>
-                        Nguyễn Văn Minh
+                        Nguyễn Văn An
                     </h3>
 
                     <div class="trainer-role">
@@ -341,14 +341,14 @@
 
                 <div class="trainer-image">
                     <img
-                        src="{{ asset('img/yoga.jpg') }}"
+                        src="{{ asset('img/trainer2.jpg') }}"
                         alt="Huấn luyện viên Yoga">
                 </div>
 
                 <div class="trainer-body">
 
                     <h3>
-                        Nguyễn Thị Lan
+                        Trần Thị Bình
                     </h3>
 
                     <div class="trainer-role">
@@ -393,14 +393,14 @@
 
                 <div class="trainer-image">
                     <img
-                        src="{{ asset('img/boxing.jpg') }}"
+                        src="{{ asset('img/trainer3.jpg') }}"
                         alt="Huấn luyện viên Boxing">
                 </div>
 
                 <div class="trainer-body">
 
                     <h3>
-                        Nguyễn Hoàng Long
+                        Lê Minh Cường
                     </h3>
 
                     <div class="trainer-role">

@@ -43,7 +43,7 @@
 
     .about-hero h1 {
         font-size: 58px;
-        line-height: 1.05;
+        line-height: 1.2;
         font-weight: 900;
         margin-bottom: 20px;
     }
