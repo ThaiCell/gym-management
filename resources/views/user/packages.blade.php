@@ -180,7 +180,7 @@
         border: 1px solid #555;
         border-radius: 5px;
 
-        color: #fff;
+        color: #ff1e2d;
         font-weight: bold;
 
         transition: .3s;
@@ -255,6 +255,197 @@
         transform: translateY(-2px);
     }
 
+    /* ================================
+    GYM TOAST NOTIFICATION
+    ================================ */
+
+    .gym-toast {
+        position: fixed;
+        top: 95px;
+        right: 30px;
+        z-index: 9999;
+
+        width: 380px;
+        min-height: 80px;
+
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        padding: 16px 18px;
+
+        background: #151515;
+        border: 1px solid #333;
+        border-left: 4px solid #ff1010;
+
+        border-radius: 8px;
+
+        box-shadow:
+            0 10px 35px rgba(0, 0, 0, 0.45);
+
+        animation: toastSlideIn 0.35s ease forwards;
+    }
+
+    .success-toast {
+        border-left-color: #ff1010;
+    }
+
+    .error-toast {
+        border-left-color: #ff1010;
+    }
+
+    .toast-icon {
+        width: 38px;
+        height: 38px;
+
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #ed1111;
+        color: white;
+
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .toast-content {
+        flex: 1;
+
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .toast-content strong {
+        color: #fff;
+        font-size: 15px;
+        font-weight: 700;
+    }
+
+    .toast-content span {
+        color: #aaa;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .toast-close {
+        background: transparent;
+        border: none;
+
+        color: #777;
+
+        font-size: 24px;
+        line-height: 1;
+
+        cursor: pointer;
+
+        padding: 2px 5px;
+    }
+
+    .toast-close:hover {
+        color: #fff;
+    }
+
+    @keyframes toastSlideIn {
+        from {
+            opacity: 0;
+            transform: translateX(40px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes toastSlideOut {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        to {
+            opacity: 0;
+            transform: translateX(40px);
+        }
+    }
+
+    .gym-toast.hide {
+        animation: toastSlideOut 0.3s ease forwards;
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+        .gym-toast {
+            top: 80px;
+            left: 15px;
+            right: 15px;
+            width: auto;
+        }
+    }
+
+/* =========================
+   THÔNG BÁO GÓI TẬP
+========================= */
+
+.package-notice {
+    width: 100%;
+    margin: 0 0 30px;
+    padding: 16px 20px;
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    background: #151515;
+    border: 1px solid #292929;
+    border-left: 4px solid #e50914;
+    border-radius: 8px;
+
+    box-sizing: border-box;
+}
+
+.package-notice-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e50914;
+    color: #fff;
+
+    border-radius: 50%;
+
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.package-notice-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.package-notice-content strong {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.package-notice-content span {
+    color: #999;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
     /* RESPONSIVE */
     @media (max-width: 1000px) {
         .packages-grid {
@@ -283,7 +474,8 @@
         .packages-cta h2 {
             font-size: 30px;
         }
-    }
+      
+
 </style>
 
 
@@ -329,25 +521,66 @@
         </div>
 
 
+        {{-- THÔNG BÁO --}}
+                @if(session('success'))
+            <div class="gym-toast success-toast" id="successToast">
+                <div class="toast-icon">✓</div>
+
+                <div class="toast-content">
+                    <strong>Đăng ký thành công</strong>
+                    <span>{{ session('success') }}</span>
+                </div>
+
+                <button type="button" class="toast-close"
+                        onclick="closeToast('successToast')">
+                    ×
+                </button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="gym-toast error-toast" id="errorToast">
+                <div class="toast-icon">!</div>
+
+                <div class="toast-content">
+                    <strong>Không thể đăng ký</strong>
+                    <span>{{ session('error') }}</span>
+                </div>
+
+                <button type="button" class="toast-close"
+                        onclick="closeToast('errorToast')">
+                    ×
+                </button>
+            </div>
+        @endif
+
+        
+
         <div class="packages-grid">
 
 
-            {{-- GÓI 1 --}}
+                @foreach ($goiTap as $goi)
+
             <div class="package-card">
 
                 <div class="package-top">
 
                     <div class="package-name">
-                        GÓI CƠ BẢN
+                        {{ $goi->ten_goi }}
                     </div>
 
                     <div class="package-description">
-                        Phù hợp cho người mới bắt đầu tập luyện.
+                        Gói tập phù hợp với nhu cầu luyện tập của bạn.
                     </div>
 
                     <div class="package-price">
-                        <strong>500.000đ</strong>
-                        <span>/ tháng</span>
+                        <strong>
+                            {{ number_format($goi->gia, 0, ',', '.') }}đ
+                        </strong>
+
+                        <span>
+                            / {{ $goi->thoi_han_ngay }} ngày
+                        </span>
                     </div>
 
                 </div>
@@ -356,218 +589,49 @@
                 <div class="package-body">
 
                     <ul class="package-features">
-                        <li>Sử dụng khu vực tập Gym</li>
-                        <li>Hỗ trợ thiết bị tập luyện</li>
-                        <li>Được sử dụng trong giờ hoạt động</li>
-                        <li>Hỗ trợ tư vấn cơ bản</li>
+
+                        <li>
+                            Số buổi tập: {{ $goi->so_buoi }}
+                        </li>
+
+                        <li>
+                            Sử dụng khu vực tập Gym
+                        </li>
+
+                        <li>
+                            Hỗ trợ tư vấn luyện tập
+                        </li>
+
+                        <li>
+                            Theo dõi lịch tập
+                        </li>
+
                     </ul>
 
-                    <a href="/register" class="package-btn">
+
+                    @if (session()->has('user') && session('role_id') == 3)
+
+                    <form action="/packages/register/{{ $goi->goi_tap_id }}" method="POST">
+                        @csrf
+
+                        <button type="submit" class="package-btn">
+                            ĐĂNG KÝ NGAY
+                        </button>
+                    </form>
+
+                @else
+
+                    <a href="/login" class="package-btn">
                         ĐĂNG KÝ NGAY
                     </a>
+
+                @endif
 
                 </div>
 
             </div>
 
-
-            {{-- GÓI 2 --}}
-            <div class="package-card featured">
-
-                <div class="package-badge">
-                    PHỔ BIẾN
-                </div>
-
-                <div class="package-top">
-
-                    <div class="package-name">
-                        GÓI TIÊU CHUẨN
-                    </div>
-
-                    <div class="package-description">
-                        Lựa chọn cân bằng giữa chi phí và quyền lợi.
-                    </div>
-
-                    <div class="package-price">
-                        <strong>800.000đ</strong>
-                        <span>/ tháng</span>
-                    </div>
-
-                </div>
-
-
-                <div class="package-body">
-
-                    <ul class="package-features">
-                        <li>Sử dụng khu vực tập Gym</li>
-                        <li>Tham gia các lớp tập</li>
-                        <li>Hỗ trợ tư vấn luyện tập</li>
-                        <li>Theo dõi lịch tập</li>
-                    </ul>
-
-                    <a href="/register" class="package-btn">
-                        ĐĂNG KÝ NGAY
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            {{-- GÓI 3 --}}
-            <div class="package-card">
-
-                <div class="package-top">
-
-                    <div class="package-name">
-                        GÓI CAO CẤP
-                    </div>
-
-                    <div class="package-description">
-                        Dành cho hội viên muốn có trải nghiệm đầy đủ hơn.
-                    </div>
-
-                    <div class="package-price">
-                        <strong>1.200.000đ</strong>
-                        <span>/ tháng</span>
-                    </div>
-
-                </div>
-
-
-                <div class="package-body">
-
-                    <ul class="package-features">
-                        <li>Sử dụng toàn bộ khu vực Gym</li>
-                        <li>Tham gia lớp tập</li>
-                        <li>Ưu tiên hỗ trợ</li>
-                        <li>Tư vấn kế hoạch luyện tập</li>
-                    </ul>
-
-                    <a href="/register" class="package-btn">
-                        ĐĂNG KÝ NGAY
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            {{-- GÓI 4 --}}
-            <div class="package-card">
-
-                <div class="package-top">
-
-                    <div class="package-name">
-                        GÓI 3 THÁNG
-                    </div>
-
-                    <div class="package-description">
-                        Phù hợp với người muốn duy trì lịch tập lâu dài.
-                    </div>
-
-                    <div class="package-price">
-                        <strong>2.100.000đ</strong>
-                        <span>/ 3 tháng</span>
-                    </div>
-
-                </div>
-
-
-                <div class="package-body">
-
-                    <ul class="package-features">
-                        <li>Sử dụng khu vực tập Gym</li>
-                        <li>Tham gia lớp tập</li>
-                        <li>Hỗ trợ tư vấn</li>
-                        <li>Tiết kiệm hơn so với từng tháng</li>
-                    </ul>
-
-                    <a href="/register" class="package-btn">
-                        ĐĂNG KÝ NGAY
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            {{-- GÓI 5 --}}
-            <div class="package-card">
-
-                <div class="package-top">
-
-                    <div class="package-name">
-                        GÓI 6 THÁNG
-                    </div>
-
-                    <div class="package-description">
-                        Dành cho người đã có thói quen tập luyện ổn định.
-                    </div>
-
-                    <div class="package-price">
-                        <strong>3.600.000đ</strong>
-                        <span>/ 6 tháng</span>
-                    </div>
-
-                </div>
-
-
-                <div class="package-body">
-
-                    <ul class="package-features">
-                        <li>Sử dụng khu vực tập Gym</li>
-                        <li>Tham gia các lớp tập</li>
-                        <li>Hỗ trợ tư vấn luyện tập</li>
-                        <li>Ưu đãi thời hạn dài</li>
-                    </ul>
-
-                    <a href="/register" class="package-btn">
-                        ĐĂNG KÝ NGAY
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            {{-- GÓI 6 --}}
-            <div class="package-card">
-
-                <div class="package-top">
-
-                    <div class="package-name">
-                        GÓI 12 THÁNG
-                    </div>
-
-                    <div class="package-description">
-                        Giải pháp dành cho hội viên muốn tập luyện lâu dài.
-                    </div>
-
-                    <div class="package-price">
-                        <strong>6.000.000đ</strong>
-                        <span>/ năm</span>
-                    </div>
-
-                </div>
-
-
-                <div class="package-body">
-
-                    <ul class="package-features">
-                        <li>Sử dụng khu vực tập Gym</li>
-                        <li>Tham gia các lớp tập</li>
-                        <li>Hỗ trợ tư vấn</li>
-                        <li>Quyền lợi dài hạn</li>
-                    </ul>
-
-                    <a href="/register" class="package-btn">
-                        ĐĂNG KÝ NGAY
-                    </a>
-
-                </div>
-
-            </div>
+        @endforeach
 
         </div>
 
@@ -598,5 +662,37 @@
     </section>
 
 </div>
+<script>
+    function closeToast(id) {
+        const toast = document.getElementById(id);
+
+        if (toast) {
+            toast.classList.add('hide');
+
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const successToast = document.getElementById('successToast');
+        const errorToast = document.getElementById('errorToast');
+
+        if (successToast) {
+            setTimeout(() => {
+                closeToast('successToast');
+            }, 3000);
+        }
+
+        if (errorToast) {
+            setTimeout(() => {
+                closeToast('errorToast');
+            }, 4000);
+        }
+
+    });
+</script>
 
 @endsection

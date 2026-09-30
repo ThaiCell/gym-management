@@ -35,9 +35,103 @@ Route::get('/about', function () {
 */
 
 Route::get('/packages', function () {
-    return view('user.packages');
+
+    $goiTap = DB::table('goi_tap')
+        ->whereIn('trang_thai', [
+            'hoạt_động',
+            'hoat_dong'
+        ])
+        ->orderBy('gia', 'asc')
+        ->get();
+
+    return view('user.packages', compact('goiTap'));
+
 });
 
+Route::post('/packages/register/{goiTapId}', function ($goiTapId) {
+
+    // Chưa đăng nhập
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    // Chỉ hội viên được đăng ký
+    if (session('role_id') != 3) {
+        return redirect('/packages')
+            ->with('error', 'Chỉ hội viên mới có thể đăng ký gói tập.');
+    }
+
+    // Lấy hội viên
+    $hoiVien = DB::table('hoi_vien')
+        ->where(
+            'nguoi_dung_id',
+            session('user')->nguoi_dung_id
+        )
+        ->first();
+
+    if (!$hoiVien) {
+        return redirect('/packages')
+            ->with('error', 'Không tìm thấy hồ sơ hội viên.');
+    }
+
+    // Lấy gói tập
+    $goi = DB::table('goi_tap')
+        ->where('goi_tap_id', $goiTapId)
+        ->whereIn('trang_thai', [
+            'hoạt_động',
+            'hoat_dong'
+        ])
+        ->first();
+
+    if (!$goi) {
+        return redirect('/packages')
+            ->with('error', 'Gói tập không tồn tại hoặc đã ngừng hoạt động.');
+    }
+
+    // Kiểm tra hội viên đã có gói đang hoạt động
+    $dangKyDangHoatDong = DB::table('dang_ky_goi_tap')
+        ->where('hoi_vien_id', $hoiVien->hoi_vien_id)
+        ->whereIn('trang_thai', [
+            'đang hoạt động',
+            'dang_hoat_dong',
+            'hoạt_động',
+            'hoat_dong'
+        ])
+        ->exists();
+
+    if ($dangKyDangHoatDong) {
+        return redirect('/packages')
+            ->with(
+                'error',
+                'Bạn đang có một gói tập hoạt động. Vui lòng sử dụng hết gói hiện tại trước khi đăng ký gói mới.'
+            );
+    }
+
+    // Ngày bắt đầu
+    $ngayBatDau = now()->toDateString();
+
+    // Ngày kết thúc
+    $ngayKetThuc = now()
+        ->addDays($goi->thoi_han_ngay)
+        ->toDateString();
+
+    // Tạo đăng ký
+    DB::table('dang_ky_goi_tap')->insert([
+        'hoi_vien_id' => $hoiVien->hoi_vien_id,
+        'goi_tap_id' => $goi->goi_tap_id,
+        'ngay_bat_dau' => $ngayBatDau,
+        'ngay_ket_thuc' => $ngayKetThuc,
+        'so_buoi_con_lai' => $goi->so_buoi ?? 0,
+        'trang_thai' => 'đang hoạt động',
+    ]);
+
+    return redirect('/packages')
+        ->with(
+            'success',
+            'Đăng ký gói "' . $goi->ten_goi . '" thành công!'
+        );
+
+});
 
 /*
 |--------------------------------------------------------------------------
