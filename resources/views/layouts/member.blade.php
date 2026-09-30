@@ -119,6 +119,8 @@
         }
 
 
+        
+
         /* HOVER GIỐNG USER.BLADE */
 
         .member-menu a:hover {
@@ -179,20 +181,28 @@
         ========================================================= */
 
         .dashboard-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            width: 90px;
+            height: 36px;
+
+            padding: 0;
 
             color: #fff;
-
+            background: #111;
             border: 1px solid #555;
-
-            padding: 10px 18px;
-
             border-radius: 5px;
 
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1;
 
+            text-decoration: none;
             transition: 0.3s;
-
             position: relative;
+            box-sizing: border-box;
         }
 
 
@@ -821,6 +831,8 @@
                 font-size: 27px;
             }
         }
+    
+
     </style>
 
 </head>
@@ -852,35 +864,51 @@
 
 
 
-        {{-- DASHBOARD / ĐĂNG XUẤT --}}
+        {{-- HỒ SƠ / DASHBOARD / ĐĂNG XUẤT --}}
 
         <div class="member-login">
 
+            {{-- CHỈ HIỆN HỒ SƠ Ở DASHBOARD HỘI VIÊN --}}
+            @if (request()->is('user/dashboard'))
 
-            <a href="{{ session('dashboard_path', '/user/dashboard') }}"
-                class="dashboard-btn
-           {{ request()->is('user/dashboard') || request()->is('staff/dashboard') || request()->is('trainer/dashboard')
-               ? 'active'
-               : '' }}">
+                <a href="/user/profile" class="dashboard-btn profile-btn">
+                    HỒ SƠ
+                </a>
 
-                DASHBOARD
+            {{-- TRANG HỒ SƠ --}}
+            @elseif (request()->is('user/profile'))
 
-            </a>
+                <a href="/user/dashboard" class="dashboard-btn">
+                    DASHBOARD
+                </a>
+
+            {{-- STAFF / TRAINER --}}
+            @else
+
+                <a href="{{ session('dashboard_path', '/user/dashboard') }}"
+                    class="dashboard-btn
+                    {{ request()->is('staff/dashboard') || request()->is('trainer/dashboard')
+                        ? 'active'
+                        : '' }}">
+
+                    DASHBOARD
+
+                </a>
+
+            @endif
 
 
+            {{-- ĐĂNG XUẤT --}}
             <form action="/logout" method="POST" style="display: inline;"
                 onsubmit="return confirm('Bạn có chắc chắn muốn đăng xuất không?');">
 
                 @csrf
 
                 <button type="submit" class="logout-btn">
-
                     ĐĂNG XUẤT
-
                 </button>
 
             </form>
-
 
         </div>
 

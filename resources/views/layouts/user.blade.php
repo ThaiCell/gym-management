@@ -650,11 +650,32 @@
         <div class="user-login">
 
             @if (session()->has('user'))
-                <a href="/{{ session('dashboard_path') }}" class="login-btn">
-                    DASHBOARD
-                </a>
+
+                {{-- TRANG DASHBOARD HỘI VIÊN --}}
+                @if (request()->is('user/dashboard'))
+
+                    <a href="/user/profile" class="login-btn">
+                        HỒ SƠ
+                    </a>
+
+                {{-- TRANG HỒ SƠ --}}
+                @elseif (request()->is('user/profile'))
+
+                    <a href="/user/dashboard" class="login-btn">
+                        DASHBOARD
+                    </a>
+
+                {{-- CÁC TRANG NGOÀI --}}
+                @else
+
+                    <a href="/user/dashboard" class="login-btn">
+                        DASHBOARD
+                    </a>
+
+                @endif
 
 
+                {{-- ĐĂNG XUẤT --}}
                 <form action="/logout" method="POST" style="display: inline;"
                     onsubmit="return confirm('Bạn có chắc chắn muốn đăng xuất không?');">
 
@@ -662,23 +683,25 @@
 
                     <button type="submit" class="register-btn"
                         style="
-                border: none;
-                cursor: pointer;
-                font-family: inherit;
-            ">
+                            border: none;
+                            cursor: pointer;
+                            font-family: inherit;
+                        ">
                         ĐĂNG XUẤT
                     </button>
 
                 </form>
+
             @else
+
                 <a href="/login" class="login-btn">
                     ĐĂNG NHẬP
                 </a>
 
-
                 <a href="/register" class="register-btn">
                     ĐĂNG KÝ
                 </a>
+
             @endif
 
         </div>

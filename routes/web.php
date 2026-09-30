@@ -1088,6 +1088,341 @@ Route::get('/trainer/dashboard', function () {
 
 })->middleware(NoCache::class);
 
+/*
+|--------------------------------------------------------------------------
+| HỒ SƠ HỘI VIÊN
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/user/profile', function () {
+
+    if (!session()->has('user')) {
+
+        return redirect('/login');
+
+    }
+
+    if (session('role_id') != 3) {
+
+        return redirect(
+            '/' . session('dashboard_path')
+        );
+
+    }
+
+    $nguoiDungId = session('user')->nguoi_dung_id;
+
+    $user = DB::table('nguoi_dung')
+        ->where(
+            'nguoi_dung_id',
+            $nguoiDungId
+        )
+        ->first();
+
+    $hoiVien = DB::table('hoi_vien')
+        ->where(
+            'nguoi_dung_id',
+            $nguoiDungId
+        )
+        ->first();
+
+    if (!$user || !$hoiVien) {
+
+        return redirect('/user/dashboard')
+            ->with(
+                'error',
+                'Không tìm thấy hồ sơ hội viên.'
+            );
+
+    }
+
+    return view(
+        'user.profile',
+        compact(
+            'user',
+            'hoiVien'
+        )
+    );
+
+})->middleware(NoCache::class);
+
+
+/*
+|--------------------------------------------------------------------------
+| CẬP NHẬT HỒ SƠ HỘI VIÊN
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/user/profile', function () {
+
+    if (!session()->has('user')) {
+
+        return redirect('/login');
+
+    }
+
+    if (session('role_id') != 3) {
+
+        return redirect(
+            '/' . session('dashboard_path')
+        );
+
+    }
+
+    $nguoiDungId = session('user')->nguoi_dung_id;
+
+    $validated = request()->validate([
+
+        'ho_ten' => [
+            'required',
+            'string',
+            'max:255'
+        ],
+
+        'email' => [
+            'required',
+            'email',
+            'max:255'
+        ],
+
+        'so_dien_thoai' => [
+            'nullable',
+            'string',
+            'max:20'
+        ],
+
+        'ngay_sinh' => [
+            'nullable',
+            'date'
+        ],
+
+        'dia_chi' => [
+            'nullable',
+            'string',
+            'max:255'
+        ],
+
+        'mat_khau_hien_tai' => [
+            'nullable',
+            'string'
+        ],
+
+        'mat_khau_moi' => [
+            'nullable',
+            'string',
+            'min:6',
+            'same:mat_khau_moi_confirmation'
+        ],
+
+        'mat_khau_moi_confirmation' => [
+            'nullable',
+            'string'
+        ],
+
+    ], [
+
+        'ho_ten.required' =>
+            'Vui lòng nhập họ và tên.',
+
+        'email.required' =>
+            'Vui lòng nhập email.',
+
+        'email.email' =>
+            'Email không đúng định dạng.',
+
+        'mat_khau_moi.min' =>
+            'Mật khẩu mới phải có ít nhất 6 ký tự.',
+
+        'mat_khau_moi.same' =>
+            'Xác nhận mật khẩu mới không khớp.',
+
+    ]);
+
+    $emailTonTai = DB::table('nguoi_dung')
+
+        ->where(
+            'email',
+            $validated['email']
+        )
+
+        ->where(
+            'nguoi_dung_id',
+            '!=',
+            $nguoiDungId
+        )
+
+        ->exists();
+
+    if ($emailTonTai) {
+
+        return back()
+            ->withInput()
+            ->with(
+                'error',
+                'Email này đã được sử dụng bởi tài khoản khác.'
+            );
+
+    }
+
+    if (!empty($validated['mat_khau_moi'])) {
+
+        $user = DB::table('nguoi_dung')
+
+            ->where(
+                'nguoi_dung_id',
+                $nguoiDungId
+            )
+
+            ->first();
+
+        $matKhauDung = false;
+
+        if (
+            $validated['mat_khau_hien_tai']
+            ===
+            $user->mat_khau
+        ) {
+
+            $matKhauDung = true;
+
+        } elseif (
+
+            str_starts_with(
+                $user->mat_khau,
+                '$2y$'
+            )
+
+            ||
+
+            str_starts_with(
+                $user->mat_khau,
+                '$2a$'
+            )
+
+            ||
+
+            str_starts_with(
+                $user->mat_khau,
+                '$2b$'
+            )
+
+        ) {
+
+            $matKhauDung = Hash::check(
+                $validated['mat_khau_hien_tai'],
+                $user->mat_khau
+            );
+
+        }
+
+        if (!$matKhauDung) {
+
+            return back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Mật khẩu hiện tại không đúng.'
+                );
+
+        }
+
+    }
+
+    DB::beginTransaction();
+
+    try {
+
+        $nguoiDungData = [
+
+            'ho_ten' =>
+                $validated['ho_ten'],
+
+            'email' =>
+                $validated['email'],
+
+        ];
+
+        if (!empty($validated['mat_khau_moi'])) {
+
+            $nguoiDungData['mat_khau'] =
+                Hash::make(
+                    $validated['mat_khau_moi']
+                );
+
+        }
+
+        DB::table('nguoi_dung')
+
+            ->where(
+                'nguoi_dung_id',
+                $nguoiDungId
+            )
+
+            ->update(
+                $nguoiDungData
+            );
+
+        DB::table('hoi_vien')
+
+            ->where(
+                'nguoi_dung_id',
+                $nguoiDungId
+            )
+
+            ->update([
+
+                'ngay_sinh' =>
+                    $validated['ngay_sinh']
+                    ?: null,
+
+                'so_dien_thoai' =>
+                    $validated['so_dien_thoai']
+                    ?: null,
+
+                'dia_chi' =>
+                    $validated['dia_chi']
+                    ?: null,
+
+            ]);
+
+        DB::commit();
+
+        $userMoi = DB::table('nguoi_dung')
+
+            ->where(
+                'nguoi_dung_id',
+                $nguoiDungId
+            )
+
+            ->first();
+
+        session([
+            'user' => $userMoi
+        ]);
+
+        return redirect('/user/profile')
+
+            ->with(
+                'success',
+                'Cập nhật hồ sơ thành công.'
+            );
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return back()
+            ->withInput()
+            ->with(
+                'error',
+                'Không thể cập nhật hồ sơ: '
+                . $e->getMessage()
+            );
+
+    }
+
+})->middleware(NoCache::class);
+
 
 /*
 |--------------------------------------------------------------------------
@@ -1104,3 +1439,4 @@ Route::post('/logout', function () {
     return redirect('/');
 
 });
+
