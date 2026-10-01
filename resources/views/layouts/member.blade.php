@@ -1418,12 +1418,8 @@
             @else
                 {{-- STAFF / TRAINER --}}
 
-                <a href="{{ session('dashboard_path', '/user/dashboard') }}"
-                    class="dashboard-btn
-               {{ request()->is('staff/dashboard') || request()->is('trainer/dashboard') ? 'active' : '' }}">
-
+                <a href="/{{ session('dashboard_path', 'user/dashboard') }}" class="dashboard-btn">
                     DASHBOARD
-
                 </a>
             @endif
 

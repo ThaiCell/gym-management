@@ -282,9 +282,25 @@
                 Quản lý hội viên, check-in và các hoạt động của phòng Gym.
             </p>
 
-            <div class="staff-role">
-                ● NHÂN VIÊN
-            </div>
+            <a
+                href="/staff/check-in"
+                style="
+                    display:inline-block;
+                    margin-top:18px;
+                    padding:11px 16px;
+                    border-radius:7px;
+                    background:#e50914;
+                    color:#fff;
+                    text-decoration:none;
+                    font-size:11px;
+                    font-weight:800;
+                    transition:.25s;
+                "
+                onmouseover="this.style.background='#ff1824'"
+                onmouseout="this.style.background='#e50914'"
+            >
+                ✓ CHECK-IN HỘI VIÊN
+            </a>
 
         </div>
 
@@ -587,9 +603,19 @@
                         PAYMENT
                     </div>
 
-                    <h2>
-                        Hóa đơn gần đây
-                    </h2>
+                   <a
+                        href="/staff/payments"
+                        style="
+                            display:inline-block;
+                            margin-top:10px;
+                            color:#e50914;
+                            font-size:11px;
+                            font-weight:800;
+                            text-decoration:none;
+                        "
+                    >
+                        QUẢN LÝ HÓA ĐƠN →
+                   </a>
 
                 </div>
 
