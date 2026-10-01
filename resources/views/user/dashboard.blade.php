@@ -392,7 +392,7 @@
 
         <div class="dashboard-stats">
 
-            <a href="/payments" class="stat-card">
+            <a href="/user/payments" class="stat-card">
 
                 <div class="stat-icon">
                     🏋️
@@ -434,7 +434,7 @@
             </a>
 
 
-            <a href="/payments" class="stat-card">
+            <a href="/user/payments" class="stat-card">
 
                 <div class="stat-icon">
                     💳
@@ -539,7 +539,6 @@
             <div class="dashboard-card">
 
                 <div class="dashboard-card-header">
-
                     <div>
                         <div class="card-label">
                             PERSONAL TRAINER
@@ -550,6 +549,18 @@
                         </h2>
                     </div>
 
+                    <a href="/user/pt-schedule"
+                    style="
+                        color:#888;
+                        font-size:11px;
+                        font-weight:700;
+                        text-decoration:none;
+                        transition:.3s;
+                    "
+                    onmouseover="this.style.color='#e50914'"
+                    onmouseout="this.style.color='#888'">
+                        XEM LỊCH PT →
+                    </a>
                 </div>
 
 

@@ -1138,6 +1138,79 @@ Route::get('/staff/dashboard', function () {
 })->middleware(NoCache::class);
 
 
+
+/*
+|--------------------------------------------------------------------------
+| LỊCH PT CỦA HỘI VIÊN
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/user/pt-schedule', function () {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 3) {
+        return redirect('/' . session('dashboard_path'));
+    }
+
+    $nguoiDungId = session('user')->nguoi_dung_id;
+
+    $hoiVien = DB::table('hoi_vien')
+        ->where('nguoi_dung_id', $nguoiDungId)
+        ->first();
+
+    if (!$hoiVien) {
+        return view('user.pt-schedule', [
+            'lichPT' => collect()
+        ]);
+    }
+
+    $lichPT = DB::table('lich_pt')
+        ->join(
+            'dang_ky_goi_pt',
+            'lich_pt.dang_ky_goi_pt_id',
+            '=',
+            'dang_ky_goi_pt.dang_ky_goi_pt_id'
+        )
+        ->join(
+            'goi_pt',
+            'dang_ky_goi_pt.goi_pt_id',
+            '=',
+            'goi_pt.goi_pt_id'
+        )
+        ->join(
+            'huan_luyen_vien',
+            'lich_pt.pt_id',
+            '=',
+            'huan_luyen_vien.pt_id'
+        )
+        ->join(
+            'nguoi_dung',
+            'huan_luyen_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->where(
+            'lich_pt.hoi_vien_id',
+            $hoiVien->hoi_vien_id
+        )
+        ->select(
+            'lich_pt.*',
+            'goi_pt.ten_goi_pt',
+            'nguoi_dung.ho_ten as ten_pt'
+        )
+        ->orderBy('lich_pt.thoi_gian_bat_dau', 'asc')
+        ->get();
+
+    return view(
+        'user.pt-schedule',
+        compact('lichPT')
+    );
+
+})->middleware(NoCache::class);
+
 /*
 |--------------------------------------------------------------------------
 | DASHBOARD HỘI VIÊN
@@ -1604,6 +1677,86 @@ Route::get('/trainer/dashboard', function () {
             'tongGoiPT',
             'tongLichPT',
             'lichPT'
+        )
+    );
+
+})->middleware(NoCache::class);
+
+
+/*
+|--------------------------------------------------------------------------
+| THANH TOÁN / HÓA ĐƠN HỘI VIÊN
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/user/payments', function () {
+
+    // Chưa đăng nhập
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    // Chỉ hội viên
+    if (session('role_id') != 3) {
+        return redirect('/' . session('dashboard_path'));
+    }
+
+    $nguoiDungId = session('user')->nguoi_dung_id;
+
+    // Tìm hội viên
+    $hoiVien = DB::table('hoi_vien')
+        ->where('nguoi_dung_id', $nguoiDungId)
+        ->first();
+
+    if (!$hoiVien) {
+        return redirect('/user/dashboard')
+            ->with('error', 'Không tìm thấy hồ sơ hội viên.');
+    }
+
+    // Lấy hóa đơn
+    $hoaDon = DB::table('hoa_don')
+        ->where('hoi_vien_id', $hoiVien->hoi_vien_id)
+        ->orderByDesc('ngay_lap')
+        ->get();
+
+    // Lấy chi tiết hóa đơn
+    $chiTietHoaDon = collect();
+
+    if ($hoaDon->count() > 0) {
+
+        $hoaDonIds = $hoaDon->pluck('hoa_don_id');
+
+        $chiTietHoaDon = DB::table('chi_tiet_hoa_don')
+            ->leftJoin(
+                'goi_tap',
+                'chi_tiet_hoa_don.goi_tap_id',
+                '=',
+                'goi_tap.goi_tap_id'
+            )
+            ->leftJoin(
+                'goi_pt',
+                'chi_tiet_hoa_don.goi_pt_id',
+                '=',
+                'goi_pt.goi_pt_id'
+            )
+            ->whereIn(
+                'chi_tiet_hoa_don.hoa_don_id',
+                $hoaDonIds
+            )
+            ->select(
+                'chi_tiet_hoa_don.*',
+                'goi_tap.ten_goi',
+                'goi_pt.ten_goi_pt'
+            )
+            ->get()
+            ->groupBy('hoa_don_id');
+    }
+
+    return view(
+        'user.payments',
+        compact(
+            'hoaDon',
+            'chiTietHoaDon'
         )
     );
 
