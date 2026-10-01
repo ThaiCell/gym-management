@@ -631,6 +631,10 @@
                 GÓI TẬP
             </a>
 
+            <a href="/pt-packages" class="{{ request()->is('pt-packages*') ? 'active' : '' }}">
+                GÓI PT
+            </a>
+
             <a href="/classes" class="{{ request()->is('classes*') ? 'active' : '' }}">
                 LỚP TẬP
             </a>
@@ -776,6 +780,10 @@
                     Gói tập
                 </a>
 
+                <a href="/pt-packages">
+                    Gói PT
+                </a>
+
                 <a href="/classes">
                     Lớp tập
                 </a>
@@ -804,15 +812,15 @@
                     Đăng ký tài khoản
                 </a>
 
-                <a href="/profile">
+                <a href="/user/profile">
                     Trang cá nhân
                 </a>
 
-                <a href="/payments">
+                <a href="/user/payments">
                     Lịch sử thanh toán
                 </a>
 
-                <a href="/notifications">
+                <a href="/user/notifications">
                     Thông báo
                 </a>
 

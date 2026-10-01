@@ -5,22 +5,28 @@
 @section('content')
 
 <style>
+
     .classes-page {
         background: #0b0b0b;
         color: #fff;
         min-height: 100vh;
     }
 
-    /* HERO */
+    /* =========================
+       HERO
+    ========================= */
+
     .classes-hero {
         padding: 90px 30px;
         text-align: center;
+
         background:
             linear-gradient(
                 rgba(0,0,0,.72),
                 rgba(0,0,0,.86)
             ),
             url("/img/photo-1571902943202-507ec2618e8f.avif");
+
         background-size: cover;
         background-position: center;
     }
@@ -47,9 +53,14 @@
         margin: auto;
         color: #bbb;
         line-height: 1.8;
+        font-size: 16px;
     }
 
-    /* CONTENT */
+
+    /* =========================
+       CONTENT
+    ========================= */
+
     .classes-section {
         max-width: 1400px;
         margin: auto;
@@ -70,29 +81,48 @@
         color: #888;
     }
 
-    /* GRID */
+
+    /* =========================
+       GRID
+    ========================= */
+
     .classes-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 25px;
     }
 
-    /* CARD */
+
+    /* =========================
+       CARD
+    ========================= */
+
     .class-card {
+        position: relative;
+
         background: #151515;
         border: 1px solid #292929;
+
         border-radius: 8px;
+
         overflow: hidden;
+
         transition: .3s;
     }
 
     .class-card:hover {
-        transform: translateY(-6px);
+        transform: translateY(-7px);
         border-color: #e50914;
     }
 
+
+    /* =========================
+       IMAGE
+    ========================= */
+
     .class-image {
         height: 210px;
+
         position: relative;
         overflow: hidden;
     }
@@ -100,7 +130,9 @@
     .class-image img {
         width: 100%;
         height: 100%;
+
         object-fit: cover;
+
         transition: .4s;
     }
 
@@ -108,8 +140,14 @@
         transform: scale(1.05);
     }
 
+
+    /* =========================
+       STATUS
+    ========================= */
+
     .class-status {
         position: absolute;
+
         top: 15px;
         right: 15px;
 
@@ -117,40 +155,61 @@
         color: #fff;
 
         padding: 6px 12px;
+
         border-radius: 20px;
 
         font-size: 11px;
         font-weight: bold;
     }
 
+
+    /* =========================
+       BODY
+    ========================= */
+
     .class-body {
-        padding: 25px;
+        padding: 28px;
     }
 
     .class-body h3 {
-        font-size: 22px;
-        margin-bottom: 10px;
+        font-size: 24px;
+        font-weight: 700;
+
+        margin-bottom: 12px;
     }
 
     .class-description {
-        color: #999;
+        color: #888;
+
         font-size: 14px;
-        line-height: 1.7;
+        line-height: 1.6;
+
         min-height: 48px;
+
         margin-bottom: 20px;
     }
 
+
+    /* =========================
+       INFO
+    ========================= */
+
     .class-info {
         border-top: 1px solid #292929;
-        padding-top: 18px;
+
+        padding-top: 20px;
         margin-top: 15px;
     }
 
     .class-info-row {
         display: flex;
+
         justify-content: space-between;
+
         gap: 15px;
-        margin-bottom: 12px;
+
+        margin-bottom: 13px;
+
         font-size: 13px;
     }
 
@@ -160,63 +219,98 @@
 
     .class-info-row span:last-child {
         color: #ddd;
+
         text-align: right;
     }
 
+
+    /* =========================
+       BUTTON
+    ========================= */
+
     .class-btn {
         display: block;
+
         width: 100%;
+
         text-align: center;
 
-        margin-top: 22px;
-        padding: 12px;
+        margin-top: 24px;
+
+        padding: 13px;
 
         border: 1px solid #555;
+
         border-radius: 5px;
 
-        color: #fff;
+        background: transparent;
+
+        color: #ff1e2d;
+
         font-size: 14px;
+
         font-weight: bold;
 
         transition: .3s;
+
+        cursor: pointer;
     }
 
     .class-btn:hover {
         background: #e50914;
+
         border-color: #e50914;
+
         color: #fff;
     }
 
-    /* NOTE */
+
+    /* =========================
+       NOTE
+    ========================= */
+
     .classes-note {
         margin-top: 45px;
+
         padding: 20px;
 
         background: #111;
+
         border: 1px solid #222;
+
         border-radius: 6px;
 
         text-align: center;
+
         color: #777;
+
         font-size: 13px;
     }
 
-    /* CTA */
+
+    /* =========================
+       CTA
+    ========================= */
+
     .classes-cta {
         padding: 75px 30px;
+
         text-align: center;
 
         background: #111;
+
         border-top: 1px solid #222;
     }
 
     .classes-cta h2 {
         font-size: 36px;
+
         margin-bottom: 15px;
     }
 
     .classes-cta p {
         color: #999;
+
         margin-bottom: 25px;
     }
 
@@ -224,9 +318,11 @@
         display: inline-block;
 
         background: #e50914;
+
         color: #fff;
 
         padding: 14px 28px;
+
         border-radius: 5px;
 
         font-weight: bold;
@@ -236,12 +332,169 @@
 
     .cta-btn:hover {
         background: #ff2633;
+
         color: #fff;
+
         transform: translateY(-2px);
     }
 
-    /* RESPONSIVE */
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    .gym-toast {
+        position: fixed;
+
+        top: 95px;
+        right: 30px;
+
+        z-index: 9999;
+
+        width: 380px;
+        min-height: 80px;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 15px;
+
+        padding: 16px 18px;
+
+        background: #151515;
+
+        border: 1px solid #333;
+
+        border-left: 4px solid #ff1010;
+
+        border-radius: 8px;
+
+        box-shadow:
+            0 10px 35px rgba(0, 0, 0, 0.45);
+
+        animation: toastSlideIn .35s ease forwards;
+    }
+
+    .success-toast,
+    .error-toast {
+        border-left-color: #ff1010;
+    }
+
+    .toast-icon {
+        width: 38px;
+        height: 38px;
+
+        flex-shrink: 0;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background: #ed1111;
+
+        color: #fff;
+
+        font-size: 20px;
+
+        font-weight: 700;
+    }
+
+    .toast-content {
+        flex: 1;
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 4px;
+    }
+
+    .toast-content strong {
+        color: #fff;
+
+        font-size: 15px;
+
+        font-weight: 700;
+    }
+
+    .toast-content span {
+        color: #aaa;
+
+        font-size: 13px;
+
+        line-height: 1.4;
+    }
+
+    .toast-close {
+        background: transparent;
+
+        border: none;
+
+        color: #777;
+
+        font-size: 24px;
+
+        line-height: 1;
+
+        cursor: pointer;
+
+        padding: 2px 5px;
+    }
+
+    .toast-close:hover {
+        color: #fff;
+    }
+
+
+    @keyframes toastSlideIn {
+
+        from {
+            opacity: 0;
+
+            transform: translateX(40px);
+        }
+
+        to {
+            opacity: 1;
+
+            transform: translateX(0);
+        }
+
+    }
+
+
+    @keyframes toastSlideOut {
+
+        from {
+            opacity: 1;
+
+            transform: translateX(0);
+        }
+
+        to {
+            opacity: 0;
+
+            transform: translateX(40px);
+        }
+
+    }
+
+
+    .gym-toast.hide {
+        animation: toastSlideOut .3s ease forwards;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
     @media (max-width: 1000px) {
+
         .classes-grid {
             grid-template-columns: repeat(2, 1fr);
         }
@@ -249,9 +502,12 @@
         .classes-section {
             padding: 60px 30px;
         }
+
     }
 
+
     @media (max-width: 650px) {
+
         .classes-grid {
             grid-template-columns: 1fr;
         }
@@ -268,13 +524,28 @@
         .classes-cta h2 {
             font-size: 30px;
         }
+
+        .gym-toast {
+            top: 80px;
+
+            left: 15px;
+            right: 15px;
+
+            width: auto;
+        }
+
     }
+
 </style>
 
 
 <div class="classes-page">
 
-    {{-- HERO --}}
+
+    {{-- =========================
+         HERO
+    ========================= --}}
+
     <section class="classes-hero">
 
         <span class="classes-label">
@@ -293,7 +564,10 @@
     </section>
 
 
-    {{-- DANH SÁCH LỚP --}}
+    {{-- =========================
+         DANH SÁCH LỚP
+    ========================= --}}
+
     <section class="classes-section">
 
         <div class="classes-heading">
@@ -313,373 +587,307 @@
         </div>
 
 
+        {{-- =========================
+             TOAST THÀNH CÔNG
+        ========================= --}}
+
+        @if(session('success'))
+
+            <div class="gym-toast success-toast" id="successToast">
+
+                <div class="toast-icon">
+                    ✓
+                </div>
+
+                <div class="toast-content">
+
+                    <strong>
+                        Đăng ký thành công
+                    </strong>
+
+                    <span>
+                        {{ session('success') }}
+                    </span>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="toast-close"
+                    onclick="closeToast('successToast')">
+
+                    ×
+
+                </button>
+
+            </div>
+
+        @endif
+
+
+        {{-- =========================
+             TOAST LỖI
+        ========================= --}}
+
+        @if(session('error'))
+
+            <div class="gym-toast error-toast" id="errorToast">
+
+                <div class="toast-icon">
+                    !
+                </div>
+
+                <div class="toast-content">
+
+                    <strong>
+                        Không thể đăng ký
+                    </strong>
+
+                    <span>
+                        {{ session('error') }}
+                    </span>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="toast-close"
+                    onclick="closeToast('errorToast')">
+
+                    ×
+
+                </button>
+
+            </div>
+
+        @endif
+
+
+        {{-- =========================
+             GRID LỚP TẬP
+        ========================= --}}
+
         <div class="classes-grid">
 
-            {{-- LỚP 1 --}}
-            <div class="class-card">
 
-                <div class="class-image">
+            @foreach($lopTap as $lop)
 
-                    <img
-                        src="{{ asset('img/yoga.jpg') }}"
-                        alt="Yoga">
+                @php
 
-                    <span class="class-status">
-                        ĐANG HOẠT ĐỘNG
-                    </span>
+                    $tenLop = strtolower($lop->ten_lop);
 
-                </div>
+                    if (str_contains($tenLop, 'yoga')) {
 
-                <div class="class-body">
+                        $image = 'img/yoga.jpg';
 
-                    <h3>
-                        YOGA
-                    </h3>
+                    } elseif (str_contains($tenLop, 'gym')) {
 
-                    <p class="class-description">
-                        Các bài tập Yoga giúp cải thiện sự dẻo dai,
-                        cân bằng cơ thể và thư giãn tinh thần.
-                    </p>
+                        $image = 'img/photo-1581009146145-b5ef050c2e1e.avif';
 
-                    <div class="class-info">
+                    } elseif (str_contains($tenLop, 'cardio')) {
 
-                        <div class="class-info-row">
-                            <span>Huấn luyện viên</span>
-                            <span>Nguyễn Thị Lan</span>
-                        </div>
+                        $image = 'img/photo-1534438327276-14e5300c3a48.avif';
 
-                        <div class="class-info-row">
-                            <span>Lịch tập</span>
-                            <span>Thứ 2 - 4 - 6</span>
-                        </div>
+                    } elseif (str_contains($tenLop, 'fitness')) {
 
-                        <div class="class-info-row">
-                            <span>Thời gian</span>
-                            <span>18:00 - 19:00</span>
-                        </div>
+                        $image = 'img/photo-1571902943202-507ec2618e8f.avif';
 
-                        <div class="class-info-row">
-                            <span>Sức chứa</span>
-                            <span>20 người</span>
-                        </div>
+                    } elseif (str_contains($tenLop, 'strength')) {
 
-                    </div>
+                        $image = 'img/strength.jpg';
 
-                    <a href="/register" class="class-btn">
-                        ĐĂNG KÝ LỚP
-                    </a>
+                    } elseif (str_contains($tenLop, 'boxing')) {
 
-                </div>
+                        $image = 'img/boxing.jpg';
 
-            </div>
+                    } else {
+
+                        $image = 'img/photo-1571902943202-507ec2618e8f.avif';
+
+                    }
+
+                @endphp
 
 
-            {{-- LỚP 2 --}}
-            <div class="class-card">
+                <div class="class-card">
 
-                <div class="class-image">
 
-                    <img
-                        src="{{ asset('img/photo-1581009146145-b5ef050c2e1e.avif') }}"
-                        alt="Gym">
+                    {{-- ẢNH --}}
 
-                    <span class="class-status">
-                        ĐANG HOẠT ĐỘNG
-                    </span>
+                    <div class="class-image">
 
-                </div>
+                        <img
+                            src="{{ asset($image) }}"
+                            alt="{{ $lop->ten_lop }}"
+                        >
 
-                <div class="class-body">
+                        <span class="class-status">
 
-                    <h3>
-                        GYM CƠ BẢN
-                    </h3>
+                            {{ $lop->trang_thai }}
 
-                    <p class="class-description">
-                        Làm quen với các thiết bị Gym và xây dựng
-                        nền tảng thể lực cơ bản.
-                    </p>
-
-                    <div class="class-info">
-
-                        <div class="class-info-row">
-                            <span>Huấn luyện viên</span>
-                            <span>Trần Minh Khoa</span>
-                        </div>
-
-                        <div class="class-info-row">
-                            <span>Lịch tập</span>
-                            <span>Thứ 3 - 5 - 7</span>
-                        </div>
-
-                        <div class="class-info-row">
-                            <span>Thời gian</span>
-                            <span>17:00 - 18:00</span>
-                        </div>
-
-                        <div class="class-info-row">
-                            <span>Sức chứa</span>
-                            <span>15 người</span>
-                        </div>
+                        </span>
 
                     </div>
 
-                    <a href="/register" class="class-btn">
-                        ĐĂNG KÝ LỚP
-                    </a>
 
-                </div>
+                    {{-- BODY --}}
 
-            </div>
+                    <div class="class-body">
+
+                        <h3>
+
+                            {{ $lop->ten_lop }}
+
+                        </h3>
 
 
-            {{-- LỚP 3 --}}
-            <div class="class-card">
+                        <p class="class-description">
 
-                <div class="class-image">
+                            {{ $lop->mo_ta ?: 'Tham gia lớp tập cùng huấn luyện viên và các hội viên tại GYMFIT.' }}
 
-                    <img
-                        src="{{ asset('img/photo-1534438327276-14e5300c3a48.avif') }}"
-                        alt="Cardio">
+                        </p>
 
-                    <span class="class-status">
-                        ĐANG HOẠT ĐỘNG
-                    </span>
 
-                </div>
+                        <div class="class-info">
 
-                <div class="class-body">
 
-                    <h3>
-                        CARDIO
-                    </h3>
+                            <div class="class-info-row">
 
-                    <p class="class-description">
-                        Bài tập cardio giúp tăng sức bền,
-                        đốt cháy năng lượng và cải thiện tim mạch.
-                    </p>
+                                <span>
+                                    Lịch tập
+                                </span>
 
-                    <div class="class-info">
+                                <span>
+                                    {{ $lop->lich_tap ?: 'Đang cập nhật' }}
+                                </span>
 
-                        <div class="class-info-row">
-                            <span>Huấn luyện viên</span>
-                            <span>Lê Hoàng Nam</span>
+                            </div>
+
+
+                            <div class="class-info-row">
+
+                                <span>
+                                    Sức chứa
+                                </span>
+
+                                <span>
+
+                                    @if($lop->suc_chua)
+
+                                        {{ $lop->suc_chua }} người
+
+                                    @else
+
+                                        Không giới hạn
+
+                                    @endif
+
+                                </span>
+
+                            </div>
+
+
+                            <div class="class-info-row">
+
+                                <span>
+                                    Trạng thái
+                                </span>
+
+                                <span>
+                                    {{ $lop->trang_thai }}
+                                </span>
+
+                            </div>
+
+
                         </div>
 
-                        <div class="class-info-row">
-                            <span>Lịch tập</span>
-                            <span>Thứ 2 - 4 - 6</span>
-                        </div>
 
-                        <div class="class-info-row">
-                            <span>Thời gian</span>
-                            <span>19:00 - 20:00</span>
-                        </div>
+                        {{-- =========================
+                             NÚT ĐĂNG KÝ
+                        ========================= --}}
 
-                        <div class="class-info-row">
-                            <span>Sức chứa</span>
-                            <span>25 người</span>
-                        </div>
+                        @if(session()->has('user') && session('role_id') == 3)
+
+                            <form
+                                action="/classes/register/{{ $lop->lop_tap_id }}"
+                                method="POST"
+                            >
+
+                                @csrf
+
+                                <button
+                                    type="submit"
+                                    class="class-btn"
+                                >
+                                    ĐĂNG KÝ NGAY
+                                </button>
+
+                            </form>
+
+                        @else
+
+                            <a
+                                href="/login"
+                                class="class-btn"
+                            >
+                                ĐĂNG KÝ NGAY
+                            </a>
+
+                        @endif
+
 
                     </div>
 
-                    <a href="/register" class="class-btn">
-                        ĐĂNG KÝ LỚP
-                    </a>
-
                 </div>
 
-            </div>
+            @endforeach
 
 
-            {{-- LỚP 4 --}}
-            <div class="class-card">
+            {{-- Không có lớp --}}
 
-                <div class="class-image">
+            @if($lopTap->count() == 0)
 
-                    <img
-                        src="{{ asset('img/photo-1571902943202-507ec2618e8f.avif') }}"
-                        alt="Fitness">
+                <div
+                    style="
+                        grid-column: 1 / -1;
+                        text-align: center;
+                        padding: 60px 20px;
+                        color: #777;
+                    "
+                >
 
-                    <span class="class-status">
-                        ĐANG HOẠT ĐỘNG
-                    </span>
-
-                </div>
-
-                <div class="class-body">
-
-                    <h3>
-                        FITNESS
+                    <h3 style="color:#fff;">
+                        Hiện chưa có lớp tập
                     </h3>
 
-                    <p class="class-description">
-                        Chương trình vận động toàn thân giúp
-                        cải thiện sức khỏe và vóc dáng.
+                    <p>
+                        Vui lòng quay lại sau.
                     </p>
 
-                    <div class="class-info">
-
-                        <div class="class-info-row">
-                            <span>Huấn luyện viên</span>
-                            <span>Phạm Quốc Huy</span>
-                        </div>
-
-                        <div class="class-info-row">
-                            <span>Lịch tập</span>
-                            <span>Thứ 3 - 5</span>
-                        </div>
-
-                        <div class="class-info-row">
-                            <span>Thời gian</span>
-                            <span>18:30 - 19:30</span>
-                        </div>
-
-                        <div class="class-info-row">
-                            <span>Sức chứa</span>
-                            <span>20 người</span>
-                        </div>
-
-                    </div>
-
-                    <a href="/register" class="class-btn">
-                        ĐĂNG KÝ LỚP
-                    </a>
-
                 </div>
 
-            </div>
+            @endif
 
-
-            {{-- LỚP 5 --}}
-            <div class="class-card">
-
-                <div class="class-image">
-
-                    <img
-                        src="{{ asset('img/strength.jpg') }}"
-                        alt="Strength">
-
-                    <span class="class-status">
-                        ĐANG HOẠT ĐỘNG
-                    </span>
-
-                </div>
-
-                <div class="class-body">
-
-                    <h3>
-                        STRENGTH
-                    </h3>
-
-                    <p class="class-description">
-                        Tập trung phát triển sức mạnh,
-                        cơ bắp và khả năng vận động.
-                    </p>
-
-                    <div class="class-info">
-
-                        <div class="class-info-row">
-                            <span>Huấn luyện viên</span>
-                            <span>Võ Minh Thái</span>
-                        </div>
-
-                        <div class="class-info-row">
-                            <span>Lịch tập</span>
-                            <span>Thứ 2 - 4 - 6</span>
-                        </div>
-
-                        <div class="class-info-row">
-                            <span>Thời gian</span>
-                            <span>20:00 - 21:00</span>
-                        </div>
-
-                        <div class="class-info-row">
-                            <span>Sức chứa</span>
-                            <span>15 người</span>
-                        </div>
-
-                    </div>
-
-                    <a href="/register" class="class-btn">
-                        ĐĂNG KÝ LỚP
-                    </a>
-
-                </div>
-
-            </div>
-
-
-            {{-- LỚP 6 --}}
-            <div class="class-card">
-
-                <div class="class-image">
-
-                    <img
-                        src="{{ asset('img/boxing.jpg') }}"
-                        alt="Boxing">
-
-                    <span class="class-status">
-                        ĐANG HOẠT ĐỘNG
-                    </span>
-
-                </div>
-
-                <div class="class-body">
-
-                    <h3>
-                        BOXING
-                    </h3>
-
-                    <p class="class-description">
-                        Rèn luyện sức mạnh, phản xạ và khả năng
-                        phối hợp thông qua các bài tập Boxing.
-                    </p>
-
-                    <div class="class-info">
-
-                        <div class="class-info-row">
-                            <span>Huấn luyện viên</span>
-                            <span>Nguyễn Hoàng Long</span>
-                        </div>
-
-                        <div class="class-info-row">
-                            <span>Lịch tập</span>
-                            <span>Thứ 3 - 5 - 7</span>
-                        </div>
-
-                        <div class="class-info-row">
-                            <span>Thời gian</span>
-                            <span>19:30 - 20:30</span>
-                        </div>
-
-                        <div class="class-info-row">
-                            <span>Sức chứa</span>
-                            <span>12 người</span>
-                        </div>
-
-                    </div>
-
-                    <a href="/register" class="class-btn">
-                        ĐĂNG KÝ LỚP
-                    </a>
-
-                </div>
-
-            </div>
 
         </div>
 
 
         <div class="classes-note">
-            * Thông tin lớp tập hiện đang là dữ liệu giao diện mẫu.
-            Sau khi hoàn thiện chức năng, dữ liệu sẽ được lấy từ hệ thống quản lý lớp tập.
+
+            * Thông tin lớp tập được lấy trực tiếp
+            từ hệ thống quản lý GYMFIT.
+
         </div>
+
 
     </section>
 
 
-    {{-- CTA --}}
+    {{-- =========================
+         CTA
+    ========================= --}}
+
     <section class="classes-cta">
 
         <h2>
@@ -690,12 +898,80 @@
             Đăng ký tài khoản để tham gia các lớp tập tại GYMFIT.
         </p>
 
-        <a href="/register" class="cta-btn">
-            ĐĂNG KÝ NGAY
+        <a
+            href="/register"
+            class="cta-btn"
+        >
+            ĐĂNG KÝ THÀNH VIÊN
         </a>
 
     </section>
 
+
 </div>
+
+
+{{-- =========================
+     JAVASCRIPT TOAST
+========================= --}}
+
+<script>
+
+    function closeToast(id) {
+
+        const toast = document.getElementById(id);
+
+        if (toast) {
+
+            toast.classList.add('hide');
+
+            setTimeout(() => {
+
+                toast.remove();
+
+            }, 300);
+
+        }
+
+    }
+
+
+    document.addEventListener(
+        'DOMContentLoaded',
+        function () {
+
+            const successToast =
+                document.getElementById('successToast');
+
+            const errorToast =
+                document.getElementById('errorToast');
+
+
+            if (successToast) {
+
+                setTimeout(() => {
+
+                    closeToast('successToast');
+
+                }, 3000);
+
+            }
+
+
+            if (errorToast) {
+
+                setTimeout(() => {
+
+                    closeToast('errorToast');
+
+                }, 4000);
+
+            }
+
+        }
+    );
+
+</script>
+
 
 @endsection
