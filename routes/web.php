@@ -674,80 +674,109 @@ Route::get('/dashboard', function () {
 
 Route::get('/staff/dashboard', function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | Kiểm tra đăng nhập
-    |--------------------------------------------------------------------------
-    */
-
     if (!session()->has('user')) {
-
         return redirect('/login');
-
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Chỉ Nhân viên
-    |--------------------------------------------------------------------------
-    */
 
     if (session('role_id') != 2) {
-
-        return redirect(
-            '/' . session('dashboard_path')
-        );
-
+        return redirect('/' . session('dashboard_path'));
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Tổng hội viên
-    |--------------------------------------------------------------------------
-    */
-
+    // TỔNG HỘI VIÊN
     $tongHoiVien = DB::table('hoi_vien')
         ->count();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Tổng check-in
-    |--------------------------------------------------------------------------
-    */
-
+    // CHECK-IN
     $tongCheckIn = DB::table('check_in')
         ->count();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Tổng hóa đơn
-    |--------------------------------------------------------------------------
-    */
-
+    // HÓA ĐƠN
     $tongHoaDon = DB::table('hoa_don')
         ->count();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Tổng đăng ký gói
-    |--------------------------------------------------------------------------
-    */
-
+    // ĐĂNG KÝ GÓI
     $tongDangKyGoi = DB::table('dang_ky_goi_tap')
         ->count();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Hóa đơn gần đây
-    |--------------------------------------------------------------------------
-    */
+    // HỘI VIÊN GẦN ĐÂY
+    $hoiVienGanDay = DB::table('hoi_vien')
+        ->join(
+            'nguoi_dung',
+            'hoi_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->select(
+            'nguoi_dung.ho_ten',
+            'nguoi_dung.email',
+            'hoi_vien.so_dien_thoai',
+            'hoi_vien.ngay_tham_gia'
+        )
+        ->orderByDesc('hoi_vien.hoi_vien_id')
+        ->limit(10)
+        ->get();
 
+
+    // CHECK-IN GẦN ĐÂY
+    $checkInGanDay = DB::table('check_in')
+        ->join(
+            'hoi_vien',
+            'check_in.hoi_vien_id',
+            '=',
+            'hoi_vien.hoi_vien_id'
+        )
+        ->join(
+            'nguoi_dung',
+            'hoi_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->select(
+            'nguoi_dung.ho_ten',
+            'check_in.thoi_gian'
+        )
+        ->orderByDesc('check_in.thoi_gian')
+        ->limit(10)
+        ->get();
+
+
+    // ĐĂNG KÝ GÓI GẦN ĐÂY
+    $dangKyGoiGanDay = DB::table('dang_ky_goi_tap')
+        ->join(
+            'hoi_vien',
+            'dang_ky_goi_tap.hoi_vien_id',
+            '=',
+            'hoi_vien.hoi_vien_id'
+        )
+        ->join(
+            'nguoi_dung',
+            'hoi_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->join(
+            'goi_tap',
+            'dang_ky_goi_tap.goi_tap_id',
+            '=',
+            'goi_tap.goi_tap_id'
+        )
+        ->select(
+            'nguoi_dung.ho_ten',
+            'goi_tap.ten_goi',
+            'dang_ky_goi_tap.ngay_bat_dau',
+            'dang_ky_goi_tap.trang_thai'
+        )
+        ->orderByDesc('dang_ky_goi_tap.dang_ky_goi_tap_id')
+        ->limit(10)
+        ->get();
+
+
+    // HÓA ĐƠN GẦN ĐÂY
     $hoaDonGanDay = DB::table('hoa_don')
         ->join(
             'hoi_vien',
@@ -765,18 +794,13 @@ Route::get('/staff/dashboard', function () {
             'nguoi_dung.ho_ten',
             'hoa_don.ngay_lap',
             'hoa_don.tong_tien',
-            'hoa_don.trang_thai'
+            'hoa_don.trang_thai',
+            'hoa_don.phuong_thuc_thanh_toan'
         )
         ->orderByDesc('hoa_don.ngay_lap')
         ->limit(10)
         ->get();
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Hiển thị
-    |--------------------------------------------------------------------------
-    */
 
     return view(
         'staff.dashboard',
@@ -785,7 +809,10 @@ Route::get('/staff/dashboard', function () {
             'tongCheckIn',
             'tongHoaDon',
             'tongDangKyGoi',
-            'hoaDonGanDay'
+            'hoiVienGanDay',
+            'checkInGanDay',
+            'dangKyGoiGanDay',
+            'hoaDonGanDay',
         )
     );
 
@@ -800,93 +827,40 @@ Route::get('/staff/dashboard', function () {
 
 Route::get('/user/dashboard', function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | Kiểm tra đăng nhập
-    |--------------------------------------------------------------------------
-    */
-
     if (!session()->has('user')) {
-
         return redirect('/login');
-
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Chỉ Hội viên
-    |--------------------------------------------------------------------------
-    */
 
     if (session('role_id') != 3) {
-
-        return redirect(
-            '/' . session('dashboard_path')
-        );
-
+        return redirect('/' . session('dashboard_path'));
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | ID người dùng hiện tại
-    |--------------------------------------------------------------------------
-    */
 
     $nguoiDungId = session('user')->nguoi_dung_id;
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Tìm hồ sơ hội viên
-    |--------------------------------------------------------------------------
-    */
-
     $hoiVien = DB::table('hoi_vien')
-        ->where(
-            'nguoi_dung_id',
-            $nguoiDungId
-        )
+        ->where('nguoi_dung_id', $nguoiDungId)
         ->first();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Nếu chưa có hồ sơ hội viên
-    |--------------------------------------------------------------------------
-    */
 
     if (!$hoiVien) {
 
-        return view(
-            'user.dashboard',
-            [
+        return view('user.dashboard', [
 
-                'tongGoiTap' => 0,
+            'tongGoiTap' => 0,
+            'tongGoiPT' => 0,
+            'tongLop' => 0,
+            'tongHoaDon' => 0,
 
-                'tongGoiPT' => 0,
+            'goiTap' => collect(),
+            'goiPT' => collect(),
+            'lopTap' => collect(),
+            'hoaDon' => collect(),
+            'thongBao' => collect(),
 
-                'tongLop' => 0,
-
-                'tongHoaDon' => 0,
-
-                'goiTap' => collect(),
-
-                'thongBao' => collect(),
-
-            ]
-        );
-
+        ]);
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Gói tập
-    |--------------------------------------------------------------------------
-    */
-
+    // GÓI TẬP
     $goiTap = DB::table('dang_ky_goi_tap')
         ->join(
             'goi_tap',
@@ -899,52 +873,90 @@ Route::get('/user/dashboard', function () {
             $hoiVien->hoi_vien_id
         )
         ->select(
+            'dang_ky_goi_tap.*',
             'goi_tap.ten_goi',
-            'dang_ky_goi_tap.ngay_bat_dau',
-            'dang_ky_goi_tap.ngay_ket_thuc',
-            'dang_ky_goi_tap.so_buoi_con_lai',
-            'dang_ky_goi_tap.trang_thai'
+            'goi_tap.gia',
+            'goi_tap.thoi_han_ngay',
+            'goi_tap.so_buoi'
         )
-        ->orderByDesc(
-            'dang_ky_goi_tap.ngay_bat_dau'
+        ->orderByDesc('dang_ky_goi_tap.ngay_bat_dau')
+        ->get();
+
+
+    // GÓI PT
+    $goiPT = DB::table('dang_ky_goi_pt')
+        ->join(
+            'goi_pt',
+            'dang_ky_goi_pt.goi_pt_id',
+            '=',
+            'goi_pt.goi_pt_id'
         )
+        ->join(
+            'huan_luyen_vien',
+            'dang_ky_goi_pt.pt_id',
+            '=',
+            'huan_luyen_vien.pt_id'
+        )
+        ->join(
+            'nguoi_dung',
+            'huan_luyen_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->where(
+            'dang_ky_goi_pt.hoi_vien_id',
+            $hoiVien->hoi_vien_id
+        )
+        ->select(
+            'dang_ky_goi_pt.*',
+            'goi_pt.ten_goi_pt',
+            'goi_pt.gia',
+            'goi_pt.so_buoi',
+            'nguoi_dung.ho_ten as ten_pt'
+        )
+        ->orderByDesc('dang_ky_goi_pt.dang_ky_goi_pt_id')
+        ->get();
+
+
+    // LỚP TẬP
+    $lopTap = DB::table('dang_ky_lop')
+        ->join(
+            'lop_tap',
+            'dang_ky_lop.lop_tap_id',
+            '=',
+            'lop_tap.lop_tap_id'
+        )
+        ->where(
+            'dang_ky_lop.hoi_vien_id',
+            $hoiVien->hoi_vien_id
+        )
+        ->select(
+            'dang_ky_lop.*',
+            'lop_tap.ten_lop',
+            'lop_tap.lich_tap',
+            'lop_tap.mo_ta'
+        )
+        ->orderByDesc('dang_ky_lop.ngay_dang_ky')
+        ->get();
+
+
+    // HÓA ĐƠN
+    $hoaDon = DB::table('hoa_don')
+        ->where(
+            'hoi_vien_id',
+            $hoiVien->hoi_vien_id
+        )
+        ->orderByDesc('ngay_lap')
         ->limit(10)
         ->get();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Tổng gói PT
-    |--------------------------------------------------------------------------
-    */
 
-    $tongGoiPT = DB::table('dang_ky_goi_pt')
-        ->where(
-            'hoi_vien_id',
-            $hoiVien->hoi_vien_id
-        )
-        ->count();
+    $tongGoiTap = $goiTap->count();
 
+    $tongGoiPT = $goiPT->count();
 
-    /*
-    |--------------------------------------------------------------------------
-    | Tổng lớp tập
-    |--------------------------------------------------------------------------
-    */
-
-    $tongLop = DB::table('dang_ky_lop')
-        ->where(
-            'hoi_vien_id',
-            $hoiVien->hoi_vien_id
-        )
-        ->count();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Tổng hóa đơn
-    |--------------------------------------------------------------------------
-    */
+    $tongLop = $lopTap->count();
 
     $tongHoaDon = DB::table('hoa_don')
         ->where(
@@ -954,37 +966,6 @@ Route::get('/user/dashboard', function () {
         ->count();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Thông báo
-    |--------------------------------------------------------------------------
-    */
-
-    $thongBao = DB::table('thong_bao')
-        ->where(
-            'nguoi_dung_id',
-            $nguoiDungId
-        )
-        ->orderByDesc('tao_luc')
-        ->limit(10)
-        ->get();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Tổng gói tập
-    |--------------------------------------------------------------------------
-    */
-
-    $tongGoiTap = $goiTap->count();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Hiển thị
-    |--------------------------------------------------------------------------
-    */
-
     return view(
         'user.dashboard',
         compact(
@@ -993,7 +974,9 @@ Route::get('/user/dashboard', function () {
             'tongLop',
             'tongHoaDon',
             'goiTap',
-            'thongBao'
+            'goiPT',
+            'lopTap',
+            'hoaDon',
         )
     );
 
@@ -1008,49 +991,19 @@ Route::get('/user/dashboard', function () {
 
 Route::get('/trainer/dashboard', function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | Kiểm tra đăng nhập
-    |--------------------------------------------------------------------------
-    */
-
     if (!session()->has('user')) {
-
         return redirect('/login');
-
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Chỉ Huấn luyện viên
-    |--------------------------------------------------------------------------
-    */
 
     if (session('role_id') != 4) {
-
-        return redirect(
-            '/' . session('dashboard_path')
-        );
-
+        return redirect('/' . session('dashboard_path'));
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | ID người dùng hiện tại
-    |--------------------------------------------------------------------------
-    */
 
     $nguoiDungId = session('user')->nguoi_dung_id;
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Tìm hồ sơ huấn luyện viên
-    |--------------------------------------------------------------------------
-    */
-
+    // TÌM PT
     $pt = DB::table('huan_luyen_vien')
         ->where(
             'nguoi_dung_id',
@@ -1059,38 +1012,23 @@ Route::get('/trainer/dashboard', function () {
         ->first();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Nếu chưa có hồ sơ PT
-    |--------------------------------------------------------------------------
-    */
-
     if (!$pt) {
 
-        return view(
-            'trainer.dashboard',
-            [
+        return view('trainer.dashboard', [
 
-                'tongHocVien' => 0,
+            'tongHocVien' => 0,
+            'tongGoiPT' => 0,
+            'tongLichPT' => 0,
 
-                'tongGoiPT' => 0,
+            'hocVien' => collect(),
+            'lichPT' => collect(),
+            'thongBao' => collect(),
 
-                'tongLichPT' => 0,
-
-                'lichPT' => collect(),
-
-            ]
-        );
-
+        ]);
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Tổng học viên PT
-    |--------------------------------------------------------------------------
-    */
-
+    // TỔNG HỌC VIÊN
     $tongHocVien = DB::table('dang_ky_goi_pt')
         ->where(
             'pt_id',
@@ -1100,12 +1038,7 @@ Route::get('/trainer/dashboard', function () {
         ->count('hoi_vien_id');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Tổng đăng ký gói PT
-    |--------------------------------------------------------------------------
-    */
-
+    // TỔNG GÓI PT
     $tongGoiPT = DB::table('dang_ky_goi_pt')
         ->where(
             'pt_id',
@@ -1114,12 +1047,7 @@ Route::get('/trainer/dashboard', function () {
         ->count();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Tổng lịch PT
-    |--------------------------------------------------------------------------
-    */
-
+    // TỔNG LỊCH PT
     $tongLichPT = DB::table('lich_pt')
         ->where(
             'pt_id',
@@ -1128,12 +1056,45 @@ Route::get('/trainer/dashboard', function () {
         ->count();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Lịch PT gần đây
-    |--------------------------------------------------------------------------
-    */
+    // HỌC VIÊN
+    $hocVien = DB::table('dang_ky_goi_pt')
+        ->join(
+            'hoi_vien',
+            'dang_ky_goi_pt.hoi_vien_id',
+            '=',
+            'hoi_vien.hoi_vien_id'
+        )
+        ->join(
+            'nguoi_dung',
+            'hoi_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->join(
+            'goi_pt',
+            'dang_ky_goi_pt.goi_pt_id',
+            '=',
+            'goi_pt.goi_pt_id'
+        )
+        ->where(
+            'dang_ky_goi_pt.pt_id',
+            $pt->pt_id
+        )
+        ->select(
+            'nguoi_dung.ho_ten',
+            'hoi_vien.so_dien_thoai',
+            'goi_pt.ten_goi_pt',
+            'dang_ky_goi_pt.so_buoi_con_lai',
+            'dang_ky_goi_pt.trang_thai'
+        )
+        ->orderByDesc(
+            'dang_ky_goi_pt.dang_ky_goi_pt_id'
+        )
+        ->limit(10)
+        ->get();
 
+
+    // LỊCH PT
     $lichPT = DB::table('lich_pt')
         ->join(
             'hoi_vien',
@@ -1157,18 +1118,14 @@ Route::get('/trainer/dashboard', function () {
             'lich_pt.thoi_gian_ket_thuc',
             'lich_pt.trang_thai'
         )
-        ->orderByDesc(
-            'lich_pt.thoi_gian_bat_dau'
+        ->orderBy(
+            'lich_pt.thoi_gian_bat_dau',
+            'desc'
         )
         ->limit(10)
         ->get();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Hiển thị
-    |--------------------------------------------------------------------------
-    */
 
     return view(
         'trainer.dashboard',
@@ -1176,67 +1133,46 @@ Route::get('/trainer/dashboard', function () {
             'tongHocVien',
             'tongGoiPT',
             'tongLichPT',
-            'lichPT'
+            'hocVien',
+            'lichPT',
         )
     );
 
 })->middleware(NoCache::class);
 
+
 /*
 |--------------------------------------------------------------------------
-| HỒ SƠ HỘI VIÊN
+| HỒ SƠ HỘI VIÊN - HIỂN THỊ
 |--------------------------------------------------------------------------
 */
 
 Route::get('/user/profile', function () {
 
     if (!session()->has('user')) {
-
         return redirect('/login');
-
     }
 
     if (session('role_id') != 3) {
-
-        return redirect(
-            '/' . session('dashboard_path')
-        );
-
+        return redirect('/' . session('dashboard_path'));
     }
 
     $nguoiDungId = session('user')->nguoi_dung_id;
 
+    // Lấy thông tin tài khoản
     $user = DB::table('nguoi_dung')
-        ->where(
-            'nguoi_dung_id',
-            $nguoiDungId
-        )
+        ->where('nguoi_dung_id', $nguoiDungId)
         ->first();
 
+    // Lấy thông tin hội viên
     $hoiVien = DB::table('hoi_vien')
-        ->where(
-            'nguoi_dung_id',
-            $nguoiDungId
-        )
+        ->where('nguoi_dung_id', $nguoiDungId)
         ->first();
 
-    if (!$user || !$hoiVien) {
-
-        return redirect('/user/dashboard')
-            ->with(
-                'error',
-                'Không tìm thấy hồ sơ hội viên.'
-            );
-
-    }
-
-    return view(
-        'user.profile',
-        compact(
-            'user',
-            'hoiVien'
-        )
-    );
+    return view('user.profile', compact(
+        'user',
+        'hoiVien'
+    ));
 
 })->middleware(NoCache::class);
 
@@ -1250,17 +1186,11 @@ Route::get('/user/profile', function () {
 Route::post('/user/profile', function () {
 
     if (!session()->has('user')) {
-
         return redirect('/login');
-
     }
 
     if (session('role_id') != 3) {
-
-        return redirect(
-            '/' . session('dashboard_path')
-        );
-
+        return redirect('/' . session('dashboard_path'));
     }
 
     $nguoiDungId = session('user')->nguoi_dung_id;
@@ -1333,18 +1263,15 @@ Route::post('/user/profile', function () {
     ]);
 
     $emailTonTai = DB::table('nguoi_dung')
-
         ->where(
             'email',
             $validated['email']
         )
-
         ->where(
             'nguoi_dung_id',
             '!=',
             $nguoiDungId
         )
-
         ->exists();
 
     if ($emailTonTai) {
@@ -1361,12 +1288,10 @@ Route::post('/user/profile', function () {
     if (!empty($validated['mat_khau_moi'])) {
 
         $user = DB::table('nguoi_dung')
-
             ->where(
                 'nguoi_dung_id',
                 $nguoiDungId
             )
-
             ->first();
 
         $matKhauDung = false;
@@ -1446,23 +1371,19 @@ Route::post('/user/profile', function () {
         }
 
         DB::table('nguoi_dung')
-
             ->where(
                 'nguoi_dung_id',
                 $nguoiDungId
             )
-
             ->update(
                 $nguoiDungData
             );
 
         DB::table('hoi_vien')
-
             ->where(
                 'nguoi_dung_id',
                 $nguoiDungId
             )
-
             ->update([
 
                 'ngay_sinh' =>
@@ -1482,12 +1403,10 @@ Route::post('/user/profile', function () {
         DB::commit();
 
         $userMoi = DB::table('nguoi_dung')
-
             ->where(
                 'nguoi_dung_id',
                 $nguoiDungId
             )
-
             ->first();
 
         session([
@@ -1495,7 +1414,6 @@ Route::post('/user/profile', function () {
         ]);
 
         return redirect('/user/profile')
-
             ->with(
                 'success',
                 'Cập nhật hồ sơ thành công.'
@@ -1517,7 +1435,6 @@ Route::post('/user/profile', function () {
 
 })->middleware(NoCache::class);
 
-
 /*
 |--------------------------------------------------------------------------
 | ĐĂNG XUẤT
@@ -1531,6 +1448,137 @@ Route::post('/logout', function () {
     session()->regenerateToken();
 
     return redirect('/');
+
+});
+
+// ===============================
+// THÔNG BÁO
+// ===============================
+
+Route::get('/notifications', function () {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    $nguoiDungId = session('user')->nguoi_dung_id;
+
+    $thongBao = DB::table('thong_bao')
+        ->where('nguoi_dung_id', $nguoiDungId)
+        ->orderByDesc('tao_luc')
+        ->get();
+
+    $thongBaoChuaDoc = DB::table('thong_bao')
+        ->where('nguoi_dung_id', $nguoiDungId)
+        ->where('da_doc', 0)
+        ->count();
+
+    return view('user.notifications', compact(
+        'thongBao',
+        'thongBaoChuaDoc'
+    ));
+});
+
+
+Route::post('/notifications/read-all', function () {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    $nguoiDungId = session('user')->nguoi_dung_id;
+
+    DB::table('thong_bao')
+        ->where('nguoi_dung_id', $nguoiDungId)
+        ->where('da_doc', 0)
+        ->update([
+            'da_doc' => 1
+        ]);
+
+    return redirect('/notifications');
+});
+
+// ===============================
+// LỊCH SỬ THANH TOÁN HỘI VIÊN
+// ===============================
+
+Route::get('/payments', function () {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    $nguoiDungId = session('user')->nguoi_dung_id;
+
+
+    // Tìm hội viên của tài khoản đang đăng nhập
+    $hoiVien = DB::table('hoi_vien')
+        ->where('nguoi_dung_id', $nguoiDungId)
+        ->first();
+
+
+    // Nếu chưa có hồ sơ hội viên
+    if (!$hoiVien) {
+
+        return view('user.payments', [
+            'hoaDon' => collect(),
+            'tongHoaDon' => 0,
+            'tongDaThanhToan' => 0,
+            'tongTien' => 0
+        ]);
+
+    }
+
+
+    // Lấy hóa đơn
+    $hoaDon = DB::table('hoa_don')
+        ->where('hoi_vien_id', $hoiVien->hoi_vien_id)
+        ->orderByDesc('ngay_lap')
+        ->get();
+
+
+    // Tổng hóa đơn
+    $tongHoaDon = $hoaDon->count();
+
+
+    // Tổng hóa đơn đã thanh toán
+    $tongDaThanhToan = $hoaDon->filter(function ($hd) {
+
+        return in_array(
+            strtolower($hd->trang_thai),
+            [
+                'da_thanh_toan',
+                'đã thanh toán',
+                'paid'
+            ]
+        );
+
+    })->count();
+
+
+    // Tổng tiền đã thanh toán
+    $tongTien = $hoaDon
+        ->filter(function ($hd) {
+
+            return in_array(
+                strtolower($hd->trang_thai),
+                [
+                    'da_thanh_toan',
+                    'đã thanh toán',
+                    'paid'
+                ]
+            );
+
+        })
+        ->sum('tong_tien');
+
+
+    return view('user.payments', compact(
+        'hoaDon',
+        'tongHoaDon',
+        'tongDaThanhToan',
+        'tongTien'
+    ));
 
 });
 
