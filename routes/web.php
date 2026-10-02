@@ -379,7 +379,8 @@ Route::get('/classes', function () {
 
     // Mặc định chưa đăng nhập
     $hoiVien = null;
-    $lopDaDangKy = collect();
+    $lopDaDangKy = [];
+    $dangKyLop = [];
 
 
     // Nếu là hội viên
@@ -1075,12 +1076,15 @@ Route::post('/login', function () {
     | Kiểm tra trạng thái tài khoản
     |--------------------------------------------------------------------------
     */
-
-    if ($user->trang_thai !== 'hoat_dong') {
-    return back()
-        ->withInput()
-        ->with('error', 'Tài khoản đang bị khóa.');
-}
+    if (!in_array($user->trang_thai, [
+        'hoat_dong',
+        'hoạt_động',
+        'hoạt động',
+    ])) {
+        return back()
+            ->withInput()
+            ->with('error', 'Tài khoản đang bị khóa.');
+    }
 
 
     /*
