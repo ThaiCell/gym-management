@@ -237,6 +237,38 @@
 
 <div class="contact-page">
 
+    @if(session('success'))
+    <div style="
+        max-width:1200px;
+        margin:20px auto 0;
+        padding:14px 20px;
+        background:#123d1d;
+        border:1px solid #28a745;
+        color:#fff;
+        border-radius:6px;
+            ">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if($errors->any())
+            <div style="
+                max-width:1200px;
+                margin:20px auto 0;
+                padding:14px 20px;
+                background:#3d1212;
+                border:1px solid #e50914;
+                color:#fff;
+                border-radius:6px;
+            ">
+                <ul style="margin:0;padding-left:20px;">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
     <section class="contact-hero">
 
         <span class="contact-label">
@@ -358,7 +390,7 @@
                     GỬI TIN NHẮN
                 </h2>
 
-                <form action="#" method="POST">
+                <form action="{{ url('/contact') }}" method="POST">
 
                     @csrf
 

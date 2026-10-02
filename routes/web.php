@@ -1028,6 +1028,57 @@ Route::get('/contact', function () {
 });
 
 
+Route::post('/contact', function () {
+
+    $validated = request()->validate([
+        'ho_ten' => [
+            'required',
+            'string',
+            'max:100'
+        ],
+
+        'email' => [
+            'required',
+            'email',
+            'max:100'
+        ],
+
+        'so_dien_thoai' => [
+            'required',
+            'string',
+            'max:20'
+        ],
+
+        'noi_dung' => [
+            'required',
+            'string',
+            'max:1000'
+        ],
+    ], [
+        'ho_ten.required' =>
+            'Vui lòng nhập họ và tên.',
+
+        'email.required' =>
+            'Vui lòng nhập email.',
+
+        'email.email' =>
+            'Email không đúng định dạng.',
+
+        'so_dien_thoai.required' =>
+            'Vui lòng nhập số điện thoại.',
+
+        'noi_dung.required' =>
+            'Vui lòng nhập nội dung cần tư vấn.',
+    ]);
+
+    return redirect('/contact')
+        ->with(
+            'success',
+            'Gửi tin nhắn thành công! GYMFIT sẽ liên hệ với bạn sớm nhất.'
+        );
+});
+
+
 /*
 |--------------------------------------------------------------------------
 | ĐĂNG NHẬP - HIỂN THỊ FORM
