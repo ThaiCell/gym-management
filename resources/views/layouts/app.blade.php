@@ -368,34 +368,34 @@
 
             <div class="menu-title">Quản lý</div>
 
-            <a href="#">
+            <a href="/admin/members">
                 <div class="menu-icon">👤</div>
                 <span>Thành viên</span>
             </a>
 
-            <a href="#">
+            <a href="/admin/packages">
                 <div class="menu-icon">💳</div>
                 <span>Gói tập</span>
             </a>
 
-            <a href="#">
+            <a href="/admin/trainers">
                 <div class="menu-icon">🏋</div>
                 <span>Huấn luyện viên</span>
             </a>
 
-            <a href="#">
+            <a href="/admin/schedules">
                 <div class="menu-icon">📅</div>
                 <span>Lịch tập</span>
             </a>
 
             <div class="menu-title">Hệ thống</div>
 
-            <a href="#">
+            <a href="/admin/payments">
                 <div class="menu-icon">💰</div>
                 <span>Thanh toán</span>
             </a>
 
-            <a href="#">
+            <a href="/admin/statistics">
                 <div class="menu-icon">📊</div>
                 <span>Thống kê</span>
             </a>

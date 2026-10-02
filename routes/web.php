@@ -357,6 +357,8 @@ Route::post('/packages/register/{goiTapId}', function ($goiTapId) {
 
 });
 
+
+
 /*
 |--------------------------------------------------------------------------
 | LỚP TẬP
@@ -365,6 +367,7 @@ Route::post('/packages/register/{goiTapId}', function ($goiTapId) {
 
 Route::get('/classes', function () {
 
+    // Danh sách lớp đang hoạt động
     $lopTap = DB::table('lop_tap')
         ->whereIn('trang_thai', [
             'hoạt_động',
@@ -373,28 +376,105 @@ Route::get('/classes', function () {
         ->orderBy('lop_tap_id', 'asc')
         ->get();
 
-    return view('user.classes', compact('lopTap'));
+
+    // Mặc định chưa đăng nhập
+    $hoiVien = null;
+    $lopDaDangKy = collect();
+
+
+    // Nếu là hội viên
+    if (
+        session()->has('user') &&
+        session('role_id') == 3
+    ) {
+
+        $hoiVien = DB::table('hoi_vien')
+            ->where(
+                'nguoi_dung_id',
+                session('user')->nguoi_dung_id
+            )
+            ->first();
+
+
+        if ($hoiVien) {
+
+           $dangKyLop = DB::table('dang_ky_lop')
+    ->join(
+        'lop_tap',
+        'dang_ky_lop.lop_tap_id',
+        '=',
+        'lop_tap.lop_tap_id'
+    )
+    ->where(
+        'dang_ky_lop.hoi_vien_id',
+        $hoiVien->hoi_vien_id
+    )
+    ->where(
+        'dang_ky_lop.trang_thai',
+        '!=',
+        'đã hủy'
+    )
+    ->select(
+        'dang_ky_lop.dang_ky_lop_id',
+        'dang_ky_lop.lop_tap_id',
+        'dang_ky_lop.ngay_dang_ky',
+        'dang_ky_lop.trang_thai',
+        'lop_tap.ten_lop',
+        'lop_tap.lich_tap'
+    )
+    ->orderByDesc('dang_ky_lop.ngay_dang_ky')
+    ->get();
+
+$lopDaDangKy = $dangKyLop
+    ->pluck('lop_tap_id')
+    ->toArray();
+
+        }
+
+    }
+
+
+    return view(
+        'user.classes',
+        compact(
+            'lopTap',
+            'lopDaDangKy',
+            'dangKyLop'
+        )
+    );
 
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| ĐĂNG KÝ LỚP
+|--------------------------------------------------------------------------
+*/
 
 Route::post('/classes/register/{lopTapId}', function ($lopTapId) {
 
     // Chưa đăng nhập
     if (!session()->has('user')) {
+
         return redirect('/login');
+
     }
 
-    // Chỉ hội viên mới được đăng ký
+
+    // Chỉ hội viên
     if (session('role_id') != 3) {
+
         return redirect('/classes')
             ->with(
                 'error',
                 'Chỉ hội viên mới có thể đăng ký lớp tập.'
             );
+
     }
 
-    // Lấy thông tin hội viên
+
+    // Tìm hội viên
     $hoiVien = DB::table('hoi_vien')
         ->where(
             'nguoi_dung_id',
@@ -402,35 +482,53 @@ Route::post('/classes/register/{lopTapId}', function ($lopTapId) {
         )
         ->first();
 
+
     if (!$hoiVien) {
+
         return redirect('/classes')
             ->with(
                 'error',
                 'Không tìm thấy hồ sơ hội viên.'
             );
+
     }
 
-    // Lấy lớp tập
+
+    // Tìm lớp
     $lop = DB::table('lop_tap')
-        ->where('lop_tap_id', $lopTapId)
+        ->where(
+            'lop_tap_id',
+            $lopTapId
+        )
         ->whereIn('trang_thai', [
             'hoạt_động',
-            'hoat_dong'
+            'hoat_dong',
+            'hoạt động'
         ])
         ->first();
 
+
     if (!$lop) {
+
         return redirect('/classes')
             ->with(
                 'error',
                 'Lớp tập không tồn tại hoặc đã ngừng hoạt động.'
             );
+
     }
 
-    // Kiểm tra đã đăng ký lớp này chưa
+
+    // Kiểm tra đăng ký trùng
     $daDangKy = DB::table('dang_ky_lop')
-        ->where('lop_tap_id', $lop->lop_tap_id)
-        ->where('hoi_vien_id', $hoiVien->hoi_vien_id)
+        ->where(
+            'lop_tap_id',
+            $lop->lop_tap_id
+        )
+        ->where(
+            'hoi_vien_id',
+            $hoiVien->hoi_vien_id
+        )
         ->whereIn('trang_thai', [
             'đang hoạt động',
             'dang_hoat_dong',
@@ -439,13 +537,17 @@ Route::post('/classes/register/{lopTapId}', function ($lopTapId) {
         ])
         ->exists();
 
+
     if ($daDangKy) {
+
         return redirect('/classes')
             ->with(
                 'error',
                 'Bạn đã đăng ký lớp này rồi.'
             );
+
     }
+
 
     // Kiểm tra sức chứa
     if ($lop->suc_chua) {
@@ -463,27 +565,216 @@ Route::post('/classes/register/{lopTapId}', function ($lopTapId) {
             ])
             ->count();
 
+
         if ($soNguoiDangKy >= $lop->suc_chua) {
+
             return redirect('/classes')
                 ->with(
                     'error',
                     'Lớp tập đã đủ số lượng. Vui lòng chọn lớp khác.'
                 );
+
         }
+
     }
 
-    // Đăng ký lớp
-    DB::table('dang_ky_lop')->insert([
-        'lop_tap_id' => $lop->lop_tap_id,
-        'hoi_vien_id' => $hoiVien->hoi_vien_id,
-        'ngay_dang_ky' => now(),
-        'trang_thai' => 'đang hoạt động',
-    ]);
+
+    // Tạo đăng ký
+    DB::table('dang_ky_lop')
+        ->insert([
+
+            'lop_tap_id' =>
+                $lop->lop_tap_id,
+
+            'hoi_vien_id' =>
+                $hoiVien->hoi_vien_id,
+
+            'ngay_dang_ky' =>
+                now(),
+
+            'trang_thai' =>
+                'đang hoạt động',
+
+        ]);
+
+
+    // Tạo thông báo
+    DB::table('thong_bao')
+        ->insert([
+
+            'nguoi_dung_id' =>
+                $hoiVien->nguoi_dung_id,
+
+            'tieu_de' =>
+                'Đăng ký lớp thành công',
+
+            'noi_dung' =>
+                'Bạn đã đăng ký lớp "'
+                . $lop->ten_lop
+                . '" thành công.',
+
+            'da_doc' =>
+                0,
+
+            'tao_luc' =>
+                now(),
+
+        ]);
+
 
     return redirect('/classes')
         ->with(
             'success',
-            'Đăng ký lớp "' . $lop->ten_lop . '" thành công!'
+            'Đăng ký lớp "'
+            . $lop->ten_lop
+            . '" thành công!'
+        );
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| HỦY ĐĂNG KÝ LỚP
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/classes/cancel/{id}', function ($id) {
+
+    // Chưa đăng nhập
+    if (!session()->has('user')) {
+
+        return redirect('/login');
+
+    }
+
+
+    // Chỉ hội viên
+    if (session('role_id') != 3) {
+
+        return redirect('/classes');
+
+    }
+
+
+    // Tìm hội viên
+    $hoiVien = DB::table('hoi_vien')
+        ->where(
+            'nguoi_dung_id',
+            session('user')->nguoi_dung_id
+        )
+        ->first();
+
+
+    if (!$hoiVien) {
+
+        return redirect('/classes')
+            ->with(
+                'error',
+                'Không tìm thấy hồ sơ hội viên.'
+            );
+
+    }
+
+
+    // Tìm đăng ký
+    $dangKy = DB::table('dang_ky_lop')
+        ->join(
+            'lop_tap',
+            'dang_ky_lop.lop_tap_id',
+            '=',
+            'lop_tap.lop_tap_id'
+        )
+        ->where(
+            'dang_ky_lop.dang_ky_lop_id',
+            $id
+        )
+        ->where(
+            'dang_ky_lop.hoi_vien_id',
+            $hoiVien->hoi_vien_id
+        )
+        ->select(
+            'dang_ky_lop.*',
+            'lop_tap.ten_lop'
+        )
+        ->first();
+
+
+    if (!$dangKy) {
+
+        return redirect('/classes')
+            ->with(
+                'error',
+                'Không tìm thấy đăng ký lớp.'
+            );
+
+    }
+
+
+    // Chỉ hủy đăng ký đang hoạt động
+    if (!in_array(
+        strtolower(trim($dangKy->trang_thai)),
+        [
+            'đang hoạt động',
+            'dang_hoat_dong',
+            'hoạt động',
+            'hoat_dong'
+        ]
+    )) {
+
+        return redirect('/classes')
+            ->with(
+                'error',
+                'Đăng ký lớp này đã được xử lý.'
+            );
+
+    }
+
+
+    // Cập nhật trạng thái
+    DB::table('dang_ky_lop')
+        ->where(
+            'dang_ky_lop_id',
+            $id
+        )
+        ->update([
+
+            'trang_thai' =>
+                'đã hủy',
+
+        ]);
+
+
+    // Thông báo
+    DB::table('thong_bao')
+        ->insert([
+
+            'nguoi_dung_id' =>
+                $hoiVien->nguoi_dung_id,
+
+            'tieu_de' =>
+                'Hủy đăng ký lớp',
+
+            'noi_dung' =>
+                'Bạn đã hủy đăng ký lớp "'
+                . $dangKy->ten_lop
+                . '".',
+
+            'da_doc' =>
+                0,
+
+            'tao_luc' =>
+                now(),
+
+        ]);
+
+
+    return redirect('/classes')
+        ->with(
+            'success',
+            'Đã hủy đăng ký lớp "'
+            . $dangKy->ten_lop
+            . '".'
         );
 
 });
@@ -785,16 +1076,11 @@ Route::post('/login', function () {
     |--------------------------------------------------------------------------
     */
 
-    if (
-        $user->trang_thai !== 'hoạt_động' &&
-        $user->trang_thai !== 'hoat_dong'
-    ) {
-
-        return back()
-            ->withInput()
-            ->with('error', 'Tài khoản đang bị khóa.');
-
-    }
+    if ($user->trang_thai !== 'hoat_dong') {
+    return back()
+        ->withInput()
+        ->with('error', 'Tài khoản đang bị khóa.');
+}
 
 
     /*
@@ -1235,6 +1521,1214 @@ Route::get('/dashboard', function () {
 
 });
 
+
+Route::get('/admin/members', function () {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $keyword = trim(request('q', ''));
+
+    $query = DB::table('hoi_vien')
+        ->join(
+            'nguoi_dung',
+            'hoi_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->select(
+            'hoi_vien.hoi_vien_id',
+            'nguoi_dung.ho_ten',
+            'nguoi_dung.email',
+            'nguoi_dung.trang_thai',
+            'hoi_vien.so_dien_thoai',
+            'hoi_vien.ngay_tham_gia'
+        );
+
+    if ($keyword !== '') {
+        $query->where(function ($q) use ($keyword) {
+            $q->where('nguoi_dung.ho_ten', 'like', '%' . $keyword . '%')
+              ->orWhere('nguoi_dung.email', 'like', '%' . $keyword . '%')
+              ->orWhere('hoi_vien.so_dien_thoai', 'like', '%' . $keyword . '%');
+        });
+    }
+
+    $hoiVien = $query
+        ->orderByDesc('hoi_vien.hoi_vien_id')
+        ->get();
+
+    return view('admin.members', compact('hoiVien', 'keyword'));
+
+});
+
+Route::get('/admin/members/{id}', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $member = DB::table('hoi_vien')
+        ->join(
+            'nguoi_dung',
+            'hoi_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->where('hoi_vien.hoi_vien_id', $id)
+        ->select(
+            'hoi_vien.hoi_vien_id',
+            'hoi_vien.nguoi_dung_id',
+            'hoi_vien.ngay_sinh',
+            'hoi_vien.so_dien_thoai',
+            'hoi_vien.dia_chi',
+            'hoi_vien.ngay_tham_gia',
+            'nguoi_dung.ho_ten',
+            'nguoi_dung.email',
+            'nguoi_dung.trang_thai'
+        )
+        ->first();
+
+    if (!$member) {
+        return redirect('/admin/members')
+            ->with('error', 'Không tìm thấy hội viên.');
+    }
+
+    $packages = DB::table('dang_ky_goi_tap')
+        ->join(
+            'goi_tap',
+            'dang_ky_goi_tap.goi_tap_id',
+            '=',
+            'goi_tap.goi_tap_id'
+        )
+        ->where('dang_ky_goi_tap.hoi_vien_id', $id)
+        ->select(
+            'goi_tap.ten_goi',
+            'goi_tap.gia',
+            'dang_ky_goi_tap.ngay_bat_dau',
+            'dang_ky_goi_tap.ngay_ket_thuc',
+            'dang_ky_goi_tap.so_buoi_con_lai',
+            'dang_ky_goi_tap.trang_thai'
+        )
+        ->orderByDesc('dang_ky_goi_tap.dang_ky_goi_tap_id')
+        ->get();
+
+    return view('admin.member-detail', compact('member', 'packages'));
+
+});
+
+Route::get('/admin/members/{id}/edit', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $member = DB::table('hoi_vien')
+        ->join(
+            'nguoi_dung',
+            'hoi_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->where('hoi_vien.hoi_vien_id', $id)
+        ->select(
+            'hoi_vien.hoi_vien_id',
+            'hoi_vien.nguoi_dung_id',
+            'hoi_vien.ngay_sinh',
+            'hoi_vien.so_dien_thoai',
+            'hoi_vien.dia_chi',
+            'hoi_vien.ngay_tham_gia',
+            'nguoi_dung.ho_ten',
+            'nguoi_dung.email',
+            'nguoi_dung.trang_thai'
+        )
+        ->first();
+
+    if (!$member) {
+        return redirect('/admin/members');
+    }
+
+    return view('admin.member-edit', compact('member'));
+
+});
+
+
+Route::post('/admin/members/{id}/edit', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $member = DB::table('hoi_vien')
+        ->where('hoi_vien_id', $id)
+        ->first();
+
+    if (!$member) {
+        return redirect('/admin/members');
+    }
+
+    $hoTen = trim(request('ho_ten'));
+    $email = trim(request('email'));
+    $soDienThoai = trim(request('so_dien_thoai'));
+    $ngaySinh = request('ngay_sinh');
+    $diaChi = trim(request('dia_chi'));
+    $trangThai = request('trang_thai');
+
+    if ($hoTen === '' || $email === '') {
+        return back()
+            ->withInput()
+            ->with('error', 'Họ tên và email không được để trống.');
+    }
+
+    $emailExists = DB::table('nguoi_dung')
+        ->where('email', $email)
+        ->where('nguoi_dung_id', '!=', $member->nguoi_dung_id)
+        ->exists();
+
+    if ($emailExists) {
+        return back()
+            ->withInput()
+            ->with('error', 'Email này đã được sử dụng.');
+    }
+
+    DB::table('nguoi_dung')
+        ->where('nguoi_dung_id', $member->nguoi_dung_id)
+        ->update([
+            'ho_ten' => $hoTen,
+            'email' => $email,
+            'trang_thai' => $trangThai,
+        ]);
+
+    DB::table('hoi_vien')
+        ->where('hoi_vien_id', $id)
+        ->update([
+            'ngay_sinh' => $ngaySinh ?: null,
+            'so_dien_thoai' => $soDienThoai ?: null,
+            'dia_chi' => $diaChi ?: null,
+        ]);
+
+    return redirect('/admin/members/' . $id)
+        ->with('success', 'Cập nhật thông tin hội viên thành công.');
+
+});
+
+Route::post('/admin/members/{id}/toggle-status', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $member = DB::table('hoi_vien')
+        ->where('hoi_vien_id', $id)
+        ->first();
+
+    if (!$member) {
+        return redirect('/admin/members')
+            ->with('error', 'Không tìm thấy hội viên.');
+    }
+
+    $newStatus = $member->trang_thai === 'hoat_dong'
+        ? 'bi_khoa'
+        : 'hoat_dong';
+
+    DB::table('nguoi_dung')
+        ->where('nguoi_dung_id', $member->nguoi_dung_id)
+        ->update([
+            'trang_thai' => $newStatus
+        ]);
+
+    $message = $newStatus === 'hoat_dong'
+        ? 'Đã mở khóa tài khoản hội viên.'
+        : 'Đã khóa tài khoản hội viên.';
+
+    return redirect('/admin/members/' . $id)
+        ->with('success', $message);
+
+});
+
+
+Route::get('/admin/packages', function () {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $keyword = trim(request('q', ''));
+
+    $query = DB::table('goi_tap')
+        ->select(
+            'goi_tap_id',
+            'ten_goi',
+            'gia',
+            'thoi_han_ngay',
+            'so_buoi',
+            'trang_thai'
+        );
+
+    if ($keyword !== '') {
+        $query->where('ten_goi', 'like', '%' . $keyword . '%');
+    }
+
+    $packages = $query
+        ->orderByDesc('goi_tap_id')
+        ->get();
+
+    return view('admin.packages', compact('packages', 'keyword'));
+
+});
+// =====================================================
+// ADMIN - THÊM GÓI TẬP
+// =====================================================
+
+Route::get('/admin/packages/create', function () {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    return view('admin.package-create');
+
+});
+
+
+// =====================================================
+// ADMIN - LƯU GÓI TẬP
+// =====================================================
+
+Route::post('/admin/packages', function () {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $validated = request()->validate([
+        'ten_goi' => 'required|string|max:100',
+        'gia' => 'required|numeric|min:0',
+        'thoi_han_ngay' => 'required|integer|min:1',
+        'so_buoi' => 'nullable|integer|min:1',
+        'trang_thai' => 'required|string|max:50',
+    ], [
+        'ten_goi.required' => 'Vui lòng nhập tên gói tập.',
+        'gia.required' => 'Vui lòng nhập giá gói tập.',
+        'gia.numeric' => 'Giá phải là số.',
+        'gia.min' => 'Giá không được nhỏ hơn 0.',
+        'thoi_han_ngay.required' => 'Vui lòng nhập thời hạn.',
+        'thoi_han_ngay.integer' => 'Thời hạn phải là số nguyên.',
+        'thoi_han_ngay.min' => 'Thời hạn phải lớn hơn 0.',
+        'so_buoi.integer' => 'Số buổi phải là số nguyên.',
+        'so_buoi.min' => 'Số buổi phải lớn hơn 0.',
+    ]);
+
+    DB::table('goi_tap')->insert([
+        'ten_goi' => $validated['ten_goi'],
+        'gia' => $validated['gia'],
+        'thoi_han_ngay' => $validated['thoi_han_ngay'],
+        'so_buoi' => $validated['so_buoi'] ?? null,
+        'trang_thai' => $validated['trang_thai'],
+    ]);
+
+    return redirect('/admin/packages')
+        ->with('success', 'Thêm gói tập thành công.');
+
+});
+
+
+// =====================================================
+// ADMIN - FORM SỬA GÓI TẬP
+// =====================================================
+
+Route::get('/admin/packages/{id}/edit', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $package = DB::table('goi_tap')
+        ->where('goi_tap_id', $id)
+        ->first();
+
+    if (!$package) {
+        return redirect('/admin/packages')
+            ->with('error', 'Không tìm thấy gói tập.');
+    }
+
+    return view('admin.package-edit', compact('package'));
+
+});
+
+
+// =====================================================
+// ADMIN - CẬP NHẬT GÓI TẬP
+// =====================================================
+
+Route::post('/admin/packages/{id}/update', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $package = DB::table('goi_tap')
+        ->where('goi_tap_id', $id)
+        ->first();
+
+    if (!$package) {
+        return redirect('/admin/packages')
+            ->with('error', 'Không tìm thấy gói tập.');
+    }
+
+    $validated = request()->validate([
+        'ten_goi' => 'required|string|max:100',
+        'gia' => 'required|numeric|min:0',
+        'thoi_han_ngay' => 'required|integer|min:1',
+        'so_buoi' => 'nullable|integer|min:1',
+        'trang_thai' => 'required|string|max:50',
+    ], [
+        'ten_goi.required' => 'Vui lòng nhập tên gói tập.',
+        'gia.required' => 'Vui lòng nhập giá gói tập.',
+        'gia.numeric' => 'Giá phải là số.',
+        'gia.min' => 'Giá không được nhỏ hơn 0.',
+        'thoi_han_ngay.required' => 'Vui lòng nhập thời hạn.',
+        'thoi_han_ngay.integer' => 'Thời hạn phải là số nguyên.',
+        'thoi_han_ngay.min' => 'Thời hạn phải lớn hơn 0.',
+        'so_buoi.integer' => 'Số buổi phải là số nguyên.',
+        'so_buoi.min' => 'Số buổi phải lớn hơn 0.',
+    ]);
+
+    DB::table('goi_tap')
+        ->where('goi_tap_id', $id)
+        ->update([
+            'ten_goi' => $validated['ten_goi'],
+            'gia' => $validated['gia'],
+            'thoi_han_ngay' => $validated['thoi_han_ngay'],
+            'so_buoi' => $validated['so_buoi'] ?? null,
+            'trang_thai' => $validated['trang_thai'],
+        ]);
+
+    return redirect('/admin/packages/' . $id)
+        ->with('success', 'Cập nhật gói tập thành công.');
+
+});
+
+// =====================================================
+// ADMIN - TẠM NGƯNG / KÍCH HOẠT GÓI TẬP
+// =====================================================
+
+Route::post('/admin/packages/{id}/toggle-status', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $package = DB::table('goi_tap')
+        ->where('goi_tap_id', $id)
+        ->first();
+
+    if (!$package) {
+        return redirect('/admin/packages')
+            ->with('error', 'Không tìm thấy gói tập.');
+    }
+
+    // Nếu đang hoạt động → tạm ngưng
+    if ($package->trang_thai === 'hoat_dong') {
+
+        DB::table('goi_tap')
+            ->where('goi_tap_id', $id)
+            ->update([
+                'trang_thai' => 'tam_ngung'
+            ]);
+
+        $message = 'Đã tạm ngưng gói tập.';
+
+    } else {
+
+        // Nếu đang tạm ngưng → kích hoạt
+        DB::table('goi_tap')
+            ->where('goi_tap_id', $id)
+            ->update([
+                'trang_thai' => 'hoat_dong'
+            ]);
+
+        $message = 'Đã kích hoạt lại gói tập.';
+    }
+
+    return redirect('/admin/packages/' . $id)
+        ->with('success', $message);
+
+});
+
+
+Route::get('/admin/packages/{id}', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $package = DB::table('goi_tap')
+        ->where('goi_tap_id', $id)
+        ->first();
+
+    if (!$package) {
+        return redirect('/admin/packages')
+            ->with('error', 'Không tìm thấy gói tập.');
+    }
+
+    $registrations = DB::table('dang_ky_goi_tap')
+        ->join(
+            'hoi_vien',
+            'dang_ky_goi_tap.hoi_vien_id',
+            '=',
+            'hoi_vien.hoi_vien_id'
+        )
+        ->join(
+            'nguoi_dung',
+            'hoi_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->where('dang_ky_goi_tap.goi_tap_id', $id)
+        ->select(
+            'nguoi_dung.ho_ten',
+            'nguoi_dung.email',
+            'dang_ky_goi_tap.ngay_bat_dau',
+            'dang_ky_goi_tap.ngay_ket_thuc',
+            'dang_ky_goi_tap.so_buoi_con_lai',
+            'dang_ky_goi_tap.trang_thai'
+        )
+        ->orderByDesc('dang_ky_goi_tap.dang_ky_goi_tap_id')
+        ->get();
+
+    return view(
+        'admin.package-detail',
+        compact('package', 'registrations')
+    );
+
+});
+
+
+
+// =====================================================
+// ADMIN - DANH SÁCH HUẤN LUYỆN VIÊN
+// =====================================================
+
+Route::get('/admin/trainers', function () {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $keyword = trim(request('q', ''));
+
+    $query = DB::table('huan_luyen_vien')
+        ->join(
+            'nguoi_dung',
+            'huan_luyen_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->select(
+            'huan_luyen_vien.pt_id',
+            'huan_luyen_vien.chuyen_mon',
+            'huan_luyen_vien.so_dien_thoai',
+            'nguoi_dung.nguoi_dung_id',
+            'nguoi_dung.ho_ten',
+            'nguoi_dung.email',
+            'nguoi_dung.trang_thai'
+        );
+
+    if ($keyword !== '') {
+
+        $query->where(function ($q) use ($keyword) {
+
+            $q->where(
+                'nguoi_dung.ho_ten',
+                'like',
+                '%' . $keyword . '%'
+            )
+            ->orWhere(
+                'nguoi_dung.email',
+                'like',
+                '%' . $keyword . '%'
+            )
+            ->orWhere(
+                'huan_luyen_vien.chuyen_mon',
+                'like',
+                '%' . $keyword . '%'
+            )
+            ->orWhere(
+                'huan_luyen_vien.so_dien_thoai',
+                'like',
+                '%' . $keyword . '%'
+            );
+
+        });
+    }
+
+    $trainers = $query
+        ->orderByDesc('huan_luyen_vien.pt_id')
+        ->get();
+
+    return view('admin.trainers', compact(
+        'trainers',
+        'keyword'
+    ));
+
+});
+
+
+Route::get('/admin/trainers/{id}', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    // Lấy thông tin huấn luyện viên
+    $trainer = DB::table('huan_luyen_vien')
+        ->join(
+            'nguoi_dung',
+            'huan_luyen_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->where('huan_luyen_vien.pt_id', $id)
+        ->select(
+            'huan_luyen_vien.pt_id',
+            'huan_luyen_vien.nguoi_dung_id',
+            'huan_luyen_vien.chuyen_mon',
+            'huan_luyen_vien.so_dien_thoai',
+            'nguoi_dung.ho_ten',
+            'nguoi_dung.email',
+            'nguoi_dung.trang_thai'
+        )
+        ->first();
+
+    if (!$trainer) {
+        abort(404);
+    }
+
+    // Lấy lịch PT của huấn luyện viên
+    $schedules = DB::table('lich_pt')
+        ->join(
+            'hoi_vien',
+            'lich_pt.hoi_vien_id',
+            '=',
+            'hoi_vien.hoi_vien_id'
+        )
+        ->join(
+            'nguoi_dung',
+            'hoi_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->where('lich_pt.pt_id', $id)
+        ->select(
+            'lich_pt.*',
+            'nguoi_dung.ho_ten as ten_hoi_vien',
+            'nguoi_dung.email as email_hoi_vien'
+        )
+        ->orderByDesc('lich_pt.thoi_gian_bat_dau')
+        ->get();
+
+    return view('admin.trainer-detail', compact('trainer', 'schedules'));
+});
+
+// ===============================
+// ADMIN - SỬA THÔNG TIN HUẤN LUYỆN VIÊN
+// ===============================
+
+Route::get('/admin/trainers/{id}/edit', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $trainer = DB::table('huan_luyen_vien')
+        ->join(
+            'nguoi_dung',
+            'huan_luyen_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->where('huan_luyen_vien.pt_id', $id)
+        ->select(
+            'huan_luyen_vien.pt_id',
+            'huan_luyen_vien.nguoi_dung_id',
+            'huan_luyen_vien.chuyen_mon',
+            'huan_luyen_vien.so_dien_thoai',
+            'nguoi_dung.ho_ten',
+            'nguoi_dung.email'
+        )
+        ->first();
+
+    if (!$trainer) {
+        abort(404);
+    }
+
+    return view('admin.trainer-edit', compact('trainer'));
+});
+
+
+Route::post('/admin/trainers/{id}/edit', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $trainer = DB::table('huan_luyen_vien')
+        ->where('pt_id', $id)
+        ->first();
+
+    if (!$trainer) {
+        abort(404);
+    }
+
+    $request = request();
+
+    $request->validate([
+        'ho_ten' => 'required|string|max:100',
+        'email' => 'required|email|max:100',
+        'so_dien_thoai' => 'nullable|string|max:20',
+        'chuyen_mon' => 'required|string|max:255',
+    ]);
+
+    // Kiểm tra email có bị tài khoản khác sử dụng không
+    $emailExists = DB::table('nguoi_dung')
+        ->where('email', $request->email)
+        ->where('nguoi_dung_id', '!=', $trainer->nguoi_dung_id)
+        ->exists();
+
+    if ($emailExists) {
+        return back()
+            ->withInput()
+            ->with('error', 'Email này đã được sử dụng.');
+    }
+
+    // Cập nhật thông tin tài khoản
+    DB::table('nguoi_dung')
+        ->where('nguoi_dung_id', $trainer->nguoi_dung_id)
+        ->update([
+            'ho_ten' => $request->ho_ten,
+            'email' => $request->email,
+        ]);
+
+    // Cập nhật thông tin huấn luyện viên
+    DB::table('huan_luyen_vien')
+        ->where('pt_id', $id)
+        ->update([
+            'so_dien_thoai' => $request->so_dien_thoai,
+            'chuyen_mon' => $request->chuyen_mon,
+        ]);
+
+    return redirect('/admin/trainers/' . $id)
+        ->with('success', 'Cập nhật thông tin huấn luyện viên thành công.');
+});
+
+
+// ===============================
+// ADMIN - KHÓA / KÍCH HOẠT PT
+// ===============================
+
+Route::post('/admin/trainers/{id}/toggle-status', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $trainer = DB::table('huan_luyen_vien')
+        ->where('pt_id', $id)
+        ->first();
+
+    if (!$trainer) {
+        abort(404);
+    }
+
+    $user = DB::table('nguoi_dung')
+        ->where('nguoi_dung_id', $trainer->nguoi_dung_id)
+        ->first();
+
+    if (!$user) {
+        abort(404);
+    }
+
+    // Nếu đang hoạt động → khóa
+    if ($user->trang_thai === 'hoat_dong') {
+
+        DB::table('nguoi_dung')
+            ->where('nguoi_dung_id', $trainer->nguoi_dung_id)
+            ->update([
+                'trang_thai' => 'bi_khoa'
+            ]);
+
+        $message = 'Đã khóa tài khoản huấn luyện viên.';
+
+    } else {
+
+        // Nếu đang khóa → kích hoạt
+        DB::table('nguoi_dung')
+            ->where('nguoi_dung_id', $trainer->nguoi_dung_id)
+            ->update([
+                'trang_thai' => 'hoat_dong'
+            ]);
+
+        $message = 'Đã kích hoạt tài khoản huấn luyện viên.';
+    }
+
+    return redirect('/admin/trainers/' . $id)
+        ->with('success', $message);
+});
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN - LỊCH TẬP
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/admin/schedules', function () {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $keyword = trim(request('q', ''));
+    $status = trim(request('status', ''));
+
+    $query = DB::table('lich_pt')
+        ->join(
+            'hoi_vien',
+            'lich_pt.hoi_vien_id',
+            '=',
+            'hoi_vien.hoi_vien_id'
+        )
+        ->join(
+            'nguoi_dung as member_user',
+            'hoi_vien.nguoi_dung_id',
+            '=',
+            'member_user.nguoi_dung_id'
+        )
+        ->join(
+            'huan_luyen_vien',
+            'lich_pt.pt_id',
+            '=',
+            'huan_luyen_vien.pt_id'
+        )
+        ->join(
+            'nguoi_dung as trainer_user',
+            'huan_luyen_vien.nguoi_dung_id',
+            '=',
+            'trainer_user.nguoi_dung_id'
+        )
+        ->leftJoin(
+            'dang_ky_goi_pt',
+            'lich_pt.dang_ky_goi_pt_id',
+            '=',
+            'dang_ky_goi_pt.dang_ky_goi_pt_id'
+        )
+        ->leftJoin(
+            'goi_pt',
+            'dang_ky_goi_pt.goi_pt_id',
+            '=',
+            'goi_pt.goi_pt_id'
+        )
+        ->select(
+            'lich_pt.*',
+            'member_user.ho_ten as hoi_vien_ten',
+            'member_user.email as hoi_vien_email',
+            'trainer_user.ho_ten as pt_ten',
+            'trainer_user.email as pt_email',
+            'goi_pt.ten_goi_pt'
+        );
+
+    if ($keyword !== '') {
+
+        $query->where(function ($q) use ($keyword) {
+
+            $q->where(
+                'member_user.ho_ten',
+                'like',
+                "%{$keyword}%"
+            )
+            ->orWhere(
+                'member_user.email',
+                'like',
+                "%{$keyword}%"
+            )
+            ->orWhere(
+                'trainer_user.ho_ten',
+                'like',
+                "%{$keyword}%"
+            )
+            ->orWhere(
+                'trainer_user.email',
+                'like',
+                "%{$keyword}%"
+            );
+
+        });
+    }
+
+    if ($status !== '') {
+        $query->where(
+            'lich_pt.trang_thai',
+            $status
+        );
+    }
+
+    $schedules = $query
+        ->orderByDesc('lich_pt.thoi_gian_bat_dau')
+        ->get();
+
+    return view(
+        'admin.schedules',
+        compact(
+            'schedules',
+            'keyword',
+            'status'
+        )
+    );
+
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN - CHI TIẾT LỊCH TẬP
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/admin/schedules/{id}', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $schedule = DB::table('lich_pt')
+        ->join(
+            'hoi_vien',
+            'lich_pt.hoi_vien_id',
+            '=',
+            'hoi_vien.hoi_vien_id'
+        )
+        ->join(
+            'nguoi_dung as member_user',
+            'hoi_vien.nguoi_dung_id',
+            '=',
+            'member_user.nguoi_dung_id'
+        )
+        ->join(
+            'huan_luyen_vien',
+            'lich_pt.pt_id',
+            '=',
+            'huan_luyen_vien.pt_id'
+        )
+        ->join(
+            'nguoi_dung as trainer_user',
+            'huan_luyen_vien.nguoi_dung_id',
+            '=',
+            'trainer_user.nguoi_dung_id'
+        )
+        ->leftJoin(
+            'dang_ky_goi_pt',
+            'lich_pt.dang_ky_goi_pt_id',
+            '=',
+            'dang_ky_goi_pt.dang_ky_goi_pt_id'
+        )
+        ->leftJoin(
+            'goi_pt',
+            'dang_ky_goi_pt.goi_pt_id',
+            '=',
+            'goi_pt.goi_pt_id'
+        )
+        ->select(
+            'lich_pt.*',
+
+            'member_user.ho_ten as hoi_vien_ten',
+            'member_user.email as hoi_vien_email',
+
+            'trainer_user.ho_ten as pt_ten',
+            'trainer_user.email as pt_email',
+
+            'huan_luyen_vien.so_dien_thoai as pt_so_dien_thoai',
+            'huan_luyen_vien.chuyen_mon',
+
+            'goi_pt.ten_goi_pt',
+            'goi_pt.gia as goi_pt_gia',
+            'goi_pt.so_buoi as goi_pt_so_buoi',
+            'goi_pt.thoi_han_ngay'
+        )
+        ->where(
+            'lich_pt.lich_pt_id',
+            $id
+        )
+        ->first();
+
+    if (!$schedule) {
+        return redirect('/admin/schedules')
+            ->with('error', 'Không tìm thấy lịch tập.');
+    }
+
+    return view(
+        'admin.schedule-detail',
+        compact('schedule')
+    );
+
+});
+
+
+// ==================== ADMIN - THANH TOÁN ====================
+
+Route::get('/admin/payments', function () {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $payments = DB::table('hoa_don')
+        ->join('hoi_vien', 'hoa_don.hoi_vien_id', '=', 'hoi_vien.hoi_vien_id')
+        ->join('nguoi_dung', 'hoi_vien.nguoi_dung_id', '=', 'nguoi_dung.nguoi_dung_id')
+        ->select(
+            'hoa_don.*',
+            'nguoi_dung.ho_ten',
+            'nguoi_dung.email'
+        )
+        ->orderByDesc('hoa_don.hoa_don_id')
+        ->get();
+
+    return view('admin.payments', compact('payments'));
+});
+
+
+Route::get('/admin/payments/{id}', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $payment = DB::table('hoa_don')
+        ->join(
+            'hoi_vien',
+            'hoa_don.hoi_vien_id',
+            '=',
+            'hoi_vien.hoi_vien_id'
+        )
+        ->join(
+            'nguoi_dung',
+            'hoi_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->where('hoa_don.hoa_don_id', $id)
+        ->select(
+            'hoa_don.*',
+            'hoi_vien.hoi_vien_id',
+            'nguoi_dung.ho_ten',
+            'nguoi_dung.email'
+        )
+        ->first();
+
+    if (!$payment) {
+        abort(404);
+    }
+
+    $details = DB::table('chi_tiet_hoa_don')
+        ->leftJoin(
+            'goi_tap',
+            'chi_tiet_hoa_don.goi_tap_id',
+            '=',
+            'goi_tap.goi_tap_id'
+        )
+        ->leftJoin(
+            'goi_pt',
+            'chi_tiet_hoa_don.goi_pt_id',
+            '=',
+            'goi_pt.goi_pt_id'
+        )
+        ->where('chi_tiet_hoa_don.hoa_don_id', $id)
+        ->select(
+            'chi_tiet_hoa_don.*',
+            'goi_tap.ten_goi',
+            'goi_pt.ten_goi_pt'
+        )
+        ->get();
+
+    return view('admin.payment-detail', compact(
+        'payment',
+        'details'
+    ));
+});
+
+
+// ==================== ADMIN - THỐNG KÊ ====================
+
+Route::get('/admin/statistics', function (Illuminate\Http\Request $request) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $from = $request->input('from');
+    $to = $request->input('to');
+
+    // Mặc định: toàn bộ dữ liệu
+    $invoiceQuery = DB::table('hoa_don')
+        ->where('trang_thai', 'đã thanh toán');
+
+    $checkInQuery = DB::table('check_in');
+
+    $scheduleQuery = DB::table('lich_pt');
+
+    // Lọc theo thời gian
+    if ($from) {
+        $invoiceQuery->whereDate('ngay_lap', '>=', $from);
+        $checkInQuery->whereDate('thoi_gian', '>=', $from);
+        $scheduleQuery->whereDate('thoi_gian_bat_dau', '>=', $from);
+    }
+
+    if ($to) {
+        $invoiceQuery->whereDate('ngay_lap', '<=', $to);
+        $checkInQuery->whereDate('thoi_gian', '<=', $to);
+        $scheduleQuery->whereDate('thoi_gian_bat_dau', '<=', $to);
+    }
+
+    // Doanh thu
+    $revenue = $invoiceQuery->sum('tong_tien');
+
+    // Số hóa đơn đã thanh toán
+    $paidInvoices = $invoiceQuery->count();
+
+    // Số check-in
+    $checkIns = $checkInQuery->count();
+
+    // Số lịch PT
+    $ptSchedules = $scheduleQuery->count();
+
+    // Tổng hội viên
+    $members = DB::table('hoi_vien')->count();
+
+    // Hội viên đang hoạt động
+    $activeMembers = DB::table('hoi_vien')
+        ->join(
+            'dang_ky_goi_tap',
+            'hoi_vien.hoi_vien_id',
+            '=',
+            'dang_ky_goi_tap.hoi_vien_id'
+        )
+        ->where('dang_ky_goi_tap.trang_thai', 'đang hoạt động')
+        ->whereDate('dang_ky_goi_tap.ngay_ket_thuc', '>=', now()->toDateString())
+        ->distinct()
+        ->count('hoi_vien.hoi_vien_id');
+
+    // Lịch PT hoàn thành
+    $completedSchedules = $scheduleQuery
+        ->clone()
+        ->where('trang_thai', 'đã hoàn thành')
+        ->count();
+
+    // Lịch PT đã hủy
+    $cancelledSchedules = $scheduleQuery
+        ->clone()
+        ->where('trang_thai', 'đã hủy')
+        ->count();
+
+    return view('admin.statistics', compact(
+        'from',
+        'to',
+        'revenue',
+        'paidInvoices',
+        'checkIns',
+        'ptSchedules',
+        'members',
+        'activeMembers',
+        'completedSchedules',
+        'cancelledSchedules'
+    ));
+});
 
 /*
 |--------------------------------------------------------------------------

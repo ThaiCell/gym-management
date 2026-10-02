@@ -493,6 +493,266 @@
        RESPONSIVE
     ========================= */
 
+    /* =========================
+       MY CLASSES
+    ========================= */
+
+    .my-classes-header,
+    .all-classes-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 25px;
+        margin-bottom: 18px;
+    }
+
+    .my-classes-header {
+        margin-top: 5px;
+    }
+
+    .my-classes-label {
+        display: block;
+        color: #e50914;
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 2.5px;
+        margin-bottom: 7px;
+    }
+
+    .my-classes-header h3,
+    .all-classes-header h3 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+    .my-classes-count {
+        color: #777;
+        font-size: 12px;
+        font-weight: 700;
+        padding-bottom: 3px;
+    }
+
+    .my-classes-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 55px;
+    }
+
+    .my-class-card {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 15px;
+        background: #121212;
+        border: 1px solid #292929;
+        border-radius: 7px;
+        transition: .25s;
+    }
+
+    .my-class-card:hover {
+        border-color: #444;
+        transform: translateY(-2px);
+    }
+
+    .my-class-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e50914;
+        color: #fff;
+        border-radius: 6px;
+        font-size: 9px;
+        font-weight: 900;
+        letter-spacing: 1px;
+    }
+
+    .my-class-info {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .my-class-info h4 {
+        margin: 0 0 5px;
+        color: #fff;
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .my-class-info p {
+        margin: 0;
+        color: #777;
+        font-size: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .my-class-status {
+        color: #4cd97b;
+        font-size: 9px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .status-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        margin-right: 4px;
+        border-radius: 50%;
+        background: #4cd97b;
+        vertical-align: middle;
+    }
+
+    .my-classes-empty {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 55px;
+        padding: 20px;
+        background: #121212;
+        border: 1px dashed #333;
+        border-radius: 7px;
+        color: #777;
+    }
+
+    .empty-icon {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #444;
+        border-radius: 50%;
+        color: #e50914;
+        font-size: 22px;
+    }
+
+    .my-classes-empty strong,
+    .my-classes-empty span {
+        display: block;
+    }
+
+    .my-classes-empty strong {
+        margin-bottom: 4px;
+        color: #ddd;
+        font-size: 13px;
+    }
+
+    .my-classes-empty span {
+        font-size: 11px;
+    }
+
+    .all-classes-header {
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .all-classes-line {
+        height: 1px;
+        flex: 1;
+        background: #292929;
+    }
+
+    .class-card {
+        min-width: 0;
+    }
+
+    .class-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .class-number {
+        display: block;
+        margin-bottom: 8px;
+        color: #666;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+    }
+
+    .class-info-row strong {
+        color: #ddd;
+        font-weight: 600;
+    }
+
+    .class-actions {
+        display: grid;
+        grid-template-columns: 1fr 72px;
+        gap: 8px;
+        margin-top: 24px;
+    }
+
+    .registered-btn,
+    .cancel-btn {
+        min-height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 8px;
+        border-radius: 5px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .registered-btn {
+        border: 1px solid rgba(76, 217, 123, .35);
+        background: rgba(76, 217, 123, .06);
+        color: #4cd97b;
+    }
+
+    .cancel-btn {
+        width: 100%;
+        border: 1px solid #5a2225;
+        background: transparent;
+        color: #ff4b55;
+        cursor: pointer;
+        transition: .25s;
+    }
+
+    .cancel-btn:hover {
+        background: #e50914;
+        border-color: #e50914;
+        color: #fff;
+    }
+
+    .classes-empty {
+        grid-column: 1 / -1;
+        padding: 70px 20px;
+        text-align: center;
+        background: #111;
+        border: 1px dashed #333;
+        border-radius: 8px;
+    }
+
+    .classes-empty h3 {
+        margin: 0 0 8px;
+        color: #fff;
+    }
+
+    .classes-empty p {
+        margin: 0;
+        color: #777;
+    }
+
+    .classes-note span {
+        color: #e50914;
+        margin-right: 8px;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+
     @media (max-width: 1000px) {
 
         .classes-grid {
@@ -507,6 +767,23 @@
 
 
     @media (max-width: 650px) {
+        .my-classes-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .my-class-card {
+            padding: 13px;
+        }
+
+        .my-class-status {
+            display: none;
+        }
+
+        .class-actions {
+            grid-template-columns: 1fr;
+        }
+
+
 
         .classes-grid {
             grid-template-columns: 1fr;
@@ -588,7 +865,7 @@
 
 
         {{-- =========================
-             TOAST THÀNH CÔNG
+             THÔNG BÁO
         ========================= --}}
 
         @if(session('success'))
@@ -602,7 +879,7 @@
                 <div class="toast-content">
 
                     <strong>
-                        Đăng ký thành công
+                        Thành công
                     </strong>
 
                     <span>
@@ -614,20 +891,15 @@
                 <button
                     type="button"
                     class="toast-close"
-                    onclick="closeToast('successToast')">
-
+                    onclick="closeToast('successToast')"
+                >
                     ×
-
                 </button>
 
             </div>
 
         @endif
 
-
-        {{-- =========================
-             TOAST LỖI
-        ========================= --}}
 
         @if(session('error'))
 
@@ -640,7 +912,7 @@
                 <div class="toast-content">
 
                     <strong>
-                        Không thể đăng ký
+                        Không thể thực hiện
                     </strong>
 
                     <span>
@@ -652,10 +924,9 @@
                 <button
                     type="button"
                     class="toast-close"
-                    onclick="closeToast('errorToast')">
-
+                    onclick="closeToast('errorToast')"
+                >
                     ×
-
                 </button>
 
             </div>
@@ -664,13 +935,114 @@
 
 
         {{-- =========================
-             GRID LỚP TẬP
+             LỚP TẬP CỦA TÔI
         ========================= --}}
+
+        @if(session()->has('user') && session('role_id') == 3)
+
+            <div class="my-classes-header">
+
+                <div>
+                    <span class="my-classes-label">
+                        MY CLASSES
+                    </span>
+
+                    <h3>
+                        Lớp tập của tôi
+                    </h3>
+                </div>
+
+                <span class="my-classes-count">
+                    {{ isset($dangKyLop) ? $dangKyLop->count() : 0 }} lớp
+                </span>
+
+            </div>
+
+
+            @if(isset($dangKyLop) && $dangKyLop->count() > 0)
+
+                <div class="my-classes-grid">
+
+                    @foreach($dangKyLop as $dangKy)
+
+                        <div class="my-class-card">
+
+                            <div class="my-class-icon">
+                                <span>GYM</span>
+                            </div>
+
+                            <div class="my-class-info">
+
+                                <h4>
+                                    {{ $dangKy->ten_lop }}
+                                </h4>
+
+                                <p>
+                                    {{ $dangKy->lich_tap ?: 'Lịch tập đang cập nhật' }}
+                                </p>
+
+                            </div>
+
+                            <div class="my-class-status">
+                                <span class="status-dot"></span>
+                                ĐANG THAM GIA
+                            </div>
+
+                        </div>
+
+                    @endforeach
+
+                </div>
+
+            @else
+
+                <div class="my-classes-empty">
+
+                    <div class="empty-icon">
+                        +
+                    </div>
+
+                    <div>
+                        <strong>
+                            Bạn chưa đăng ký lớp nào
+                        </strong>
+
+                        <span>
+                            Chọn một lớp bên dưới để bắt đầu luyện tập.
+                        </span>
+                    </div>
+
+                </div>
+
+            @endif
+
+        @endif
+
+
+        {{-- =========================
+             TẤT CẢ LỚP TẬP
+        ========================= --}}
+
+        <div class="all-classes-header">
+
+            <div>
+                <span class="my-classes-label">
+                    EXPLORE
+                </span>
+
+                <h3>
+                    Tất cả lớp tập
+                </h3>
+            </div>
+
+            <span class="all-classes-line"></span>
+
+        </div>
+
 
         <div class="classes-grid">
 
-
-            @foreach($lopTap as $lop)
+            @forelse($lopTap as $lop)
 
                 @php
 
@@ -706,13 +1078,22 @@
 
                     }
 
+                    $daDangKy = isset($lopDaDangKy)
+                        && in_array($lop->lop_tap_id, $lopDaDangKy);
+
+                    $dangKyCuaLop = null;
+
+                    if ($daDangKy && isset($dangKyLop)) {
+
+                        $dangKyCuaLop = $dangKyLop
+                            ->firstWhere('lop_tap_id', $lop->lop_tap_id);
+
+                    }
+
                 @endphp
 
 
-                <div class="class-card">
-
-
-                    {{-- ẢNH --}}
+                <article class="class-card">
 
                     <div class="class-image">
 
@@ -722,23 +1103,29 @@
                         >
 
                         <span class="class-status">
-
                             {{ $lop->trang_thai }}
-
                         </span>
 
                     </div>
 
 
-                    {{-- BODY --}}
-
                     <div class="class-body">
 
-                        <h3>
+                        <div class="class-card-top">
 
-                            {{ $lop->ten_lop }}
+                            <div>
 
-                        </h3>
+                                <span class="class-number">
+                                    CLASS {{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}
+                                </span>
+
+                                <h3>
+                                    {{ $lop->ten_lop }}
+                                </h3>
+
+                            </div>
+
+                        </div>
 
 
                         <p class="class-description">
@@ -750,16 +1137,15 @@
 
                         <div class="class-info">
 
-
                             <div class="class-info-row">
 
                                 <span>
-                                    Lịch tập
+                                    LỊCH TẬP
                                 </span>
 
-                                <span>
+                                <strong>
                                     {{ $lop->lich_tap ?: 'Đang cập nhật' }}
-                                </span>
+                                </strong>
 
                             </div>
 
@@ -767,10 +1153,10 @@
                             <div class="class-info-row">
 
                                 <span>
-                                    Sức chứa
+                                    SỨC CHỨA
                                 </span>
 
-                                <span>
+                                <strong>
 
                                     @if($lop->suc_chua)
 
@@ -782,7 +1168,7 @@
 
                                     @endif
 
-                                </span>
+                                </strong>
 
                             </div>
 
@@ -790,15 +1176,14 @@
                             <div class="class-info-row">
 
                                 <span>
-                                    Trạng thái
+                                    TRẠNG THÁI
                                 </span>
 
-                                <span>
+                                <strong>
                                     {{ $lop->trang_thai }}
-                                </span>
+                                </strong>
 
                             </div>
-
 
                         </div>
 
@@ -809,21 +1194,52 @@
 
                         @if(session()->has('user') && session('role_id') == 3)
 
-                            <form
-                                action="/classes/register/{{ $lop->lop_tap_id }}"
-                                method="POST"
-                            >
+                            @if($daDangKy && $dangKyCuaLop)
 
-                                @csrf
+                                <div class="class-actions">
 
-                                <button
-                                    type="submit"
-                                    class="class-btn"
+                                    <div class="registered-btn">
+                                        ✓ ĐÃ ĐĂNG KÝ
+                                    </div>
+
+                                    <form
+                                        action="/classes/cancel/{{ $dangKyCuaLop->dang_ky_lop_id }}"
+                                        method="POST"
+                                    >
+
+                                        @csrf
+
+                                        <button
+                                            type="submit"
+                                            class="cancel-btn"
+                                            onclick="return confirm('Bạn có chắc muốn hủy đăng ký lớp này?')"
+                                        >
+                                            HỦY
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            @else
+
+                                <form
+                                    action="/classes/register/{{ $lop->lop_tap_id }}"
+                                    method="POST"
                                 >
-                                    ĐĂNG KÝ NGAY
-                                </button>
 
-                            </form>
+                                    @csrf
+
+                                    <button
+                                        type="submit"
+                                        class="class-btn"
+                                    >
+                                        ĐĂNG KÝ NGAY
+                                    </button>
+
+                                </form>
+
+                            @endif
 
                         @else
 
@@ -836,28 +1252,15 @@
 
                         @endif
 
-
                     </div>
 
-                </div>
+                </article>
 
-            @endforeach
+            @empty
 
+                <div class="classes-empty">
 
-            {{-- Không có lớp --}}
-
-            @if($lopTap->count() == 0)
-
-                <div
-                    style="
-                        grid-column: 1 / -1;
-                        text-align: center;
-                        padding: 60px 20px;
-                        color: #777;
-                    "
-                >
-
-                    <h3 style="color:#fff;">
+                    <h3>
                         Hiện chưa có lớp tập
                     </h3>
 
@@ -867,19 +1270,18 @@
 
                 </div>
 
-            @endif
-
+            @endforelse
 
         </div>
 
 
         <div class="classes-note">
 
-            * Thông tin lớp tập được lấy trực tiếp
-            từ hệ thống quản lý GYMFIT.
+            <span>INFO</span>
+
+            Thông tin lớp tập được lấy trực tiếp từ hệ thống quản lý GYMFIT.
 
         </div>
-
 
     </section>
 
