@@ -3,16 +3,6 @@
 @section('title', 'Dashboard Huấn luyện viên')
 @section('role_name', 'Huấn luyện viên')
 
-@section('menu')
-
-    <a href="/">TRANG CHỦ</a>
-    <a href="/about">GIỚI THIỆU</a>
-    <a href="/packages">GÓI TẬP</a>
-    <a href="/classes">LỚP TẬP</a>
-    <a href="/trainers">HUẤN LUYỆN VIÊN</a>
-    <a href="/contact">LIÊN HỆ</a>
-
-@endsection
 
 
 @section('content')
@@ -431,26 +421,26 @@
 
             {{-- LỊCH PT --}}
 
-<div class="trainer-card">
+            <div class="trainer-card">
 
-    <div class="trainer-card-header">
+                <div class="trainer-card-header">
 
-        <div class="trainer-card-label">
-            TRAINING SCHEDULE
-        </div>
+                    <div class="trainer-card-label">
+                        TRAINING SCHEDULE
+                    </div>
 
-        <h2>
-            Lịch PT gần đây
-        </h2>
+                    <h2>
+                        Lịch PT gần đây
+                    </h2>
 
-    </div>
+                </div>
 
 
-    {{-- THÔNG BÁO --}}
+                {{-- THÔNG BÁO --}}
 
-    @if(session('success'))
-
-        <div style="
+                @if (session('success'))
+                    <div
+                        style="
             margin: 18px 24px 0;
             padding: 12px 15px;
             border-radius: 8px;
@@ -460,15 +450,14 @@
             font-size: 12px;
             font-weight: 700;
         ">
-            ✓ {{ session('success') }}
-        </div>
+                        ✓ {{ session('success') }}
+                    </div>
+                @endif
 
-    @endif
 
-
-    @if(session('error'))
-
-        <div style="
+                @if (session('error'))
+                    <div
+                        style="
             margin: 18px 24px 0;
             padding: 12px 15px;
             border-radius: 8px;
@@ -478,165 +467,136 @@
             font-size: 12px;
             font-weight: 700;
         ">
-            ⚠ {{ session('error') }}
-        </div>
-
-    @endif
-
-
-    @if ($lichPT->count() > 0)
-
-        <div class="trainer-list">
-
-            @foreach ($lichPT as $lich)
-
-                @php
-
-                    $batDau = \Carbon\Carbon::parse(
-                        $lich->thoi_gian_bat_dau
-                    );
-
-                    $ketThuc = \Carbon\Carbon::parse(
-                        $lich->thoi_gian_ket_thuc
-                    );
-
-                    $status = mb_strtolower(
-                        $lich->trang_thai ?? ''
-                    );
-
-                    $daDat =
-                        str_contains($status, 'đặt') ||
-                        str_contains($status, 'dat');
-
-                    $daHoanThanh =
-                        str_contains($status, 'hoàn thành') ||
-                        str_contains($status, 'hoan thanh');
-
-                    $daHuy =
-                        str_contains($status, 'hủy') ||
-                        str_contains($status, 'huy');
-
-                    $coTheHoanThanh =
-                        $daDat &&
-                        $ketThuc->isPast();
-
-                @endphp
+                        ⚠ {{ session('error') }}
+                    </div>
+                @endif
 
 
-                <div
-                    class="trainer-item"
-                    style="
+                @if ($lichPT->count() > 0)
+
+                    <div class="trainer-list">
+
+                        @foreach ($lichPT as $lich)
+                            @php
+
+                                $batDau = \Carbon\Carbon::parse($lich->thoi_gian_bat_dau);
+
+                                $ketThuc = \Carbon\Carbon::parse($lich->thoi_gian_ket_thuc);
+
+                                $status = mb_strtolower($lich->trang_thai ?? '');
+
+                                $daDat = str_contains($status, 'đặt') || str_contains($status, 'dat');
+
+                                $daHoanThanh =
+                                    str_contains($status, 'hoàn thành') || str_contains($status, 'hoan thanh');
+
+                                $daHuy = str_contains($status, 'hủy') || str_contains($status, 'huy');
+
+                                $coTheHoanThanh = $daDat && $ketThuc->isPast();
+
+                            @endphp
+
+
+                            <div class="trainer-item"
+                                style="
                         align-items:flex-start;
-                    "
-                >
+                    ">
 
-                    {{-- THÔNG TIN --}}
+                                {{-- THÔNG TIN --}}
 
-                    <div class="trainer-item-left">
+                                <div class="trainer-item-left">
 
-                        <div class="trainer-item-icon">
-                            📅
-                        </div>
+                                    <div class="trainer-item-icon">
+                                        📅
+                                    </div>
 
-                        <div class="trainer-item-info">
+                                    <div class="trainer-item-info">
 
-                            <h3>
-                                {{ $lich->ho_ten }}
-                            </h3>
+                                        <h3>
+                                            {{ $lich->ho_ten }}
+                                        </h3>
 
-                            <p>
-                                {{ $lich->ten_goi_pt }}
-                            </p>
+                                        <p>
+                                            {{ $lich->ten_goi_pt }}
+                                        </p>
 
-                            <p style="margin-top:5px;">
+                                        <p style="margin-top:5px;">
 
-                                📅
-                                {{ $batDau->format('d/m/Y') }}
+                                            📅
+                                            {{ $batDau->format('d/m/Y') }}
 
-                                &nbsp;&nbsp;
+                                            &nbsp;&nbsp;
 
-                                ⏰
-                                {{ $batDau->format('H:i') }}
-                                →
-                                {{ $ketThuc->format('H:i') }}
+                                            ⏰
+                                            {{ $batDau->format('H:i') }}
+                                            →
+                                            {{ $ketThuc->format('H:i') }}
 
-                            </p>
+                                        </p>
 
-                            <p style="
+                                        <p
+                                            style="
                                 margin-top:5px;
                                 color:#555;
                             ">
 
-                                Còn lại:
-                                {{ $lich->so_buoi_con_lai }}
-                                buổi
+                                            Còn lại:
+                                            {{ $lich->so_buoi_con_lai }}
+                                            buổi
 
-                            </p>
+                                        </p>
 
-                        </div>
+                                    </div>
 
-                    </div>
+                                </div>
 
 
-                    {{-- TRẠNG THÁI + NÚT --}}
+                                {{-- TRẠNG THÁI + NÚT --}}
 
-                    <div style="
+                                <div
+                                    style="
                         display:flex;
                         flex-direction:column;
                         align-items:flex-end;
                         gap:9px;
                     ">
 
-                        @if($daHoanThanh)
-
-                            <span
-                                class="trainer-badge"
-                                style="
+                                    @if ($daHoanThanh)
+                                        <span class="trainer-badge"
+                                            style="
                                     color:#4ade80;
                                     background:rgba(74,222,128,.08);
                                     border-color:rgba(74,222,128,.2);
-                                "
-                            >
-                                ✓ ĐÃ HOÀN THÀNH
-                            </span>
-
-                        @elseif($daHuy)
-
-                            <span
-                                class="trainer-badge"
-                                style="
+                                ">
+                                            ✓ ĐÃ HOÀN THÀNH
+                                        </span>
+                                    @elseif($daHuy)
+                                        <span class="trainer-badge"
+                                            style="
                                     color:#999;
                                     background:#1c1c1c;
                                     border-color:#333;
-                                "
-                            >
-                                ● ĐÃ HỦY
-                            </span>
-
-                        @else
-
-                            <span class="trainer-badge">
-                                ● ĐÃ ĐẶT LỊCH
-                            </span>
-
-                        @endif
+                                ">
+                                            ● ĐÃ HỦY
+                                        </span>
+                                    @else
+                                        <span class="trainer-badge">
+                                            ● ĐÃ ĐẶT LỊCH
+                                        </span>
+                                    @endif
 
 
-                        {{-- NÚT HOÀN THÀNH --}}
+                                    {{-- NÚT HOÀN THÀNH --}}
 
-                        @if($coTheHoanThanh)
+                                    @if ($coTheHoanThanh)
+                                        <form action="{{ url('/trainer/pt-schedule/' . $lich->lich_pt_id . '/complete') }}"
+                                            method="POST"
+                                            onsubmit="return confirm('Bạn có chắc chắn muốn xác nhận buổi PT này đã hoàn thành không?');">
 
-                            <form
-                                action="{{ url('/trainer/pt-schedule/' . $lich->lich_pt_id . '/complete') }}"
-                                method="POST"
-                                onsubmit="return confirm('Bạn có chắc chắn muốn xác nhận buổi PT này đã hoàn thành không?');"
-                            >
+                                            @csrf
 
-                                @csrf
-
-                                <button
-                                    type="submit"
-                                    style="
+                                            <button type="submit"
+                                                style="
                                         border:0;
                                         background:#e50914;
                                         color:#fff;
@@ -645,54 +605,48 @@
                                         font-size:10px;
                                         font-weight:800;
                                         cursor:pointer;
-                                    "
-                                >
-                                    ✓ HOÀN THÀNH
-                                </button>
+                                    ">
+                                                ✓ HOÀN THÀNH
+                                            </button>
 
-                            </form>
-
-                        @elseif($daDat)
-
-                            <span style="
+                                        </form>
+                                    @elseif($daDat)
+                                        <span
+                                            style="
                                 color:#666;
                                 font-size:10px;
                                 font-weight:700;
                             ">
-                                CHƯA ĐẾN GIỜ HOÀN THÀNH
-                            </span>
+                                            CHƯA ĐẾN GIỜ HOÀN THÀNH
+                                        </span>
+                                    @endif
 
-                        @endif
+                                </div>
+
+                            </div>
+                        @endforeach
+
+                    </div>
+                @else
+                    <div class="trainer-empty">
+
+                        <div class="trainer-empty-icon">
+                            📅
+                        </div>
+
+                        <h3>
+                            Chưa có lịch PT
+                        </h3>
+
+                        <p>
+                            Hiện chưa có lịch huấn luyện nào.
+                        </p>
 
                     </div>
 
-                </div>
+                @endif
 
-            @endforeach
-
-        </div>
-
-    @else
-
-        <div class="trainer-empty">
-
-            <div class="trainer-empty-icon">
-                📅
             </div>
-
-            <h3>
-                Chưa có lịch PT
-            </h3>
-
-            <p>
-                Hiện chưa có lịch huấn luyện nào.
-            </p>
-
-        </div>
-
-    @endif
-
-</div>
 
         </div>
 

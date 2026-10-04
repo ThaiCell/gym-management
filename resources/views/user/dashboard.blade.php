@@ -3,33 +3,6 @@
 @section('title', 'Dashboard Hội viên')
 @section('role_name', 'Hội viên')
 
-@section('menu')
-
-    <a href="/">
-        TRANG CHỦ
-    </a>
-
-    <a href="/about">
-        GIỚI THIỆU
-    </a>
-
-    <a href="/packages">
-        GÓI TẬP
-    </a>
-
-    <a href="/classes">
-        LỚP TẬP
-    </a>
-
-    <a href="/trainers">
-        HUẤN LUYỆN VIÊN
-    </a>
-
-    <a href="/contact">
-        LIÊN HỆ
-    </a>
-
-@endsection
 
 
 @section('content')
@@ -41,8 +14,8 @@
         }
 
         /* =========================
-           WELCOME
-        ========================= */
+                                                                   WELCOME
+                                                                ========================= */
 
         .dashboard-hero {
             position: relative;
@@ -107,8 +80,8 @@
         }
 
         /* =========================
-           STATS
-        ========================= */
+                                                                   STATS
+                                                                ========================= */
 
         .dashboard-stats {
             display: grid;
@@ -166,8 +139,8 @@
         }
 
         /* =========================
-           CONTENT GRID
-        ========================= */
+                                                                   CONTENT GRID
+                                                                ========================= */
 
         .dashboard-grid {
             display: grid;
@@ -216,8 +189,8 @@
         }
 
         /* =========================
-           LIST
-        ========================= */
+                                                                   LIST
+                                                                ========================= */
 
         .dashboard-list {
             padding: 8px 24px 18px;
@@ -273,8 +246,8 @@
         }
 
         /* =========================
-           BADGE
-        ========================= */
+                                                                   BADGE
+                                                                ========================= */
 
         .status-badge {
             flex-shrink: 0;
@@ -288,8 +261,8 @@
         }
 
         /* =========================
-           EMPTY
-        ========================= */
+                                                                   EMPTY
+                                                                ========================= */
 
         .empty-box {
             text-align: center;
@@ -320,9 +293,90 @@
             font-size: 12px;
         }
 
+        .dashboard-alert {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .dashboard-alert.success {
+            background: rgba(40, 167, 69, .10);
+            border: 1px solid rgba(40, 167, 69, .28);
+            color: #72d98a;
+        }
+
+        .dashboard-alert.error {
+            background: rgba(229, 9, 20, .10);
+            border: 1px solid rgba(229, 9, 20, .28);
+            color: #ff6b72;
+        }
+
+        .action-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .action-btn {
+            border: 0;
+            cursor: pointer;
+            padding: 7px 11px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            transition: .2s ease;
+        }
+
+        .cancel-btn {
+            background: rgba(229, 9, 20, .10);
+            border: 1px solid rgba(229, 9, 20, .25);
+            color: #ff4b53;
+        }
+
+        .cancel-btn:hover {
+            background: #e50914;
+            color: #fff;
+        }
+
+        .cancel-form {
+            margin: 0;
+        }
+
+        .action-locked {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 190px;
+            padding: 7px 10px;
+            border-radius: 8px;
+            background: #181818;
+            border: 1px solid #333;
+            color: #777;
+            font-size: 9px;
+            font-weight: 800;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .dashboard-item {
+                align-items: flex-start;
+            }
+
+            .action-group {
+                flex-direction: column;
+                align-items: flex-end;
+            }
+        }
+
         /* =========================
-           RESPONSIVE
-        ========================= */
+                                                                   RESPONSIVE
+                                                                ========================= */
 
         @media (max-width: 1000px) {
 
@@ -365,6 +419,21 @@
 
     <div class="dashboard-page">
 
+        {{-- THÔNG BÁO KẾT QUẢ --}}
+        @if (session('success'))
+            <div class="dashboard-alert success">
+                <span>✓</span>
+                <div>{{ session('success') }}</div>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="dashboard-alert error">
+                <span>!</span>
+                <div>{{ session('error') }}</div>
+            </div>
+        @endif
+
         {{-- HERO --}}
 
         <div class="dashboard-hero">
@@ -392,7 +461,7 @@
 
         <div class="dashboard-stats">
 
-            <a href="/user/payments" class="stat-card">
+            <div href="/user/payments" class="stat-card">
 
                 <div class="stat-icon">
                     🏋️
@@ -403,7 +472,7 @@
                     <strong>{{ $tongGoiTap }}</strong>
                 </div>
 
-            </a>
+            </div>
 
 
             <div class="stat-card">
@@ -420,7 +489,7 @@
             </div>
 
 
-            <a href="/classes" class="stat-card">
+            <div href="/classes" class="stat-card">
 
                 <div class="stat-icon">
                     🏃
@@ -431,10 +500,10 @@
                     <strong>{{ $tongLop }}</strong>
                 </div>
 
-            </a>
+            </div>
 
 
-            <a href="/user/payments" class="stat-card">
+            <div href="/user/payments" class="stat-card">
 
                 <div class="stat-icon">
                     💳
@@ -445,7 +514,7 @@
                     <strong>{{ $tongHoaDon }}</strong>
                 </div>
 
-            </a>
+            </div>
 
         </div>
 
@@ -504,9 +573,67 @@
 
                                 </div>
 
-                                <span class="status-badge">
-                                    {{ $goi->trang_thai }}
-                                </span>
+                                @php
+                                    $trangThaiHoaDon = mb_strtolower(trim($goi->hoa_don_trang_thai ?? ''));
+
+                                    $hoaDonDaThanhToan = in_array(
+                                        $trangThaiHoaDon,
+                                        ['Đã thanh toán', 'da thanh toan', 'da_thanh_toan', 'paid'],
+                                        true,
+                                    );
+
+                                    $hoaDonChoThanhToan = in_array(
+                                        $trangThaiHoaDon,
+                                        ['Chờ thanh toán', 'cho thanh toan', 'cho_thanh_toan', 'pending'],
+                                        true,
+                                    );
+
+                                    $conTrong72Gio = false;
+
+                                    if ($hoaDonChoThanhToan && $goi->hoa_don_ngay_lap) {
+                                        $conTrong72Gio = now()->lessThan(
+                                            \Carbon\Carbon::parse($goi->hoa_don_ngay_lap)->addHours(72),
+                                        );
+                                    }
+
+                                    $goiHetHan =
+                                        $goi->ngay_ket_thuc &&
+                                        \Carbon\Carbon::parse($goi->ngay_ket_thuc)
+                                            ->startOfDay()
+                                            ->lessThan(now()->startOfDay());
+                                @endphp
+
+                                <div class="action-group">
+
+                                    <span class="status-badge">
+                                        {{ $goi->trang_thai }}
+                                    </span>
+
+                                    @if ($goiHetHan)
+                                        <span class="action-locked">
+                                            ĐÃ HẾT HẠN
+                                        </span>
+                                    @elseif ($hoaDonDaThanhToan)
+                                        <span class="action-locked">
+                                            ĐÃ THANH TOÁN · KHÔNG THỂ HỦY
+                                        </span>
+                                    @elseif ($hoaDonChoThanhToan && $conTrong72Gio)
+                                        <form action="/user/packages/{{ $goi->dang_ky_goi_tap_id }}/cancel" method="POST"
+                                            class="cancel-form"
+                                            onsubmit="return confirm('Bạn có chắc chắn muốn hủy gói tập này không?');">
+                                            @csrf
+
+                                            <button type="submit" class="action-btn cancel-btn">
+                                                HỦY GÓI
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="action-locked">
+                                            KHÔNG THỂ HỦY
+                                        </span>
+                                    @endif
+
+                                </div>
 
                             </div>
                         @endforeach
@@ -549,16 +676,7 @@
                         </h2>
                     </div>
 
-                    <a href="/user/pt-schedule"
-                    style="
-                        color:#888;
-                        font-size:11px;
-                        font-weight:700;
-                        text-decoration:none;
-                        transition:.3s;
-                    "
-                    onmouseover="this.style.color='#e50914'"
-                    onmouseout="this.style.color='#888'">
+                    <a href="/user/pt-schedule" class="view-link">
                         XEM LỊCH PT →
                     </a>
                 </div>
@@ -591,9 +709,24 @@
 
                                 </div>
 
-                                <span class="status-badge">
-                                    {{ $pt->trang_thai }}
-                                </span>
+                                <div class="action-group">
+                                    <span class="status-badge">
+                                        {{ $pt->trang_thai }}
+                                    </span>
+
+                                    @if (in_array(mb_strtolower(trim($pt->trang_thai ?? '')),
+                                            ['đang hoạt động', 'dang_hoat_dong', 'hoạt_động', 'hoat_dong'],
+                                            true))
+                                        <form action="/user/pt-packages/{{ $pt->dang_ky_goi_pt_id }}/cancel" method="POST"
+                                            class="cancel-form"
+                                            onsubmit="return confirm('Bạn có chắc chắn muốn hủy gói PT này không?');">
+                                            @csrf
+                                            <button type="submit" class="action-btn cancel-btn">
+                                                HỦY GÓI PT
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
 
                             </div>
                         @endforeach
@@ -671,9 +804,24 @@
 
                                 </div>
 
-                                <span class="status-badge">
-                                    {{ $lop->trang_thai }}
-                                </span>
+                                <div class="action-group">
+                                    <span class="status-badge">
+                                        {{ $lop->trang_thai }}
+                                    </span>
+
+                                    @if (in_array(mb_strtolower(trim($lop->trang_thai ?? '')),
+                                            ['đang hoạt động', 'dang_hoat_dong', 'hoạt_động', 'hoat_dong'],
+                                            true))
+                                        <form action="/classes/cancel/{{ $lop->dang_ky_lop_id }}" method="POST"
+                                            class="cancel-form"
+                                            onsubmit="return confirm('Bạn có chắc chắn muốn rời lớp này không?');">
+                                            @csrf
+                                            <button type="submit" class="action-btn cancel-btn">
+                                                RỜI LỚP
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
 
                             </div>
                         @endforeach
@@ -717,7 +865,7 @@
                         </h2>
                     </div>
 
-                    <a href="/payments" class="view-link">
+                    <a href="/user/payments" class="view-link">
                         XEM TẤT CẢ →
                     </a>
 

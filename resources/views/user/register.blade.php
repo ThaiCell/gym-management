@@ -19,7 +19,7 @@
             background:
                 linear-gradient(rgba(0, 0, 0, .82),
                     rgba(0, 0, 0, .92)),
-                url("/img/photo-1581009146145-b5ef050c2e1e.avif");
+                url("/img/banner1.avif");
 
             background-size: cover;
 

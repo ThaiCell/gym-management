@@ -3,16 +3,6 @@
 @section('title', 'Dashboard Nhân viên')
 @section('role_name', 'Nhân viên')
 
-@section('menu')
-
-    <a href="/">TRANG CHỦ</a>
-    <a href="/about">GIỚI THIỆU</a>
-    <a href="/packages">GÓI TẬP</a>
-    <a href="/classes">LỚP TẬP</a>
-    <a href="/trainers">HUẤN LUYỆN VIÊN</a>
-    <a href="/contact">LIÊN HỆ</a>
-
-@endsection
 
 
 @section('content')
@@ -282,25 +272,80 @@
                 Quản lý hội viên, check-in và các hoạt động của phòng Gym.
             </p>
 
-            <a
-                href="/staff/check-in"
-                style="
-                    display:inline-block;
-                    margin-top:18px;
-                    padding:11px 16px;
-                    border-radius:7px;
-                    background:#e50914;
-                    color:#fff;
-                    text-decoration:none;
-                    font-size:11px;
-                    font-weight:800;
-                    transition:.25s;
-                "
-                onmouseover="this.style.background='#ff1824'"
-                onmouseout="this.style.background='#e50914'"
-            >
-                ✓ CHECK-IN HỘI VIÊN
-            </a>
+            <div style="
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:18px;
+">
+
+                <a href="/staff/members"
+                    style="
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:11px 16px;
+            border-radius:7px;
+            background:#e50914;
+            color:#fff;
+            text-decoration:none;
+            font-size:11px;
+            font-weight:800;
+            transition:.25s;
+        "
+                    onmouseover="this.style.background='#ff1824'" onmouseout="this.style.background='#e50914'">
+
+                    👥 QUẢN LÝ HỘI VIÊN
+
+                </a>
+
+
+                <a href="/staff/contacts"
+                    style="
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:11px 16px;
+            border-radius:7px;
+            background:#222;
+            border:1px solid #333;
+            color:#ddd;
+            text-decoration:none;
+            font-size:11px;
+            font-weight:800;
+            transition:.25s;
+        "
+                    onmouseover="this.style.borderColor='#e50914';this.style.color='#fff'"
+                    onmouseout="this.style.borderColor='#333';this.style.color='#ddd'">
+
+                    ✉ XỬ LÝ LIÊN HỆ
+
+                </a>
+
+
+                <a href="/staff/check-in"
+                    style="
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:11px 16px;
+            border-radius:7px;
+            background:#222;
+            border:1px solid #333;
+            color:#ddd;
+            text-decoration:none;
+            font-size:11px;
+            font-weight:800;
+            transition:.25s;
+        "
+                    onmouseover="this.style.borderColor='#e50914';this.style.color='#fff'"
+                    onmouseout="this.style.borderColor='#333';this.style.color='#ddd'">
+
+                    ✓ CHECK-IN HỘI VIÊN
+
+                </a>
+
+            </div>
 
         </div>
 
@@ -603,8 +648,7 @@
                         PAYMENT
                     </div>
 
-                   <a
-                        href="/staff/payments"
+                    <a href="/staff/payments"
                         style="
                             display:inline-block;
                             margin-top:10px;
@@ -612,10 +656,9 @@
                             font-size:11px;
                             font-weight:800;
                             text-decoration:none;
-                        "
-                    >
+                        ">
                         QUẢN LÝ HÓA ĐƠN →
-                   </a>
+                    </a>
 
                 </div>
 

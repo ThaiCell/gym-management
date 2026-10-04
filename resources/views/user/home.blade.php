@@ -27,7 +27,7 @@
                     rgba(0, 0, 0, 0.68) 38%,
                     rgba(0, 0, 0, 0.30) 70%,
                     rgba(0, 0, 0, 0.15) 100%),
-                url("/img/photo-1581009146145-b5ef050c2e1e.avif");
+                url("/img/banner1.avif");
 
             background-size: cover;
 
@@ -81,6 +81,7 @@
             border-radius: 5px;
             margin-right: 10px;
             transition: .3s;
+            margin-top: 20px;
         }
 
         .btn-red:hover {
@@ -229,7 +230,7 @@
             background:
                 linear-gradient(rgba(0, 0, 0, .78),
                     rgba(0, 0, 0, .78)),
-                url("/img/photo-1534438327276-14e5300c3a48.avif");
+                url("/img/banner5.avif");
 
             background-size: cover;
             background-position: center;
@@ -364,7 +365,7 @@
 
                 <div class="service-card">
 
-                    <img src="{{ asset('img/photo-1534438327276-14e5300c3a48.avif') }}" alt="Phòng tập Gym">
+                    <img src="{{ asset('img/banner4.avif') }}" alt="Phòng tập Gym">
 
                     <div class="service-content">
 
@@ -386,7 +387,7 @@
 
                 <div class="service-card">
 
-                    <img src="{{ asset('img/photo-1517836357463-d25dfeac3438.avif') }}" alt="Lớp tập Gym">
+                    <img src="{{ asset('img/banner5.avif') }}" alt="Lớp tập Gym">
 
                     <div class="service-content">
 
@@ -408,7 +409,7 @@
 
                 <div class="service-card">
 
-                    <img src="{{ asset('img/photo-1571019614242-c5c5dee9f50b.avif') }}" alt="Huấn luyện viên">
+                    <img src="{{ asset('img/banner3.avif') }}" alt="Huấn luyện viên">
 
                     <div class="service-content">
 
@@ -437,7 +438,7 @@
 
             <div class="about-image">
 
-                <img src="{{ asset('img/photo-1571902943202-507ec2618e8f.avif') }}" alt="Không gian phòng Gym">
+                <img src="{{ asset('img/banner2.avif') }}" alt="Không gian phòng Gym">
 
             </div>
 
