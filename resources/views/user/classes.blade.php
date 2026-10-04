@@ -1001,11 +1001,11 @@
                         if (str_contains($tenLop, 'yoga')) {
                             $image = 'img/yoga.jpg';
                         } elseif (str_contains($tenLop, 'gym')) {
-                            $image = 'img/photo-1581009146145-b5ef050c2e1e.avif';
+                            $image = 'img/gym-tang-co.jpg';
                         } elseif (str_contains($tenLop, 'cardio')) {
-                            $image = 'img/photo-1534438327276-14e5300c3a48.avif';
+                            $image = 'img/cardio.jpg';
                         } elseif (str_contains($tenLop, 'fitness')) {
-                            $image = 'img/photo-1571902943202-507ec2618e8f.avif';
+                            $image = 'img/fitness-toan-than.jpg';
                         } elseif (str_contains($tenLop, 'strength')) {
                             $image = 'img/strength.jpg';
                         } elseif (str_contains($tenLop, 'boxing')) {
@@ -1185,22 +1185,43 @@
 
         <section class="classes-cta">
 
-            <h2>
-                TÌM ĐƯỢC LỚP TẬP PHÙ HỢP?
-            </h2>
+            @if(session()->has('user'))
 
-            <p>
-                Đăng ký tài khoản để tham gia các lớp tập tại GYMFIT.
-            </p>
+                <h2>
+                    SẴN SÀNG LUYỆN TẬP ?
+                </h2>
 
-            <a href="/register" class="cta-btn">
-                ĐĂNG KÝ THÀNH VIÊN
-            </a>
+                <p>
+                    Quản lý lớp tập và lịch tập của bạn trong tài khoản GYMFIT.
+                </p>
 
-        </section>
+                <a
+                    href="{{ session('dashboard_path') }}"
+                    class="cta-btn"
+                >
+                    VỀ DASHBOARD
+                </a>
 
+            @else
 
-    </div>
+                <h2>
+                    TÌM ĐƯỢC LỚP TẬP PHÙ HỢP ?
+                </h2>
+
+                <p>
+                    Đăng ký tài khoản để tham gia các lớp tập tại GYMFIT.
+                </p>
+
+                <a
+                    href="/register"
+                    class="cta-btn"
+                >
+                    ĐĂNG KÝ THÀNH VIÊN
+                </a>
+
+            @endif
+
+</section>
 
 
     {{-- =========================

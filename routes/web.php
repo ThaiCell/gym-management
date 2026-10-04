@@ -5081,6 +5081,48 @@ Route::post('/user/pt-packages/{id}/cancel', function ($id) {
 
 /*
 |--------------------------------------------------------------------------
+| TRANG THÔNG BÁO HỘI VIÊN
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/user/notifications', function () {
+
+    // Chưa đăng nhập → chuyển đến đăng nhập
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    // Chỉ hội viên được xem thông báo
+    if (session('role_id') != 3) {
+        return redirect('/' . session('dashboard_path'));
+    }
+
+    $nguoiDungId = session('user')->nguoi_dung_id;
+
+    // Lấy thông báo của người dùng hiện tại
+    $thongBao = DB::table('thong_bao')
+        ->where('nguoi_dung_id', $nguoiDungId)
+        ->orderByDesc('tao_luc')
+        ->get();
+
+    // Đếm thông báo chưa đọc
+    $thongBaoChuaDoc = DB::table('thong_bao')
+        ->where('nguoi_dung_id', $nguoiDungId)
+        ->where('da_doc', 0)
+        ->count();
+
+    return view(
+        'user.notifications',
+        compact(
+            'thongBao',
+            'thongBaoChuaDoc'
+        )
+    );
+
+})->middleware(NoCache::class);
+
+/*
+|--------------------------------------------------------------------------
 | THÔNG BÁO - BẤM VÀO = ĐÃ ĐỌC
 |--------------------------------------------------------------------------
 */

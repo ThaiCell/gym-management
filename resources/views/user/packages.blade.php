@@ -616,19 +616,43 @@
         {{-- CTA --}}
         <section class="packages-cta">
 
-            <h2>
-                BẠN ĐÃ SẴN SÀNG?
-            </h2>
+            @if(session()->has('user'))
 
-            <p>
-                Tạo tài khoản và bắt đầu hành trình tập luyện cùng GYMFIT.
-            </p>
+                <h2>
+                    BẠN ĐÃ SẴN SÀNG ?
+                </h2>
 
-            <a href="/register" class="cta-btn">
-                ĐĂNG KÝ THÀNH VIÊN
-            </a>
+                <p>
+                    Quản lý gói tập và thông tin thành viên của bạn tại GYMFIT.
+                </p>
 
-        </section>
+                <a
+                    href="{{ session('dashboard_path') }}"
+                    class="cta-btn"
+                >
+                    VỀ DASHBOARD
+                </a>
+
+            @else
+
+                <h2>
+                    BẠN ĐÃ SẴN SÀNG ?
+                </h2>
+
+                <p>
+                    Tạo tài khoản và bắt đầu hành trình tập luyện cùng GYMFIT.
+                </p>
+
+                <a
+                    href="/register"
+                    class="cta-btn"
+                >
+                    ĐĂNG KÝ THÀNH VIÊN
+                </a>
+
+            @endif
+
+</section>
 
     </div>
     <script>
