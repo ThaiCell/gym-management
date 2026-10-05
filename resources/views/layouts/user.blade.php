@@ -820,9 +820,7 @@
                     Lịch sử thanh toán
                 </a>
 
-                <a href="/user/notifications">
-                    Thông báo
-                </a>
+               
 
             </div>
 
