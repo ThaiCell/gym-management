@@ -1,4 +1,4 @@
-@extends('layouts.member')
+@extends('layouts.dashboard')
 
 @section('title', 'Dashboard Hội viên')
 @section('role_name', 'Hội viên')
@@ -14,8 +14,8 @@
         }
 
         /* =========================
-                                                                   WELCOME
-                                                                ========================= */
+                                                                               WELCOME
+                                                                            ========================= */
 
         .dashboard-hero {
             position: relative;
@@ -80,8 +80,8 @@
         }
 
         /* =========================
-                                                                   STATS
-                                                                ========================= */
+                                                                               STATS
+                                                                            ========================= */
 
         .dashboard-stats {
             display: grid;
@@ -139,8 +139,8 @@
         }
 
         /* =========================
-                                                                   CONTENT GRID
-                                                                ========================= */
+                                                                               CONTENT GRID
+                                                                            ========================= */
 
         .dashboard-grid {
             display: grid;
@@ -189,8 +189,8 @@
         }
 
         /* =========================
-                                                                   LIST
-                                                                ========================= */
+                                                                               LIST
+                                                                            ========================= */
 
         .dashboard-list {
             padding: 8px 24px 18px;
@@ -246,8 +246,8 @@
         }
 
         /* =========================
-                                                                   BADGE
-                                                                ========================= */
+                                                                               BADGE
+                                                                            ========================= */
 
         .status-badge {
             flex-shrink: 0;
@@ -261,8 +261,8 @@
         }
 
         /* =========================
-                                                                   EMPTY
-                                                                ========================= */
+                                                                               EMPTY
+                                                                            ========================= */
 
         .empty-box {
             text-align: center;
@@ -375,8 +375,8 @@
         }
 
         /* =========================
-                                                                   RESPONSIVE
-                                                                ========================= */
+                                                                               RESPONSIVE
+                                                                            ========================= */
 
         @media (max-width: 1000px) {
 
@@ -578,13 +578,13 @@
 
                                     $hoaDonDaThanhToan = in_array(
                                         $trangThaiHoaDon,
-                                        ['Đã thanh toán', 'da thanh toan', 'da_thanh_toan', 'paid'],
+                                        ['đã thanh toán', 'da thanh toan', 'da_thanh_toan', 'paid'],
                                         true,
                                     );
 
                                     $hoaDonChoThanhToan = in_array(
                                         $trangThaiHoaDon,
-                                        ['Chờ thanh toán', 'cho thanh toan', 'cho_thanh_toan', 'pending'],
+                                        ['chờ thanh toán', 'cho thanh toan', 'cho_thanh_toan', 'pending'],
                                         true,
                                     );
 
@@ -606,7 +606,7 @@
                                 <div class="action-group">
 
                                     <span class="status-badge">
-                                        {{ $goi->trang_thai }}
+                                        {{ \App\Support\StatusLabel::format($goi->trang_thai) }}
                                     </span>
 
                                     @if ($goiHetHan)
@@ -711,7 +711,7 @@
 
                                 <div class="action-group">
                                     <span class="status-badge">
-                                        {{ $pt->trang_thai }}
+                                        {{ \App\Support\StatusLabel::format($pt->trang_thai) }}
                                     </span>
 
                                     @if (in_array(mb_strtolower(trim($pt->trang_thai ?? '')),
@@ -806,7 +806,7 @@
 
                                 <div class="action-group">
                                     <span class="status-badge">
-                                        {{ $lop->trang_thai }}
+                                        {{ \App\Support\StatusLabel::format($lop->trang_thai) }}
                                     </span>
 
                                     @if (in_array(mb_strtolower(trim($lop->trang_thai ?? '')),
@@ -902,7 +902,7 @@
                                 </div>
 
                                 <span class="status-badge">
-                                    {{ $hd->trang_thai }}
+                                    {{ \App\Support\StatusLabel::format($hd->trang_thai) }}
                                 </span>
 
                             </div>

@@ -1,4 +1,4 @@
-@extends('layouts.member')
+@extends('layouts.dashboard')
 
 @section('title', 'Thanh toán - GYM MANAGEMENT')
 
@@ -33,8 +33,8 @@
         }
 
         /* =========================
-                               SUMMARY
-                            ========================= */
+                                       SUMMARY
+                                    ========================= */
 
         .payment-summary {
             display: grid;
@@ -86,8 +86,8 @@
         }
 
         /* =========================
-                               INVOICE LIST
-                            ========================= */
+                                       INVOICE LIST
+                                    ========================= */
 
         .invoice-list {
             display: flex;
@@ -108,8 +108,8 @@
         }
 
         /* =========================
-                               INVOICE TOP
-                            ========================= */
+                                       INVOICE TOP
+                                    ========================= */
 
         .invoice-top {
             padding: 22px 25px;
@@ -150,8 +150,8 @@
         }
 
         /* =========================
-                               STATUS
-                            ========================= */
+                                       STATUS
+                                    ========================= */
 
         .invoice-status {
             padding: 7px 13px;
@@ -180,8 +180,8 @@
         }
 
         /* =========================
-                               BODY
-                            ========================= */
+                                       BODY
+                                    ========================= */
 
         .invoice-body {
             padding: 22px 25px;
@@ -208,8 +208,8 @@
         }
 
         /* =========================
-                               DETAILS
-                            ========================= */
+                                       DETAILS
+                                    ========================= */
 
         .invoice-details {
             border-top: 1px solid #252525;
@@ -257,8 +257,8 @@
         }
 
         /* =========================
-                               TOTAL
-                            ========================= */
+                                       TOTAL
+                                    ========================= */
 
         .invoice-total {
             margin-top: 18px;
@@ -281,8 +281,8 @@
         }
 
         /* =========================
-                               PAYMENT REMINDER
-                            ========================= */
+                                       PAYMENT REMINDER
+                                    ========================= */
 
         .payment-alert {
             margin-bottom: 25px;
@@ -313,8 +313,8 @@
         }
 
         /* =========================
-                               SUCCESS / ERROR
-                            ========================= */
+                                       SUCCESS / ERROR
+                                    ========================= */
 
         .payment-success,
         .payment-error {
@@ -337,8 +337,8 @@
         }
 
         /* =========================
-                               EMPTY
-                            ========================= */
+                                       EMPTY
+                                    ========================= */
 
         .payment-empty {
             background: #111;
@@ -389,8 +389,8 @@
         }
 
         /* =========================
-                               RESPONSIVE
-                            ========================= */
+                                       RESPONSIVE
+                                    ========================= */
 
         @media (max-width: 900px) {
 
@@ -524,7 +524,7 @@
 
             $tongDaThanhToan = $hoaDon
                 ->filter(function ($item) {
-                    return in_array(strtolower($item->trang_thai ?? ''), [
+                    return in_array(mb_strtolower(trim($item->trang_thai ?? ''), 'UTF-8'), [
                         'đã thanh toán',
                         'da thanh toan',
                         'da_thanh_toan',
@@ -622,7 +622,7 @@
                 @foreach ($hoaDon as $hd)
                     @php
 
-                        $status = strtolower($hd->trang_thai ?? '');
+                        $status = mb_strtolower(trim($hd->trang_thai ?? ''), 'UTF-8');
 
                         if (in_array($status, ['đã thanh toán', 'da thanh toan', 'da_thanh_toan', 'paid'])) {
                             $statusClass = 'status-paid';
@@ -667,7 +667,7 @@
 
 
                             <span class="invoice-status {{ $statusClass }}">
-                                {{ $hd->trang_thai }}
+                                {{ \App\Support\StatusLabel::format($hd->trang_thai) }}
                             </span>
 
                         </div>
@@ -742,9 +742,9 @@
 
 
                                 @forelse($chiTietHoaDon->get(
-                                                            $hd->hoa_don_id,
-                                                            collect()
-                                                        ) as $ct)
+                                                                    $hd->hoa_don_id,
+                                                                    collect()
+                                                                ) as $ct)
                                     @php
                                         $tenSanPham = $ct->ten_goi ?: $ct->ten_goi_pt ?: 'Dịch vụ GymFit';
                                     @endphp
@@ -812,7 +812,7 @@
 
                                 $choThanhToan = in_array(
                                     $trangThaiHoaDon,
-                                    ['Chờ thanh toán', 'cho thanh toan', 'cho_thanh_toan', 'pending'],
+                                    ['chờ thanh toán', 'cho thanh toan', 'cho_thanh_toan', 'pending'],
                                     true,
                                 );
 

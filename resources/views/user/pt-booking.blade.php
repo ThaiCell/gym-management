@@ -1,4 +1,4 @@
-@extends('layouts.member')
+@extends('layouts.dashboard')
 
 @section('title', 'Đặt lịch PT')
 

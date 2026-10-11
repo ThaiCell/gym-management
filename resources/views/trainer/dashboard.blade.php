@@ -1,4 +1,4 @@
-@extends('layouts.member')
+@extends('layouts.dashboard')
 
 @section('title', 'Dashboard Huấn luyện viên')
 @section('role_name', 'Huấn luyện viên')

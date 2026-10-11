@@ -1,4 +1,4 @@
-@extends('layouts.member')
+@extends('layouts.dashboard')
 
 @section('title', 'Dashboard Nhân viên')
 @section('role_name', 'Nhân viên')
@@ -609,7 +609,7 @@
                                 </div>
 
                                 <span class="staff-badge">
-                                    {{ $dk->trang_thai }}
+                                    {{ \App\Support\StatusLabel::format($dk->trang_thai) }}
                                 </span>
 
                             </div>
@@ -693,7 +693,7 @@
                                 </div>
 
                                 <span class="staff-badge">
-                                    {{ $hoaDon->trang_thai }}
+                                    {{ \App\Support\StatusLabel::format($hoaDon->trang_thai) }}
                                 </span>
 
                             </div>

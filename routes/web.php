@@ -6937,4 +6937,92 @@ Route::post('/staff/contacts/{id}/update', function (Request $request, $id) {
 
 })->middleware(NoCache::class);
 
+// ================================
+// HỒ SƠ NHÂN VIÊN
+// ================================
+Route::get('/staff/profile', function () {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 2) {
+        return redirect('/' . ltrim(
+            session('dashboard_path', 'user/dashboard'),
+            '/'
+        ));
+    }
+
+    $userSession = session('user');
+
+    $userId = $userSession->nguoi_dung_id
+        ?? $userSession->id
+        ?? null;
+
+    if (!$userId) {
+        return redirect('/login')->with('error', 'Không tìm thấy tài khoản.');
+    }
+
+    $user = DB::table('nguoi_dung')
+        ->where('nguoi_dung_id', $userId)
+        ->first();
+
+    $nhanVien = DB::table('nhan_vien')
+        ->where('nguoi_dung_id', $userId)
+        ->first();
+
+    if (!$user || !$nhanVien) {
+        abort(404, 'Không tìm thấy hồ sơ nhân viên.');
+    }
+
+    return view('staff.profile', compact('user', 'nhanVien'));
+});
+
+// ================================
+// HỒ SƠ HUẤN LUYỆN VIÊN
+// ================================
+
+Route::get('/trainer/profile', function () {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 4) {
+        return redirect('/' . ltrim(
+            session('dashboard_path', 'user/dashboard'),
+            '/'
+        ));
+    }
+
+    $userSession = session('user');
+
+    $userId = $userSession->nguoi_dung_id
+        ?? $userSession->id
+        ?? null;
+
+    if (!$userId) {
+        return redirect('/login')
+            ->with('error', 'Không tìm thấy tài khoản.');
+    }
+
+    // Lấy tài khoản đăng nhập
+    $user = DB::table('nguoi_dung')
+        ->where('nguoi_dung_id', $userId)
+        ->first();
+
+    // Lấy hồ sơ huấn luyện viên
+    $huanLuyenVien = DB::table('huan_luyen_vien')
+        ->where('nguoi_dung_id', $userId)
+        ->first();
+
+    if (!$user || !$huanLuyenVien) {
+        abort(404, 'Không tìm thấy hồ sơ huấn luyện viên.');
+    }
+
+    return view('trainer.profile', compact(
+        'user',
+        'huanLuyenVien'
+    ));
+});
+
+
             

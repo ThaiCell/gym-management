@@ -1,125 +1,125 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('content')
+    <div class="welcome">
 
-<div class="welcome">
+        <h2>
+            Chào mừng đến với
+            <span>Gym Management</span>
+        </h2>
 
-    <h2>
-        Chào mừng đến với
-        <span>Gym Management</span>
-    </h2>
-
-    <p>
-        Tổng quan hoạt động phòng gym.
-    </p>
-
-</div>
-
-
-<!-- THỐNG KÊ -->
-
-<div class="stats">
-
-    <!-- HỘI VIÊN -->
-
-    <div class="card">
-
-        <div class="card-header">
-
-            <span>Tổng hội viên</span>
-
-            <div class="card-icon">
-                👤
-            </div>
-
-        </div>
-
-        <h3>{{ number_format($tongHoiVien) }}</h3>
-
-        <p>Số hội viên trong hệ thống</p>
+        <p>
+            Tổng quan hoạt động phòng gym.
+        </p>
 
     </div>
 
 
-    <!-- ĐANG HOẠT ĐỘNG -->
+    <!-- THỐNG KÊ -->
 
-    <div class="card">
+    <div class="stats">
 
-        <div class="card-header">
+        <!-- HỘI VIÊN -->
 
-            <span>Đang hoạt động</span>
+        <div class="card">
 
-            <div class="card-icon">
-                ✓
+            <div class="card-header">
+
+                <span>Tổng hội viên</span>
+
+                <div class="card-icon">
+                    👤
+                </div>
+
             </div>
+
+            <h3>{{ number_format($tongHoiVien) }}</h3>
+
+            <p>Số hội viên trong hệ thống</p>
 
         </div>
 
-        <h3>{{ number_format($hoiVienDangHoatDong) }}</h3>
 
-        <p>Hội viên đang có gói tập</p>
+        <!-- ĐANG HOẠT ĐỘNG -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <span>Đang hoạt động</span>
+
+                <div class="card-icon">
+                    ✓
+                </div>
+
+            </div>
+
+            <h3>{{ number_format($hoiVienDangHoatDong) }}</h3>
+
+            <p>Hội viên đang có gói tập</p>
+
+        </div>
+
+
+        <!-- DOANH THU -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <span>Doanh thu</span>
+
+                <div class="card-icon">
+                    ₫
+                </div>
+
+            </div>
+
+            <h3>
+                {{ number_format($doanhThu, 0, ',', '.') }} ₫
+            </h3>
+
+            <p>Tổng các hóa đơn đã thanh toán</p>
+
+        </div>
+
+
+        <!-- GÓI TẬP -->
+
+        <div class="card">
+
+            <div class="card-header">
+
+                <span>Gói tập</span>
+
+                <div class="card-icon">
+                    ★
+                </div>
+
+            </div>
+
+            <h3>{{ number_format($tongGoiTap) }}</h3>
+
+            <p>Gói tập đang hoạt động</p>
+
+        </div>
 
     </div>
 
 
-    <!-- DOANH THU -->
+    <!-- DỮ LIỆU GẦN ĐÂY -->
 
-    <div class="card">
-
-        <div class="card-header">
-
-            <span>Doanh thu</span>
-
-            <div class="card-icon">
-                ₫
-            </div>
-
-        </div>
-
-        <h3>
-            {{ number_format($doanhThu, 0, ',', '.') }} ₫
-        </h3>
-
-        <p>Tổng các hóa đơn đã thanh toán</p>
-
-    </div>
+    <div class="dashboard-grid">
 
 
-    <!-- GÓI TẬP -->
+        <!-- BIỂU ĐỒ -->
 
-    <div class="card">
+        <div class="panel">
 
-        <div class="card-header">
+            <h3>Thông tin hệ thống</h3>
 
-            <span>Gói tập</span>
-
-            <div class="card-icon">
-                ★
-            </div>
-
-        </div>
-
-        <h3>{{ number_format($tongGoiTap) }}</h3>
-
-        <p>Gói tập đang hoạt động</p>
-
-    </div>
-
-</div>
-
-
-<!-- DỮ LIỆU GẦN ĐÂY -->
-
-<div class="dashboard-grid">
-
-
-    <!-- BIỂU ĐỒ -->
-
-    <div class="panel">
-
-        <h3>Thông tin hệ thống</h3>
-
-        <div style="
+            <div
+                style="
             display:flex;
             align-items:center;
             justify-content:center;
@@ -128,70 +128,69 @@
             text-align:center;
         ">
 
-            <div>
+                <div>
 
-                <div style="
+                    <div
+                        style="
                     font-size:45px;
                     color:#e50914;
                     margin-bottom:10px;
                 ">
-                    📊
-                </div>
+                        📊
+                    </div>
 
-                <p>
-                    Dữ liệu Dashboard được lấy trực tiếp
-                    từ cơ sở dữ liệu.
-                </p>
+                    <p>
+                        Dữ liệu Dashboard được lấy trực tiếp
+                        từ cơ sở dữ liệu.
+                    </p>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
 
+        <!-- HOẠT ĐỘNG -->
 
-    <!-- HOẠT ĐỘNG -->
+        <div class="panel">
 
-    <div class="panel">
+            <h3>Hóa đơn gần đây</h3>
 
-        <h3>Hóa đơn gần đây</h3>
+            @forelse($hoatDongGanDay as $hoaDon)
+                <div class="activity">
 
-        @forelse($hoatDongGanDay as $hoaDon)
+                    <div class="activity-dot"></div>
 
-            <div class="activity">
+                    <div>
 
-                <div class="activity-dot"></div>
+                        <p>
+                            {{ $hoaDon->ho_ten }}
+                        </p>
 
-                <div>
+                        <small>
+                            Hóa đơn #{{ $hoaDon->hoa_don_id }}
+                            -
+                            {{ number_format($hoaDon->tong_tien, 0, ',', '.') }} ₫
+                        </small>
 
-                    <p>
-                        {{ $hoaDon->ho_ten }}
-                    </p>
-
-                    <small>
-                        Hóa đơn #{{ $hoaDon->hoa_don_id }}
-                        -
-                        {{ number_format($hoaDon->tong_tien, 0, ',', '.') }} ₫
-                    </small>
+                    </div>
 
                 </div>
 
-            </div>
+            @empty
 
-        @empty
-
-            <div style="
+                <div
+                    style="
                 padding:30px 0;
                 text-align:center;
                 color:#777;
             ">
-                Chưa có dữ liệu hóa đơn.
-            </div>
+                    Chưa có dữ liệu hóa đơn.
+                </div>
+            @endforelse
 
-        @endforelse
+        </div>
 
     </div>
-
-</div>
-
 @endsection

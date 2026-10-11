@@ -854,30 +854,49 @@
             </div>
 
 
-            {{-- HỒ SƠ / DASHBOARD --}}
-            @if (request()->is('user/dashboard'))
 
-                {{-- Hội viên đang ở Dashboard → hiện nút HỒ SƠ --}}
+            {{-- HỒ SƠ / DASHBOARD THEO TỪNG VAI TRÒ --}}
+
+            {{-- HỘI VIÊN --}}
+            @if (request()->is('user/dashboard'))
                 <a href="/user/profile" class="dashboard-btn profile-btn">
                     HỒ SƠ
                 </a>
             @elseif (request()->is('user/profile'))
-                {{-- Hội viên đang ở Hồ sơ → quay về Dashboard --}}
                 <a href="/user/dashboard" class="dashboard-btn">
                     DASHBOARD
                 </a>
-            @elseif (request()->is('staff/*'))
-                {{-- Nhân viên → quay về Dashboard nhân viên --}}
+
+                {{-- NHÂN VIÊN --}}
+            @elseif (request()->is('staff/dashboard'))
+                <a href="/staff/profile" class="dashboard-btn profile-btn">
+                    HỒ SƠ
+                </a>
+            @elseif (request()->is('staff/profile'))
                 <a href="/staff/dashboard" class="dashboard-btn">
                     DASHBOARD
                 </a>
-            @elseif (request()->is('trainer/*'))
-                {{-- PT → quay về Dashboard PT --}}
+            @elseif (request()->is('staff/*'))
+                <a href="/staff/dashboard" class="dashboard-btn">
+                    DASHBOARD
+                </a>
+
+                {{-- HUẤN LUYỆN VIÊN (PT) --}}
+            @elseif (request()->is('trainer/dashboard'))
+                <a href="/trainer/profile" class="dashboard-btn profile-btn">
+                    HỒ SƠ
+                </a>
+            @elseif (request()->is('trainer/profile'))
                 <a href="/trainer/dashboard" class="dashboard-btn">
                     DASHBOARD
                 </a>
+            @elseif (request()->is('trainer/*'))
+                <a href="/trainer/dashboard" class="dashboard-btn">
+                    DASHBOARD
+                </a>
+
+                {{-- CÁC TRANG KHÁC --}}
             @else
-                {{-- Các trang khác --}}
                 @if (session('role_id') == 2)
                     <a href="/staff/dashboard" class="dashboard-btn">
                         DASHBOARD
@@ -891,8 +910,8 @@
                         DASHBOARD
                     </a>
                 @endif
-
             @endif
+
 
 
             {{-- ĐĂNG XUẤT --}}

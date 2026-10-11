@@ -1,4 +1,4 @@
-@extends('layouts.member')
+@extends('layouts.dashboard')
 
 @section('title', 'Xử lý liên hệ')
 @section('role_name', 'Nhân viên')
@@ -426,15 +426,18 @@
 
                                     <select name="trang_thai" required>
 
-                                        <option value="chưa xử lý" {{ $lh->trang_thai == 'chưa xử lý' ? 'selected' : '' }}>
+                                        <option value="chưa xử lý"
+                                            {{ in_array($lh->trang_thai, ['chưa xử lý', 'chua_xu_ly']) ? 'selected' : '' }}>
                                             Chưa xử lý
                                         </option>
 
-                                        <option value="đang xử lý" {{ $lh->trang_thai == 'đang xử lý' ? 'selected' : '' }}>
+                                        <option value="đang xử lý"
+                                            {{ in_array($lh->trang_thai, ['đang xử lý', 'dang_xu_ly']) ? 'selected' : '' }}>
                                             Đang xử lý
                                         </option>
 
-                                        <option value="đã xử lý" {{ $lh->trang_thai == 'đã xử lý' ? 'selected' : '' }}>
+                                        <option value="đã xử lý"
+                                            {{ in_array($lh->trang_thai, ['đã xử lý', 'da_xu_ly']) ? 'selected' : '' }}>
                                             Đã xử lý
                                         </option>
 

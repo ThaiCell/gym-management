@@ -12,8 +12,8 @@
         }
 
         /* =========================
-                               HERO
-                            ========================= */
+                                   HERO
+                                ========================= */
 
         .classes-hero {
             padding: 90px 30px;
@@ -55,8 +55,8 @@
 
 
         /* =========================
-                               CONTENT
-                            ========================= */
+                                   CONTENT
+                                ========================= */
 
         .classes-section {
             max-width: 1400px;
@@ -80,8 +80,8 @@
 
 
         /* =========================
-                               GRID
-                            ========================= */
+                                   GRID
+                                ========================= */
 
         .classes-grid {
             display: grid;
@@ -91,8 +91,8 @@
 
 
         /* =========================
-                               CARD
-                            ========================= */
+                                   CARD
+                                ========================= */
 
         .class-card {
             position: relative;
@@ -114,8 +114,8 @@
 
 
         /* =========================
-                               IMAGE
-                            ========================= */
+                                   IMAGE
+                                ========================= */
 
         .class-image {
             height: 210px;
@@ -139,8 +139,8 @@
 
 
         /* =========================
-                               STATUS
-                            ========================= */
+                                   STATUS
+                                ========================= */
 
         .class-status {
             position: absolute;
@@ -161,8 +161,8 @@
 
 
         /* =========================
-                               BODY
-                            ========================= */
+                                   BODY
+                                ========================= */
 
         .class-body {
             padding: 28px;
@@ -188,8 +188,8 @@
 
 
         /* =========================
-                               INFO
-                            ========================= */
+                                   INFO
+                                ========================= */
 
         .class-info {
             border-top: 1px solid #292929;
@@ -222,8 +222,8 @@
 
 
         /* =========================
-                               BUTTON
-                            ========================= */
+                                   BUTTON
+                                ========================= */
 
         .class-btn {
             display: block;
@@ -263,8 +263,8 @@
 
 
         /* =========================
-                               CTA
-                            ========================= */
+                                   CTA
+                                ========================= */
 
         .classes-cta {
             padding: 75px 30px;
@@ -314,8 +314,8 @@
 
 
         /* =========================
-                               TOAST
-                            ========================= */
+                                   TOAST
+                                ========================= */
 
         .gym-toast {
             position: fixed;
@@ -464,12 +464,12 @@
 
 
         /* =========================
-                               RESPONSIVE
-                            ========================= */
+                                   RESPONSIVE
+                                ========================= */
 
         /* =========================
-                               MY CLASSES
-                            ========================= */
+                                   MY CLASSES
+                                ========================= */
 
         .my-classes-header,
         .all-classes-header {
@@ -1032,7 +1032,7 @@
                             <img src="{{ asset($image) }}" alt="{{ $lop->ten_lop }}">
 
                             <span class="class-status">
-                                {{ $lop->trang_thai }}
+                                {{ \App\Support\StatusLabel::format($lop->trang_thai) }}
                             </span>
 
                         </div>
@@ -1105,7 +1105,7 @@
                                     </span>
 
                                     <strong>
-                                        {{ $lop->trang_thai }}
+                                        {{ \App\Support\StatusLabel::format($lop->trang_thai) }}
                                     </strong>
 
                                 </div>
@@ -1185,8 +1185,7 @@
 
         <section class="classes-cta">
 
-            @if(session()->has('user'))
-
+            @if (session()->has('user'))
                 <h2>
                     SẴN SÀNG LUYỆN TẬP ?
                 </h2>
@@ -1195,15 +1194,10 @@
                     Quản lý lớp tập và lịch tập của bạn trong tài khoản GYMFIT.
                 </p>
 
-                <a
-                    href="{{ session('dashboard_path') }}"
-                    class="cta-btn"
-                >
+                <a href="{{ session('dashboard_path') }}" class="cta-btn">
                     VỀ DASHBOARD
                 </a>
-
             @else
-
                 <h2>
                     TÌM ĐƯỢC LỚP TẬP PHÙ HỢP ?
                 </h2>
@@ -1212,77 +1206,73 @@
                     Đăng ký tài khoản để tham gia các lớp tập tại GYMFIT.
                 </p>
 
-                <a
-                    href="/register"
-                    class="cta-btn"
-                >
+                <a href="/register" class="cta-btn">
                     ĐĂNG KÝ THÀNH VIÊN
                 </a>
-
             @endif
 
-</section>
+        </section>
 
 
-    {{-- =========================
+        {{-- =========================
      JAVASCRIPT TOAST
 ========================= --}}
 
-    <script>
-        function closeToast(id) {
+        <script>
+            function closeToast(id) {
 
-            const toast = document.getElementById(id);
+                const toast = document.getElementById(id);
 
-            if (toast) {
+                if (toast) {
 
-                toast.classList.add('hide');
-
-                setTimeout(() => {
-
-                    toast.remove();
-
-                }, 300);
-
-            }
-
-        }
-
-
-        document.addEventListener(
-            'DOMContentLoaded',
-            function() {
-
-                const successToast =
-                    document.getElementById('successToast');
-
-                const errorToast =
-                    document.getElementById('errorToast');
-
-
-                if (successToast) {
+                    toast.classList.add('hide');
 
                     setTimeout(() => {
 
-                        closeToast('successToast');
+                        toast.remove();
 
-                    }, 3000);
-
-                }
-
-
-                if (errorToast) {
-
-                    setTimeout(() => {
-
-                        closeToast('errorToast');
-
-                    }, 4000);
+                    }, 300);
 
                 }
 
             }
-        );
-    </script>
 
 
-@endsection
+            document.addEventListener(
+                'DOMContentLoaded',
+                function() {
+
+                    const successToast =
+                        document.getElementById('successToast');
+
+                    const errorToast =
+                        document.getElementById('errorToast');
+
+
+                    if (successToast) {
+
+                        setTimeout(() => {
+
+                            closeToast('successToast');
+
+                        }, 3000);
+
+                    }
+
+
+                    if (errorToast) {
+
+                        setTimeout(() => {
+
+                            closeToast('errorToast');
+
+                        }, 4000);
+
+                    }
+
+                }
+            );
+        </script>
+
+
+    @endsection

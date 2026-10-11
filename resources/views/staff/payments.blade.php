@@ -1,4 +1,4 @@
-@extends('layouts.member')
+@extends('layouts.dashboard')
 
 @section('title', 'Quản lý hóa đơn - GYM MANAGEMENT')
 @section('role_name', 'Nhân viên')
@@ -40,8 +40,8 @@
 
 
         /* =========================
-           ALERT
-        ========================= */
+                               ALERT
+                            ========================= */
 
         .payment-alert {
             padding: 14px 18px;
@@ -65,8 +65,8 @@
 
 
         /* =========================
-           SUMMARY
-        ========================= */
+                               SUMMARY
+                            ========================= */
 
         .payment-summary {
             display: grid;
@@ -104,8 +104,8 @@
 
 
         /* =========================
-           INVOICE
-        ========================= */
+                               INVOICE
+                            ========================= */
 
         .invoice-list {
             display: flex;
@@ -194,8 +194,8 @@
 
 
         /* =========================
-           BODY
-        ========================= */
+                               BODY
+                            ========================= */
 
         .invoice-body {
             padding: 22px 25px;
@@ -224,8 +224,8 @@
 
 
         /* =========================
-           DETAIL
-        ========================= */
+                               DETAIL
+                            ========================= */
 
         .detail-box {
             border-top: 1px solid #222;
@@ -271,8 +271,8 @@
 
 
         /* =========================
-           CONFIRM
-        ========================= */
+                               CONFIRM
+                            ========================= */
 
         .payment-action {
             margin-top: 22px;
@@ -331,8 +331,8 @@
 
 
         /* =========================
-           EMPTY
-        ========================= */
+                               EMPTY
+                            ========================= */
 
         .payment-empty {
             padding: 70px 25px;
@@ -360,8 +360,8 @@
 
 
         /* =========================
-           RESPONSIVE
-        ========================= */
+                               RESPONSIVE
+                            ========================= */
 
         @media (max-width: 1000px) {
 
@@ -454,22 +454,20 @@
 
             $choThanhToan = $hoaDon
                 ->filter(function ($item) {
-                    return in_array(strtolower(trim($item->trang_thai)), [
-                        'chờ thanh toán',
-                        'cho thanh toan',
-                        'cho_thanh_toan',
-                        'pending',
-                    ]);
+                    $trangThai = mb_strtolower(trim($item->trang_thai ?? ''), 'UTF-8');
+
+                    return in_array(
+                        $trangThai,
+                        ['chờ thanh toán', 'cho thanh toan', 'cho_thanh_toan', 'pending'],
+                        true,
+                    );
                 })
                 ->count();
 
             $daThanhToan = $hoaDon->filter(function ($item) {
-                return in_array(strtolower(trim($item->trang_thai)), [
-                    'đã thanh toán',
-                    'da thanh toan',
-                    'da_thanh_toan',
-                    'paid',
-                ]);
+                $trangThai = mb_strtolower(trim($item->trang_thai ?? ''), 'UTF-8');
+
+                return in_array($trangThai, ['đã thanh toán', 'da thanh toan', 'da_thanh_toan', 'paid'], true);
             });
 
         @endphp
@@ -569,7 +567,7 @@
 
 
                             <div class="invoice-status {{ $statusClass }}">
-                                {{ $hd->trang_thai }}
+                                {{ \App\Support\StatusLabel::format($hd->trang_thai) }}
                             </div>
 
                         </div>
@@ -646,10 +644,10 @@
 
 
                                 @forelse($chiTietHoaDon->get(
-                                        $hd->hoa_don_id,
-                                        collect()
-                                    )
-                                    as $ct)
+                                                            $hd->hoa_don_id,
+                                                            collect()
+                                                        )
+                                                        as $ct)
                                     @php
 
                                         $tenGoi = $ct->ten_goi ?: $ct->ten_goi_pt ?: 'Dịch vụ GYM';
