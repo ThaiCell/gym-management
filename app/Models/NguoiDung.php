@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-class NguoiDung extends Model
+class NguoiDung extends Authenticatable
 {
+    use HasApiTokens;
+
     protected $table = 'nguoi_dung';
 
     protected $primaryKey = 'nguoi_dung_id';
@@ -19,4 +22,13 @@ class NguoiDung extends Model
         'mat_khau',
         'trang_thai',
     ];
+
+    protected $hidden = [
+        'mat_khau',
+    ];
+
+    public function getAuthPassword()
+    {
+        return $this->mat_khau;
+    }
 }

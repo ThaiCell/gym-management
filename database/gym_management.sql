@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 04, 2026 lúc 03:03 PM
+-- Thời gian đã tạo: Th10 13, 2026 lúc 08:02 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -145,7 +145,10 @@ INSERT INTO `dang_ky_goi_pt` (`dang_ky_goi_pt_id`, `hoi_vien_id`, `goi_pt_id`, `
 (10, 14, 3, 1, '2026-10-01', '2026-12-29', 30, 'đang hoạt động'),
 (11, 14, 2, 1, '2026-10-01', '2026-11-29', 20, 'đang hoạt động'),
 (12, 11, 3, 1, '2026-10-03', '2026-12-31', 30, 'đã hủy'),
-(13, 11, 4, 1, '2026-10-03', '2026-10-17', 5, 'đang hoạt động');
+(13, 11, 4, 1, '2026-10-03', '2026-10-17', 5, 'đã hủy'),
+(14, 11, 1, 1, '2026-10-11', '2026-11-09', 10, 'đang hoạt động'),
+(15, 11, 3, 1, '2026-10-11', '2027-01-08', 30, 'đang hoạt động'),
+(16, 11, 2, 1, '2026-10-11', '2026-12-09', 20, 'đang hoạt động');
 
 -- --------------------------------------------------------
 
@@ -237,7 +240,7 @@ INSERT INTO `dang_ky_lop` (`dang_ky_lop_id`, `lop_tap_id`, `hoi_vien_id`, `ngay_
 (31, 4, 15, '2026-10-02 08:46:29', 'đang hoạt động'),
 (32, 3, 11, '2026-10-03 08:06:04', 'đã hủy'),
 (33, 2, 11, '2026-10-03 08:06:10', 'đã hủy'),
-(34, 3, 11, '2026-10-04 11:26:47', 'đang hoạt động');
+(34, 3, 11, '2026-10-04 11:26:47', 'đã hủy');
 
 -- --------------------------------------------------------
 
@@ -342,7 +345,7 @@ INSERT INTO `hoa_don` (`hoa_don_id`, `hoi_vien_id`, `nhan_vien_id`, `ngay_lap`, 
 (10, 10, 3, '2026-09-25 16:00:00', 100000.00, 'đã thanh toán', 'Tiền mặt'),
 (12, 15, 2, '2026-10-01 13:54:55', 200000.00, 'đã thanh toán', 'Tiền mặt'),
 (14, 11, 2, '2026-10-03 08:33:52', 200000.00, 'đã thanh toán', 'Tiền mặt'),
-(15, 1, 1, '2026-10-04 12:07:23', 100000.00, 'chờ thanh toán', NULL);
+(15, 1, 2, '2026-10-04 12:07:23', 100000.00, 'đã thanh toán', 'Tiền mặt');
 
 -- --------------------------------------------------------
 
@@ -536,7 +539,8 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (2, '0001_01_01_000001_create_cache_table', 1),
 (3, '0001_01_01_000002_create_jobs_table', 1),
 (8, '2026_09_28_153041_create_vai_tro_table', 2),
-(9, '2026_09_28_153614_create_gym_tables', 2);
+(9, '2026_09_28_153614_create_gym_tables', 2),
+(10, '2026_10_13_044238_create_personal_access_tokens_table', 3);
 
 -- --------------------------------------------------------
 
@@ -558,7 +562,7 @@ CREATE TABLE `nguoi_dung` (
 --
 
 INSERT INTO `nguoi_dung` (`nguoi_dung_id`, `vai_tro_id`, `ho_ten`, `email`, `mat_khau`, `trang_thai`) VALUES
-(1, 1, 'Nguyễn Văn Admin', 'admin@gym.com', '123456', 'hoat_dong'),
+(1, 1, 'Nguyễn Văn Admin', 'admin@gym.com', '$2y$12$zdYNzlsjZ98wjJRsg/vwm.BAR1Pyb3UOsaMZULjz4INNeqYvJyyW6', 'hoat_dong'),
 (2, 2, 'Trần Văn An', 'an@gym.com', '123456', 'hoạt_động'),
 (3, 2, 'Lê Thị Hoa', 'hoa@gym.com', '123456', 'hoạt_động'),
 (4, 2, 'Phạm Văn Nam', 'nam@gym.com', '123456', 'hoạt_động'),
@@ -619,6 +623,35 @@ CREATE TABLE `password_reset_tokens` (
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `personal_access_tokens`
+--
+
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) NOT NULL,
+  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
+  `name` text NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `abilities` text DEFAULT NULL,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `personal_access_tokens`
+--
+
+INSERT INTO `personal_access_tokens` (`id`, `tokenable_type`, `tokenable_id`, `name`, `token`, `abilities`, `last_used_at`, `expires_at`, `created_at`, `updated_at`) VALUES
+(1, 'App\\Models\\NguoiDung', 1, 'gym-api', '208e5e531749994bf248ada05953d117a9b8de6f035a3ce3bdcc2fa3c713dafd', '[\"*\"]', NULL, NULL, '2026-10-12 22:24:34', '2026-10-12 22:24:34'),
+(2, 'App\\Models\\NguoiDung', 1, 'gym-api', '5e1af2db9d502f2d5ae10eb5253c8f30d9068e8e3c676665f08ac407c21bc82a', '[\"*\"]', NULL, NULL, '2026-10-12 22:33:36', '2026-10-12 22:33:36'),
+(3, 'App\\Models\\NguoiDung', 1, 'gym-api', '21c3aa2cca371d84cee5fc4cd832648637cf74f4bfe03784712489344e27d499', '[\"*\"]', '2026-10-12 22:47:33', NULL, '2026-10-12 22:47:17', '2026-10-12 22:47:33'),
+(5, 'App\\Models\\NguoiDung', 1, 'gym-api', '1db3d978eab0a1405e553b3f887dd343d1f08f5d042fae43547aa6dd5b8c1ac5', '[\"*\"]', '2026-10-12 22:52:18', NULL, '2026-10-12 22:52:08', '2026-10-12 22:52:18');
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `sessions`
 --
 
@@ -636,7 +669,9 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('rFfEDhX72dOOSCwpIADrpWRE2H1OLYCdm0SvYDg0', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVUFFUW9SeHBjSFNINUtmUXJlaEpISTFsRjJiU2lqTnV0dmdwYlJ1RCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9fQ==', 1791118980);
+('4ovPXVB83rVASkJOWVWbnsZNrdGTcRZdGL56O9fy', NULL, '127.0.0.1', 'PostmanRuntime/2.11.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUnJENld1eDNNNTZETTFzNUhwREljcmRFWTFieTBSYnh5bE16d1kwaCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1791868922),
+('hM45vIF7CoU5YF6034hB744VtImYoxin7gby3J5L', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZllnb1RkSDJCYWpRazBCM3ZBN3lkTlBjaXJHeUE3RjIxVE5WTUZyNCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9fQ==', 1791725577),
+('nwSqHKKJnclwVFKlMb6QtQezCvz5DdGyYV6sYTsd', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSVE1bXJlT2cxc2JpZFVwazVJYllKTDJzeU4wV0lzVFdleFZOaVZ1YSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9fQ==', 1791871044);
 
 -- --------------------------------------------------------
 
@@ -713,7 +748,12 @@ INSERT INTO `thong_bao` (`thong_bao_id`, `nguoi_dung_id`, `tieu_de`, `noi_dung`,
 (53, 19, 'Thanh toán thành công', 'Hóa đơn #HD00014 đã được xác nhận thanh toán bằng Tiền mặt.', 1, '2026-10-03 08:42:34'),
 (54, 19, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Gym Tăng Cơ\" thành công.', 1, '2026-10-04 11:26:47'),
 (55, 5, 'Đăng ký gói tập thành công', 'Bạn đã đăng ký gói \"Gói Tập Thử\". Hóa đơn đang chờ thanh toán.', 1, '2026-10-04 12:07:23'),
-(56, 5, 'Nhắc nhở thanh toán', 'Hóa đơn #HD00015 trị giá 100.000 VNĐ đang chờ thanh toán. Thời gian còn lại: 71.998547446667 giờ.', 1, '2026-10-04 12:07:28');
+(56, 5, 'Nhắc nhở thanh toán', 'Hóa đơn #HD00015 trị giá 100.000 VNĐ đang chờ thanh toán. Thời gian còn lại: 71.998547446667 giờ.', 1, '2026-10-04 12:07:28'),
+(57, 19, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Gym Tăng Cơ\".', 1, '2026-10-11 12:04:30'),
+(58, 19, 'Đăng ký gói PT thành công', 'Bạn đã đăng ký thành công gói PT Cơ Bản 10 Buổi. Có 10 buổi, thời hạn 30 ngày.', 1, '2026-10-11 12:56:50'),
+(59, 19, 'Đăng ký gói PT thành công', 'Bạn đã đăng ký thành công gói PT Premium 30 Buổi. Có 30 buổi, thời hạn 90 ngày.', 0, '2026-10-11 12:57:08'),
+(60, 19, 'Đăng ký gói PT thành công', 'Bạn đã đăng ký thành công gói PT Tiêu Chuẩn 20 Buổi. Có 20 buổi, thời hạn 60 ngày.', 0, '2026-10-11 12:57:23'),
+(61, 5, 'Thanh toán thành công', 'Hóa đơn #HD00015 đã được xác nhận thanh toán bằng Tiền mặt.', 0, '2026-10-11 13:11:36');
 
 -- --------------------------------------------------------
 
@@ -918,6 +958,15 @@ ALTER TABLE `password_reset_tokens`
   ADD PRIMARY KEY (`email`);
 
 --
+-- Chỉ mục cho bảng `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`),
+  ADD KEY `personal_access_tokens_expires_at_index` (`expires_at`);
+
+--
 -- Chỉ mục cho bảng `sessions`
 --
 ALTER TABLE `sessions`
@@ -966,7 +1015,7 @@ ALTER TABLE `chi_tiet_hoa_don`
 -- AUTO_INCREMENT cho bảng `dang_ky_goi_pt`
 --
 ALTER TABLE `dang_ky_goi_pt`
-  MODIFY `dang_ky_goi_pt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `dang_ky_goi_pt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT cho bảng `dang_ky_goi_tap`
@@ -1044,7 +1093,7 @@ ALTER TABLE `lop_tap`
 -- AUTO_INCREMENT cho bảng `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT cho bảng `nguoi_dung`
@@ -1059,10 +1108,16 @@ ALTER TABLE `nhan_vien`
   MODIFY `nhan_vien_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT cho bảng `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
 -- AUTO_INCREMENT cho bảng `thong_bao`
 --
 ALTER TABLE `thong_bao`
-  MODIFY `thong_bao_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `thong_bao_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
