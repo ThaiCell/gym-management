@@ -12,7 +12,7 @@
         }
 
         .contact-hero {
-            padding: 90px 30px;
+            padding: 95px 30px;
             text-align: center;
 
             background:

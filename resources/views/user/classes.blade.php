@@ -12,11 +12,11 @@
         }
 
         /* =========================
-                                   HERO
-                                ========================= */
+                                           HERO
+                                        ========================= */
 
         .classes-hero {
-            padding: 90px 30px;
+            padding: 95px 30px;
             text-align: center;
 
             background:
@@ -55,8 +55,8 @@
 
 
         /* =========================
-                                   CONTENT
-                                ========================= */
+                                           CONTENT
+                                        ========================= */
 
         .classes-section {
             max-width: 1400px;
@@ -80,8 +80,8 @@
 
 
         /* =========================
-                                   GRID
-                                ========================= */
+                                           GRID
+                                        ========================= */
 
         .classes-grid {
             display: grid;
@@ -91,8 +91,8 @@
 
 
         /* =========================
-                                   CARD
-                                ========================= */
+                                           CARD
+                                        ========================= */
 
         .class-card {
             position: relative;
@@ -114,8 +114,8 @@
 
 
         /* =========================
-                                   IMAGE
-                                ========================= */
+                                           IMAGE
+                                        ========================= */
 
         .class-image {
             height: 210px;
@@ -139,8 +139,8 @@
 
 
         /* =========================
-                                   STATUS
-                                ========================= */
+                                           STATUS
+                                        ========================= */
 
         .class-status {
             position: absolute;
@@ -161,8 +161,8 @@
 
 
         /* =========================
-                                   BODY
-                                ========================= */
+                                           BODY
+                                        ========================= */
 
         .class-body {
             padding: 28px;
@@ -188,8 +188,8 @@
 
 
         /* =========================
-                                   INFO
-                                ========================= */
+                                           INFO
+                                        ========================= */
 
         .class-info {
             border-top: 1px solid #292929;
@@ -222,8 +222,8 @@
 
 
         /* =========================
-                                   BUTTON
-                                ========================= */
+                                           BUTTON
+                                        ========================= */
 
         .class-btn {
             display: block;
@@ -263,8 +263,8 @@
 
 
         /* =========================
-                                   CTA
-                                ========================= */
+                                           CTA
+                                        ========================= */
 
         .classes-cta {
             padding: 75px 30px;
@@ -314,8 +314,8 @@
 
 
         /* =========================
-                                   TOAST
-                                ========================= */
+                                           TOAST
+                                        ========================= */
 
         .gym-toast {
             position: fixed;
@@ -464,12 +464,12 @@
 
 
         /* =========================
-                                   RESPONSIVE
-                                ========================= */
+                                           RESPONSIVE
+                                        ========================= */
 
         /* =========================
-                                   MY CLASSES
-                                ========================= */
+                                           MY CLASSES
+                                        ========================= */
 
         .my-classes-header,
         .all-classes-header {
@@ -996,9 +996,12 @@
 
                     @php
 
-                        $tenLop = strtolower($lop->ten_lop);
+                        // Ưu tiên ảnh lưu trong database; nếu chưa có thì dùng ảnh mặc định theo tên lớp.
+                        $tenLop = mb_strtolower($lop->ten_lop ?? '');
 
-                        if (str_contains($tenLop, 'yoga')) {
+                        if (!empty($lop->anh)) {
+                            $image = ltrim($lop->anh, '/');
+                        } elseif (str_contains($tenLop, 'yoga')) {
                             $image = 'img/yoga.jpg';
                         } elseif (str_contains($tenLop, 'gym')) {
                             $image = 'img/gym-tang-co.jpg';
@@ -1011,7 +1014,7 @@
                         } elseif (str_contains($tenLop, 'boxing')) {
                             $image = 'img/boxing.jpg';
                         } else {
-                            $image = 'img/photo-1571902943202-507ec2618e8f.avif';
+                            $image = '';
                         }
 
                         $daDangKy = isset($lopDaDangKy) && in_array($lop->lop_tap_id, $lopDaDangKy);

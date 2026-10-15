@@ -67,9 +67,12 @@
 
             padding: 0 60px;
 
-            position: sticky;
+            position: fixed;
             top: 0;
             z-index: 1000;
+            width: 100%;
+            left: 0;
+            right: 0;
         }
 
         /* LOGO */

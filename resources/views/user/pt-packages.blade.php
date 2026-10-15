@@ -338,42 +338,40 @@
             ========================================================= */
 
         .pt-btn {
-            display: block;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    background: transparent;
+    color: #ff1e2d;
+    text-align: center;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: .3s;
+    cursor: pointer;
+}
 
-            width: 100%;
+.pt-btn:hover {
+    background: #e50914;
+    border-color: #e50914;
+    color: #fff;
+}
 
-            padding: 13px;
+.pt-card.featured .pt-btn {
+    background: transparent;
+    border-color: #555;
+    color: #ff2633;
+}
 
-            border: 1px solid #e50914;
-
-            border-radius: 6px;
-
-            background: #e50914;
-
-            color: #fff;
-
-            text-align: center;
-
-            text-decoration: none;
-
-            font-size: 13px;
-            font-weight: 800;
-
-            text-transform: uppercase;
-
-            transition: .25s;
-
-            cursor: pointer;
-        }
-
-
-        .pt-btn:hover {
-            background: #b80710;
-
-            border-color: #b80710;
-
-            color: #fff;
-        }
+.pt-card.featured .pt-btn:hover {
+    background: #ff2633;
+    border-color: #ff2633;
+    color: #fff;
+}
 
 
         .pt-btn-form {
@@ -775,11 +773,13 @@
                             <div class="pt-image">
 
                                 @php
-                                    $image = $ptImages[$pt->goi_pt_id] ?? 'pt1.jpg';
+                                    // Ưu tiên đường dẫn ảnh lưu trong cột goi_pt.anh.
+                                    $image = !empty($pt->anh)
+                                        ? ltrim($pt->anh, '/')
+                                        : 'img/' . ($ptImages[$pt->goi_pt_id] ?? 'pt1.jpg');
                                 @endphp
 
-
-                                <img src="{{ asset('img/' . $image) }}" alt="{{ $pt->ten_goi_pt }}">
+                                <img src="{{ asset($image) }}" alt="{{ $pt->ten_goi_pt }}">
 
                             </div>
 
@@ -886,7 +886,7 @@
                                 @else
                                     <a href="/login" class="pt-btn">
 
-                                        ĐĂNG NHẬP ĐỂ ĐĂNG KÝ
+                                        ĐĂNG KÝ NGAY
 
                                     </a>
                                 @endif

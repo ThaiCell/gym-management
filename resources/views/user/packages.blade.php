@@ -13,7 +13,7 @@
 
         /* HERO */
         .packages-hero {
-            padding: 90px 30px;
+            padding: 95px 30px;
             text-align: center;
 
             background:
@@ -240,8 +240,8 @@
         }
 
         /* ================================
-                    GYM TOAST NOTIFICATION
-                    ================================ */
+                        GYM TOAST NOTIFICATION
+                        ================================ */
 
         .gym-toast {
             position: fixed;
@@ -374,8 +374,8 @@
         }
 
         /* =========================
-                   THÔNG BÁO GÓI TẬP
-                ========================= */
+                       THÔNG BÁO GÓI TẬP
+                    ========================= */
 
         .package-notice {
             width: 100%;
@@ -616,8 +616,7 @@
         {{-- CTA --}}
         <section class="packages-cta">
 
-            @if(session()->has('user'))
-
+            @if (session()->has('user'))
                 <h2>
                     BẠN ĐÃ SẴN SÀNG ?
                 </h2>
@@ -626,15 +625,10 @@
                     Quản lý gói tập và thông tin thành viên của bạn tại GYMFIT.
                 </p>
 
-                <a
-                    href="{{ session('dashboard_path') }}"
-                    class="cta-btn"
-                >
+                <a href="{{ session('dashboard_path') }}" class="cta-btn">
                     VỀ DASHBOARD
                 </a>
-
             @else
-
                 <h2>
                     BẠN ĐÃ SẴN SÀNG ?
                 </h2>
@@ -643,16 +637,12 @@
                     Tạo tài khoản và bắt đầu hành trình tập luyện cùng GYMFIT.
                 </p>
 
-                <a
-                    href="/register"
-                    class="cta-btn"
-                >
+                <a href="/register" class="cta-btn">
                     ĐĂNG KÝ THÀNH VIÊN
                 </a>
-
             @endif
 
-</section>
+        </section>
 
     </div>
     <script>

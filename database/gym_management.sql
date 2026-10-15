@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 13, 2026 lúc 08:02 AM
+-- Thời gian đã tạo: Th10 15, 2026 lúc 06:07 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -279,10 +279,10 @@ CREATE TABLE `goi_pt` (
 --
 
 INSERT INTO `goi_pt` (`goi_pt_id`, `ten_goi_pt`, `gia`, `so_buoi`, `thoi_han_ngay`, `anh`, `trang_thai`) VALUES
-(1, 'PT Cơ Bản 10 Buổi', 1500000.00, 10, 30, NULL, 'hoạt_động'),
-(2, 'PT Tiêu Chuẩn 20 Buổi', 2800000.00, 20, 60, NULL, 'hoạt_động'),
-(3, 'PT Premium 30 Buổi', 3900000.00, 30, 90, NULL, 'hoạt_động'),
-(4, 'PT Cá Nhân 5 Buổi', 800000.00, 5, 15, NULL, 'hoạt_động');
+(1, 'PT Cơ Bản 10 Buổi', 1500000.00, 10, 30, 'img/pt1.jpg', 'hoạt_động'),
+(2, 'PT Tiêu Chuẩn 20 Buổi', 2800000.00, 20, 60, 'img/pt2.jpg', 'hoạt_động'),
+(3, 'PT Premium 30 Buổi', 3900000.00, 30, 90, 'img/pt3.jpg', 'hoạt_động'),
+(4, 'PT Cá Nhân 5 Buổi', 800000.00, 5, 15, 'img/pt4.jpg', 'hoạt_động');
 
 -- --------------------------------------------------------
 
@@ -402,10 +402,12 @@ CREATE TABLE `huan_luyen_vien` (
 --
 
 INSERT INTO `huan_luyen_vien` (`pt_id`, `nguoi_dung_id`, `chuyen_mon`, `so_dien_thoai`, `anh`) VALUES
-(1, 11, 'Tăng cơ và phát triển cơ bắp', '0902000001', NULL),
-(2, 12, 'Giảm cân và Cardio', '0902000002', NULL),
-(3, 13, 'Thể hình chuyên nghiệp', '0902000003', NULL),
-(4, 14, 'Yoga và Fitness nâng cao', '0902000004', NULL);
+(1, 11, 'Tăng cơ và phát triển cơ bắp', '0902000001', 'img/trainer1.jpg'),
+(2, 12, 'Giảm cân và Cardio', '0902000002', ''),
+(3, 13, 'Boxing', '0902000003', 'img/trainer3.jpg'),
+(4, 14, 'Yoga và Fitness nâng cao', '0902000004', 'img/trainer1.jpg'),
+(5, 27, 'Thể hình chuyên nghiệp', '0903000005', NULL),
+(6, 28, 'Giảm cân và fitness', '0903000006', 'img/trainer2.jpg');
 
 -- --------------------------------------------------------
 
@@ -511,12 +513,12 @@ CREATE TABLE `lop_tap` (
 --
 
 INSERT INTO `lop_tap` (`lop_tap_id`, `ten_lop`, `mo_ta`, `lich_tap`, `suc_chua`, `anh`, `trang_thai`) VALUES
-(1, 'Yoga Cơ Bản', 'Lớp yoga dành cho người mới bắt đầu', 'Thứ 2 - 4 - 6, 08:00', 20, NULL, 'hoạt_động'),
-(2, 'Cardio Đốt Mỡ', 'Lớp cardio giúp tăng sức bền và đốt cháy năng lượng', 'Thứ 3 - 5 - 7, 17:00', 25, NULL, 'hoạt_động'),
-(3, 'Gym Tăng Cơ', 'Lớp hướng dẫn tập luyện tăng cơ', 'Thứ 2 - 4 - 6, 18:00', 20, NULL, 'hoạt_động'),
-(4, 'Fitness Toàn Thân', 'Bài tập fitness toàn thân', 'Chủ Nhật, 08:00', 30, NULL, 'hoạt_động'),
-(5, 'Strength', 'Tập trung phát triển sức mạnh, cơ bắp và khả năng vận động.', 'Thứ 2 - 4 - 6, 20:00', 15, NULL, 'hoat_dong'),
-(6, 'Boxing', 'Rèn luyện sức mạnh, phản xạ và khả năng phối hợp thông qua các bài tập Boxing.', 'Thứ 3 - 5 - 7, 19:30', 12, NULL, 'hoat_dong');
+(1, 'Yoga Cơ Bản', 'Lớp yoga dành cho người mới bắt đầu', 'Thứ 2 - 4 - 6, 08:00', 20, 'img/yoga.jpg', 'hoạt_động'),
+(2, 'Cardio Đốt Mỡ', 'Lớp cardio giúp tăng sức bền và đốt cháy năng lượng', 'Thứ 3 - 5 - 7, 17:00', 25, 'img/cardio.jpg', 'hoạt_động'),
+(3, 'Gym Tăng Cơ', 'Lớp hướng dẫn tập luyện tăng cơ', 'Thứ 2 - 4 - 6, 18:00', 20, 'img/gym-tang-co.jpg', 'hoạt_động'),
+(4, 'Fitness Toàn Thân', 'Bài tập fitness toàn thân', 'Chủ Nhật, 08:00', 30, 'img/fitness-toan-than.jpg', 'hoạt_động'),
+(5, 'Strength', 'Tập trung phát triển sức mạnh, cơ bắp và khả năng vận động.', 'Thứ 2 - 4 - 6, 20:00', 15, 'img/strength.jpg', 'hoat_dong'),
+(6, 'Boxing', 'Rèn luyện sức mạnh, phản xạ và khả năng phối hợp thông qua các bài tập Boxing.', 'Thứ 3 - 5 - 7, 19:30', 12, 'img/boxing.jpg', 'hoat_dong');
 
 -- --------------------------------------------------------
 
@@ -575,7 +577,7 @@ INSERT INTO `nguoi_dung` (`nguoi_dung_id`, `vai_tro_id`, `ho_ten`, `email`, `mat
 (11, 4, 'Nguyễn Hoàng Long', 'long@gym.com', '123456', 'hoạt_động'),
 (12, 4, 'Trần Minh Khoa', 'khoa@gym.com', '123456', 'hoạt_động'),
 (13, 4, 'Lê Quốc Bảo', 'bao@gym.com', '123456', 'hoạt_động'),
-(14, 4, 'Phạm Thanh Phong', 'phong@gym.com', '123456', 'bi_khoa'),
+(14, 4, 'Phạm Thanh Phong', 'phong@gym.com', '123456', 'hoạt_động'),
 (15, 3, 'Nguyễn Hoàng Nam', 'nam1@gmail.com', '123456', 'hoạt_động'),
 (16, 3, 'Trần Quốc Việt', 'viet@gmail.com', '123456', 'hoạt_động'),
 (17, 3, 'Lê Minh Tuấn', 'tuan@gmail.com', '123456', 'hoạt_động'),
@@ -584,7 +586,12 @@ INSERT INTO `nguoi_dung` (`nguoi_dung_id`, `vai_tro_id`, `ho_ten`, `email`, `mat
 (20, 3, 'thái', 'thai@gmail.com', '$2y$12$MTMe6TfSFGGf49Gr.H3TM.MniGrJyYxR4YsuWwXfnUbzv3JfnmqKu', 'hoạt_động'),
 (21, 3, 'ali', 'ali@gmail.com', '$2y$12$GTbbenfb650KvMdkYQRBf.AGQBnW6pZWOxihpB6kn1lH5GqnCRkke', 'hoạt_động'),
 (22, 3, 'ali', 'alo@gmail.com', '$2y$12$WVAz9hYnukGA4I65C95Nfuh31PFFPhblNoCe81/jmWbZUGcm0C4.i', 'hoạt_động'),
-(23, 3, 'thiengay', 'gay@gmail.com', '$2y$12$o26IFfqeUrGOmKGeD8LpxecgSl3x3EDE0Iy1nmztxqxcNpA0cFcvK', 'hoat_dong');
+(23, 3, 'thiengay', 'gay@gmail.com', '$2y$12$o26IFfqeUrGOmKGeD8LpxecgSl3x3EDE0Iy1nmztxqxcNpA0cFcvK', 'hoat_dong'),
+(24, 3, 'Nguyễn Minh Đức', 'minhduc@gym.com', '123456', 'hoat_dong'),
+(25, 3, 'Trần Ngọc Hà', 'ngoch a@gym.com', '123456', 'hoat_dong'),
+(26, 3, 'Lê Quốc Anh', 'quocanh@gym.com', '123456', 'hoat_dong'),
+(27, 4, 'Phạm Minh Tuấn', 'minhtuan@gym.com', '123456', 'hoat_dong'),
+(28, 4, 'Võ Ngọc Hân', 'ngochan@gym.com', '123456', 'hoat_dong');
 
 -- --------------------------------------------------------
 
@@ -671,7 +678,8 @@ CREATE TABLE `sessions` (
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
 ('4ovPXVB83rVASkJOWVWbnsZNrdGTcRZdGL56O9fy', NULL, '127.0.0.1', 'PostmanRuntime/2.11.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUnJENld1eDNNNTZETTFzNUhwREljcmRFWTFieTBSYnh5bE16d1kwaCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1791868922),
 ('hM45vIF7CoU5YF6034hB744VtImYoxin7gby3J5L', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZllnb1RkSDJCYWpRazBCM3ZBN3lkTlBjaXJHeUE3RjIxVE5WTUZyNCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9fQ==', 1791725577),
-('nwSqHKKJnclwVFKlMb6QtQezCvz5DdGyYV6sYTsd', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSVE1bXJlT2cxc2JpZFVwazVJYllKTDJzeU4wV0lzVFdleFZOaVZ1YSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9fQ==', 1791871044);
+('nwSqHKKJnclwVFKlMb6QtQezCvz5DdGyYV6sYTsd', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSVE1bXJlT2cxc2JpZFVwazVJYllKTDJzeU4wV0lzVFdleFZOaVZ1YSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9fQ==', 1791871044),
+('TT5qkyHWdEYCvQy04tchmJgl1nEHTsP4TtW0hWh8', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWm9MU1lCV2NVOHRHZXQ4NkxkSXN1d0Ruem5wWmRRejNNc3lRMlVXayI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1792037177);
 
 -- --------------------------------------------------------
 
@@ -1063,7 +1071,7 @@ ALTER TABLE `hoi_vien`
 -- AUTO_INCREMENT cho bảng `huan_luyen_vien`
 --
 ALTER TABLE `huan_luyen_vien`
-  MODIFY `pt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `pt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `jobs`
@@ -1099,7 +1107,7 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT cho bảng `nguoi_dung`
 --
 ALTER TABLE `nguoi_dung`
-  MODIFY `nguoi_dung_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `nguoi_dung_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT cho bảng `nhan_vien`

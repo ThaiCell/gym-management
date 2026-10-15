@@ -12,7 +12,7 @@
         }
 
         .trainers-hero {
-            padding: 90px 30px;
+            padding: 95px 30px;
             text-align: center;
 
             background:
@@ -328,8 +328,11 @@
                             ->take(2)
                             ->implode('');
 
-                        $imagePath = public_path('img/trainer' . $trainer->pt_id . '.jpg');
-                        $hasImage = file_exists($imagePath);
+                        $image = trim($trainer->anh ?? '');
+
+                        $imagePath = $image !== '' ? public_path($image) : '';
+
+                        $hasImage = $image !== '' && file_exists($imagePath);
 
                         $hocVienDangPt = $trainer->so_hoc_vien ?? 0;
                         $soLich = $trainer->so_lich ?? 0;
@@ -339,8 +342,11 @@
 
                         <div class="trainer-image">
                             @if ($hasImage)
-                                <img src="{{ asset('img/trainer' . $trainer->pt_id . '.jpg') }}"
-                                    alt="{{ $trainer->ho_ten }}">
+                                <img src="{{ asset($image) }}" alt="{{ $trainer->ho_ten }}"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="trainer-avatar" style="display:none">
+                                    {{ mb_strtoupper($initials) }}
+                                </div>
                             @else
                                 <div class="trainer-avatar">
                                     {{ mb_strtoupper($initials) }}

@@ -308,13 +308,54 @@
                 padding: 50px 30px;
             }
         }
-    </style>
+    
+/* GYMFIT_AUTO_SLIDER */
+.hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+.hero .hero-slideshow {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+.hero .hero-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 1.2s ease-in-out;
+}
+.hero .hero-slide.active {
+    opacity: 1;
+}
+.hero .hero-slideshow::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,.48), rgba(0,0,0,.20));
+}
+.hero > :not(.hero-slideshow) {
+    position: relative;
+    z-index: 1;
+}
+</style>
 
 
     <div class="home-page">
 
         {{-- HERO --}}
         <section class="hero">
+    <div class="hero-slideshow" aria-hidden="true">
+    <div class="hero-slide active"></div>
+    <div class="hero-slide"></div>
+</div>
+
             <div class="hero-content">
 
                 <div class="hero-small">
@@ -342,7 +383,52 @@
                 </a>
 
             </div>
-        </section>
+        
+<script>
+/* GYMFIT_AUTO_SLIDER */
+(() => {
+    const hero = document.querySelector('.hero');
+    if (!hero || hero.dataset.sliderReady) return;
+
+    const slides = [...hero.querySelectorAll('.hero-slide')];
+    if (slides.length < 2) return;
+
+    const images = [
+        
+        '/img/banner2.avif',
+        '/img/banner3.avif',
+        '/img/banner4.avif',
+        '/img/banner5.avif'
+    ];
+
+    hero.dataset.sliderReady = '1';
+
+    let current = 0;
+    let activeLayer = 0;
+
+    slides[0].style.backgroundImage = `url("${images[0]}")`;
+    slides[1].style.backgroundImage = `url("${images[1]}")`;
+
+    // Tai truoc cac anh de chuyen canh muot hon
+    images.forEach(src => {
+        const img = new Image();
+        img.src = src;
+    });
+
+    window.setInterval(() => {
+        const next = (current + 1) % images.length;
+        const nextLayer = 1 - activeLayer;
+
+        slides[nextLayer].style.backgroundImage = `url("${images[next]}")`;
+        slides[nextLayer].classList.add('active');
+        slides[activeLayer].classList.remove('active');
+
+        current = next;
+        activeLayer = nextLayer;
+    }, 4000);
+})();
+</script>
+</section>
 
 
         {{-- DỊCH VỤ --}}

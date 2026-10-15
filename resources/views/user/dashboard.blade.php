@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Dashboard Hội viên')
 @section('role_name', 'Hội viên')
@@ -609,28 +609,13 @@
                                         {{ \App\Support\StatusLabel::format($goi->trang_thai) }}
                                     </span>
 
-                                    @if ($goiHetHan)
-                                        <span class="action-locked">
-                                            ĐÃ HẾT HẠN
-                                        </span>
-                                    @elseif ($hoaDonDaThanhToan)
-                                        <span class="action-locked">
-                                            ĐÃ THANH TOÁN · KHÔNG THỂ HỦY
-                                        </span>
-                                    @elseif ($hoaDonChoThanhToan && $conTrong72Gio)
+                                    @if (!$goiHetHan && !$hoaDonDaThanhToan && $hoaDonChoThanhToan && $conTrong72Gio)
                                         <form action="/user/packages/{{ $goi->dang_ky_goi_tap_id }}/cancel" method="POST"
                                             class="cancel-form"
                                             onsubmit="return confirm('Bạn có chắc chắn muốn hủy gói tập này không?');">
                                             @csrf
-
-                                            <button type="submit" class="action-btn cancel-btn">
-                                                HỦY GÓI
-                                            </button>
+                                            <button type="submit" class="action-btn cancel-btn">HỦY GÓI</button>
                                         </form>
-                                    @else
-                                        <span class="action-locked">
-                                            KHÔNG THỂ HỦY
-                                        </span>
                                     @endif
 
                                 </div>
@@ -709,21 +694,39 @@
 
                                 </div>
 
+                                @php
+                                    $ptHoaDonDaThanhToan = DB::table('chi_tiet_hoa_don')
+                                        ->join('hoa_don', 'chi_tiet_hoa_don.hoa_don_id', '=', 'hoa_don.hoa_don_id')
+                                        ->where('chi_tiet_hoa_don.goi_pt_id', $pt->goi_pt_id)
+                                        ->where('hoa_don.hoi_vien_id', function ($query) {
+                                            $query->select('hoi_vien_id')
+                                                ->from('hoi_vien')
+                                                ->where('nguoi_dung_id', session('user')->nguoi_dung_id)
+                                                ->limit(1);
+                                        })
+                                        ->whereDate('hoa_don.ngay_lap', '>=', $pt->ngay_bat_dau)
+                                        ->whereIn(DB::raw('LOWER(TRIM(hoa_don.trang_thai))'), [
+                                            'đã thanh toán', 'da thanh toan', 'da_thanh_toan', 'paid'
+                                        ])
+                                        ->exists();
+                                @endphp
+
                                 <div class="action-group">
                                     <span class="status-badge">
                                         {{ \App\Support\StatusLabel::format($pt->trang_thai) }}
                                     </span>
 
-                                    @if (in_array(mb_strtolower(trim($pt->trang_thai ?? '')),
+                                    @if (
+                                        !$ptHoaDonDaThanhToan &&
+                                        in_array(mb_strtolower(trim($pt->trang_thai ?? '')),
                                             ['đang hoạt động', 'dang_hoat_dong', 'hoạt_động', 'hoat_dong'],
-                                            true))
+                                            true)
+                                    )
                                         <form action="/user/pt-packages/{{ $pt->dang_ky_goi_pt_id }}/cancel" method="POST"
                                             class="cancel-form"
                                             onsubmit="return confirm('Bạn có chắc chắn muốn hủy gói PT này không?');">
                                             @csrf
-                                            <button type="submit" class="action-btn cancel-btn">
-                                                HỦY GÓI PT
-                                            </button>
+                                            <button type="submit" class="action-btn cancel-btn">HỦY GÓI PT</button>
                                         </form>
                                     @endif
                                 </div>

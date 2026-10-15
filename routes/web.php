@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
@@ -240,10 +240,7 @@ Route::get('/about', function () {
 Route::get('/packages', function () {
 
     $goiTap = DB::table('goi_tap')
-        ->whereIn('trang_thai', [
-            'hoạt_động',
-            'hoat_dong'
-        ])
+        ->whereIn('trang_thai', ['hoạt_động', 'hoat_dong', 'đang hoạt động', 'dang_hoat_dong'])
         ->orderBy('gia', 'asc')
         ->get();
 
@@ -584,10 +581,10 @@ Route::get('/classes', function () {
 
     // Danh sách lớp đang hoạt động
     $lopTap = DB::table('lop_tap')
-        ->whereIn('trang_thai', [
-            'hoạt_động',
-            'hoat_dong'
-        ])
+        ->where(function ($query) {
+            $query->where('trang_thai', 'like', '%hoat_dong%')
+                  ->orWhere('trang_thai', 'like', '%hoạt_động%');
+        })
         ->orderBy('lop_tap_id', 'asc')
         ->get();
 
@@ -716,11 +713,7 @@ Route::post('/classes/register/{lopTapId}', function ($lopTapId) {
             'lop_tap_id',
             $lopTapId
         )
-        ->whereIn('trang_thai', [
-            'hoạt_động',
-            'hoat_dong',
-            'hoạt động'
-        ])
+        ->whereIn('trang_thai', ['hoạt_động', 'hoat_dong', 'đang hoạt động', 'dang_hoat_dong'])
         ->first();
 
 
@@ -745,12 +738,7 @@ Route::post('/classes/register/{lopTapId}', function ($lopTapId) {
             'hoi_vien_id',
             $hoiVien->hoi_vien_id
         )
-        ->whereIn('trang_thai', [
-            'đang hoạt động',
-            'dang_hoat_dong',
-            'hoạt_động',
-            'hoat_dong'
-        ])
+        ->whereIn('trang_thai', ['hoạt_động', 'hoat_dong', 'đang hoạt động', 'dang_hoat_dong'])
         ->exists();
 
 
@@ -773,12 +761,7 @@ Route::post('/classes/register/{lopTapId}', function ($lopTapId) {
                 'lop_tap_id',
                 $lop->lop_tap_id
             )
-            ->whereIn('trang_thai', [
-                'đang hoạt động',
-                'dang_hoat_dong',
-                'hoạt_động',
-                'hoat_dong'
-            ])
+            ->whereIn('trang_thai', ['hoạt_động', 'hoat_dong', 'đang hoạt động', 'dang_hoat_dong'])
             ->count();
 
 
@@ -1024,11 +1007,7 @@ Route::get('/trainers', function () {
                     'pt_id',
                     DB::raw('COUNT(*) as so_hoc_vien')
                 )
-                ->whereIn('trang_thai', [
-                    'đang hoạt động',
-                    'dang hoat dong',
-                    'hoat_dong'
-                ])
+                ->whereIn('trang_thai', ['hoạt_động', 'hoat_dong', 'đang hoạt động', 'dang_hoat_dong'])
                 ->whereDate('ngay_ket_thuc', '>=', $today)
                 ->groupBy('pt_id'),
             'pt_hoc_vien',
@@ -1044,6 +1023,11 @@ Route::get('/trainers', function () {
                     'pt_id',
                     DB::raw('COUNT(*) as so_lich')
                 )
+                ->whereNotIn('trang_thai', [
+                    'đã hủy',
+                    'đã huỷ',
+                    'da_huy'
+                ])
                 ->groupBy('pt_id'),
             'pt_lich',
             'huan_luyen_vien.pt_id',
@@ -1061,6 +1045,7 @@ Route::get('/trainers', function () {
             'huan_luyen_vien.nguoi_dung_id',
             'huan_luyen_vien.chuyen_mon',
             'huan_luyen_vien.so_dien_thoai',
+            'huan_luyen_vien.anh',
 
             'nguoi_dung.ho_ten',
             'nguoi_dung.email',
@@ -1491,14 +1476,16 @@ Route::post('/login', function () {
     | Kiểm tra trạng thái tài khoản
     |--------------------------------------------------------------------------
     */
-    if (!in_array($user->trang_thai, [
+    if (!in_array(mb_strtolower(trim((string) $user->trang_thai), 'UTF-8'), [
         'hoat_dong',
         'hoạt_động',
         'hoạt động',
-    ])) {
+        'dang_hoat_dong',
+        'đang hoạt động',
+    ], true)) {
         return back()
             ->withInput()
-            ->with('error', 'Tài khoản đang bị khóa.');
+            ->with('error', 'Tài khoản đang bị khóa hoặc ngừng hoạt động.');
     }
 
 
@@ -6983,3 +6970,6 @@ Route::get('/trainer/profile', function () {
 
 
             
+
+
+
