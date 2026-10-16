@@ -1303,9 +1303,9 @@ Route::post('/pt-packages/{id}/register', function ($id) {
 */
 
 Route::get('/contact', function () {
+    $settings = DB::table('cai_dat')->pluck('gia_tri', 'khoa');
 
-    return view('user.contact');
-
+    return view('user.contact', compact('settings'));
 });
 
 
@@ -1928,6 +1928,91 @@ Route::get('/dashboard', function () {
 });
 
 
+/* =====================================
+   ADMIN - CÀI ĐẶT HỆ THỐNG
+===================================== */
+
+Route::get('/admin/settings', function () {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $settings = DB::table('cai_dat')
+        ->pluck('gia_tri', 'khoa');
+
+    return view('admin.settings', compact('settings'));
+});
+
+Route::post('/admin/settings/gym', function (Request $request) {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $data = $request->validate([
+        'ten_phong_gym' => 'required|string|max:150',
+        'dia_chi' => 'nullable|string|max:255',
+        'so_dien_thoai' => 'nullable|string|max:20',
+        'email_lien_he' => 'nullable|email|max:150',
+    ]);
+
+    foreach ($data as $key => $value) {
+        DB::table('cai_dat')->updateOrInsert(
+            ['khoa' => $key],
+            ['gia_tri' => $value ?? '', 'updated_at' => now(), 'created_at' => now()]
+        );
+    }
+
+    return redirect('/admin/settings')
+        ->with('success_gym', 'Đã lưu thông tin phòng gym.');
+});
+
+Route::post('/admin/settings/password', function (Request $request) {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $request->validate([
+        'mat_khau_hien_tai' => 'required|string',
+        'mat_khau_moi' => 'required|string|min:8|confirmed',
+    ], [
+        'mat_khau_moi.min' => 'Mật khẩu mới phải có ít nhất 8 ký tự.',
+        'mat_khau_moi.confirmed' => 'Xác nhận mật khẩu mới không khớp.',
+    ]);
+
+    $user = DB::table('nguoi_dung')
+        ->where('nguoi_dung_id', session('user')->nguoi_dung_id)
+        ->first();
+
+    if (!$user || !Hash::check($request->mat_khau_hien_tai, $user->mat_khau)) {
+        return back()->withErrors([
+            'mat_khau_hien_tai' => 'Mật khẩu hiện tại không chính xác.',
+        ]);
+    }
+
+    DB::table('nguoi_dung')
+        ->where('nguoi_dung_id', $user->nguoi_dung_id)
+        ->update([
+            'mat_khau' => Hash::make($request->mat_khau_moi),
+        ]);
+
+    return redirect('/admin/settings')
+        ->with('success_password', 'Đổi mật khẩu thành công.');
+});
+
+
+
 Route::get('/admin/members', function () {
 
     if (!session()->has('user')) {
@@ -1971,6 +2056,80 @@ Route::get('/admin/members', function () {
     return view('admin.members', compact('hoiVien', 'keyword'));
 
 });
+
+
+/* ================================
+   ADMIN - THÊM HỘI VIÊN
+================================ */
+
+Route::get('/admin/members/create', function () {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    return view('admin.member-create');
+});
+
+Route::post('/admin/members/create', function (Request $request) {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $request->validate([
+        'ho_ten' => 'required|string|max:100',
+        'email' => 'required|email|max:100',
+        'mat_khau' => 'required|string|min:6',
+        'ngay_sinh' => 'nullable|date',
+        'so_dien_thoai' => 'nullable|string|max:20',
+        'dia_chi' => 'nullable|string|max:255',
+    ], [
+        'ho_ten.required' => 'Vui lòng nhập họ tên.',
+        'email.required' => 'Vui lòng nhập email.',
+        'email.email' => 'Email không hợp lệ.',
+        'mat_khau.required' => 'Vui lòng nhập mật khẩu.',
+        'mat_khau.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
+    ]);
+
+    if (DB::table('nguoi_dung')->where('email', $request->email)->exists()) {
+        return back()->withInput()->with('error', 'Email đã tồn tại.');
+    }
+
+    try {
+        DB::transaction(function () use ($request) {
+            $nguoiDungId = DB::table('nguoi_dung')->insertGetId([
+                'vai_tro_id' => 3,
+                'ho_ten' => trim($request->ho_ten),
+                'email' => trim($request->email),
+                'mat_khau' => Hash::make($request->mat_khau),
+                'trang_thai' => 'hoat_dong',
+            ]);
+
+            DB::table('hoi_vien')->insert([
+                'nguoi_dung_id' => $nguoiDungId,
+                'ngay_sinh' => $request->ngay_sinh ?: null,
+                'so_dien_thoai' => trim($request->so_dien_thoai ?? '') ?: null,
+                'dia_chi' => trim($request->dia_chi ?? '') ?: null,
+                'ngay_tham_gia' => now()->toDateString(),
+            ]);
+        });
+
+        return redirect('/admin/members')
+            ->with('success', 'Thêm hội viên thành công.');
+    } catch (\Throwable $e) {
+        return back()->withInput()
+            ->with('error', 'Không thể thêm hội viên. Vui lòng kiểm tra dữ liệu.');
+    }
+});
+
+
 
 Route::get('/admin/members/{id}', function ($id) {
 
@@ -2171,6 +2330,71 @@ Route::post('/admin/members/{id}/toggle-status', function ($id) {
         ->with('success', $message);
 
 });
+
+
+/* ================================
+   ADMIN - XÓA HỘI VIÊN
+================================ */
+
+Route::post('/admin/members/{id}/delete', function ($id) {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $member = DB::table('hoi_vien')
+        ->where('hoi_vien_id', $id)
+        ->first();
+
+    if (!$member) {
+        return redirect('/admin/members')
+            ->with('error', 'Không tìm thấy hội viên.');
+    }
+
+    $relatedChecks = [
+        ['dang_ky_goi_tap', 'hoi_vien_id'],
+        ['dang_ky_goi_pt', 'hoi_vien_id'],
+        ['lich_pt', 'hoi_vien_id'],
+        ['check_in', 'hoi_vien_id'],
+        ['hoa_don', 'hoi_vien_id'],
+        ['dang_ky_lop', 'hoi_vien_id'],
+    ];
+
+    foreach ($relatedChecks as [$table, $column]) {
+        if (DB::table($table)->where($column, $id)->exists()) {
+            return redirect('/admin/members/' . $id)
+                ->with('error',
+                    'Không thể xóa hội viên vì đã có lịch sử gói tập, lịch PT, check-in, lớp hoặc hóa đơn. Hãy khóa tài khoản thay thế.');
+        }
+    }
+
+    try {
+        DB::transaction(function () use ($member, $id) {
+            DB::table('thong_bao')
+                ->where('nguoi_dung_id', $member->nguoi_dung_id)
+                ->delete();
+
+            DB::table('hoi_vien')
+                ->where('hoi_vien_id', $id)
+                ->delete();
+
+            DB::table('nguoi_dung')
+                ->where('nguoi_dung_id', $member->nguoi_dung_id)
+                ->delete();
+        });
+
+        return redirect('/admin/members')
+            ->with('success', 'Đã xóa hội viên thành công.');
+    } catch (\Throwable $e) {
+        return redirect('/admin/members/' . $id)
+            ->with('error', 'Không thể xóa hội viên do dữ liệu liên quan.');
+    }
+});
+
+
 
 
 Route::get('/admin/packages', function () {

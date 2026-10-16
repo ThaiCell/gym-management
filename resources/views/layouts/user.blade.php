@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link rel="icon" type="image/png" href="{{ asset('img/favicon.png') }}?v=12345">
+
     <title>@yield('title', 'GYM MANAGEMENT')</title>
 
     <style>
@@ -606,10 +608,14 @@
     </style>
 
     @yield('styles')
+    
 </head>
 
 <body>
-
+@php
+    $gymSettings = \Illuminate\Support\Facades\DB::table('cai_dat')
+        ->pluck('gia_tri', 'khoa');
+@endphp
     {{-- HEADER NGƯỜI DÙNG --}}
     <header class="user-header">
 
@@ -842,9 +848,7 @@
                     <div class="footer-contact-content">
 
                         <strong>Địa chỉ</strong>
-
-                        123 Đường Nguyễn Văn Linh,
-                        Quận 7, TP. Hồ Chí Minh
+                        {{ $gymSettings['dia_chi'] ?? 'Chưa cập nhật địa chỉ' }}
 
                     </div>
 
@@ -860,8 +864,7 @@
                     <div class="footer-contact-content">
 
                         <strong>Điện thoại</strong>
-
-                        0123 456 789
+                        {{ $gymSettings['so_dien_thoai'] ?? 'Chưa cập nhật số điện thoại' }}
 
                     </div>
 
@@ -877,8 +880,7 @@
                     <div class="footer-contact-content">
 
                         <strong>Email</strong>
-
-                        gymfit@example.com
+                        {{ $gymSettings['email_lien_he'] ?? 'Chưa cập nhật email' }}
 
                     </div>
 

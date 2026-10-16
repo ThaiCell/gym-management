@@ -180,6 +180,11 @@
                 <h2>Quản lý thành viên</h2>
                 <p>Danh sách hội viên trong hệ thống Gym Management</p>
             </div>
+            <a href="/admin/members/create"
+            style="background:#ed1c24;color:white;padding:12px 18px;
+            border-radius:7px;text-decoration:none;font-weight:600;">
+                + Thêm hội viên
+            </a>
         </div>
 
         <div class="member-card">

@@ -309,8 +309,7 @@
                             </h3>
 
                             <p>
-                                123 Đường GymFit, Quận Trung Tâm,
-                                TP. Hồ Chí Minh
+                                {{ $settings['dia_chi'] ?? 'Chưa cập nhật địa chỉ' }}
                             </p>
                         </div>
 
@@ -329,7 +328,7 @@
                             </h3>
 
                             <p>
-                                0900 123 456
+                                {{ $settings['so_dien_thoai'] ?? 'Chưa cập nhật số điện thoại' }}
                             </p>
                         </div>
 
@@ -348,7 +347,7 @@
                             </h3>
 
                             <p>
-                                contact@gymfit.vn
+                                {{ $settings['email_lien_he'] ?? 'Chưa cập nhật email' }}
                             </p>
                         </div>
 

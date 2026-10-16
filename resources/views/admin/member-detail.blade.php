@@ -145,6 +145,43 @@
                 flex-direction: column;
             }
         }
+        
+        /* Đồng bộ kích thước các nút trên trang chi tiết hội viên */
+        .detail-header > div:last-child {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .detail-header > div:last-child > a.back-btn,
+        .detail-header > div:last-child > form {
+            width: 140px;
+            min-width: 140px;
+            height: 40px;
+            box-sizing: border-box;
+        }
+
+        .detail-header > div:last-child > a.back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 8px;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        .detail-header > div:last-child > form button.back-btn {
+            width: 100%;
+            height: 40px;
+            box-sizing: border-box;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 8px;
+            white-space: nowrap;
+            font-size: 13px;
+        }
     </style>
 
     <div class="member-detail-page">
@@ -161,6 +198,12 @@
                 margin-bottom: 18px;
             ">
                 {{ session('success') }}
+            </div>
+        @endif
+        @if (session('error'))
+            <div style="background:#411b1b;color:#ffb5b5;padding:12px 15px;
+                border-radius:7px;margin-bottom:18px;">
+                {{ session('error') }}
             </div>
         @endif
         <div class="detail-header">
@@ -207,7 +250,16 @@
                     @endif
 
                 </form>
-
+                <form action="/admin/members/{{ $member->hoi_vien_id }}/delete"
+                method="POST"
+                style="margin:0;"
+                onsubmit="return confirm('Bạn chắc chắn muốn xóa hội viên này? Thao tác này không thể hoàn tác.');">
+                @csrf
+                <button type="submit" class="back-btn"
+                    style="background:#7f1d1d;border-color:#991b1b;cursor:pointer;">
+                    🗑 Xóa hội viên
+                </button>
+            </form>
                 <a href="/admin/members" class="back-btn">
                     ← Quay lại danh sách
                 </a>
