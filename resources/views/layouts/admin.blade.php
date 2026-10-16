@@ -383,6 +383,10 @@
                <div class="menu-icon">🏋🏼‍♀️</div>
                 <span>Gói PT</span>
             </a>
+            <a href="/admin/classes" class="menu-item">
+               <div class="menu-icon">🏢</div>
+                <span>Lớp tập</span>
+            </a>
             <a href="/admin/trainers">
                 <div class="menu-icon">🏋</div>
                 <span>Huấn luyện viên</span>

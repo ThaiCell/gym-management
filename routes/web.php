@@ -7538,6 +7538,123 @@ Route::post('/admin/pt-packages/{id}/delete', function ($id) {
     return redirect('/admin/pt-packages')->with('success','Đã xóa gói PT.');
 });
         
+// =====================================================
+// ADMIN - QUẢN LÝ LỚP TẬP
+// =====================================================
+
+Route::get('/admin/classes', function () {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $lopTap = DB::table('lop_tap')
+        ->leftJoin('dang_ky_lop', function ($join) {
+            $join->on('lop_tap.lop_tap_id', '=', 'dang_ky_lop.lop_tap_id')
+                 ->whereNotIn('dang_ky_lop.trang_thai', ['đã hủy', 'da_huy', 'hủy', 'huy']);
+        })
+        ->select('lop_tap.*', DB::raw('COUNT(dang_ky_lop.dang_ky_lop_id) as so_dang_ky'))
+        ->groupBy(
+            'lop_tap.lop_tap_id',
+            'lop_tap.ten_lop',
+            'lop_tap.mo_ta',
+            'lop_tap.lich_tap',
+            'lop_tap.suc_chua',
+            'lop_tap.anh',
+            'lop_tap.trang_thai'
+        )
+        ->orderByDesc('lop_tap.lop_tap_id')
+        ->get();
+
+    return view('admin.classes', compact('lopTap'));
+});
+
+Route::get('/admin/classes/create', function () {
+    if (!session()->has('user')) return redirect('/login');
+    if (session('role_id') != 1) return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    return view('admin.class-create');
+});
+
+Route::post('/admin/classes/create', function (Request $request) {
+    if (!session()->has('user')) return redirect('/login');
+    if (session('role_id') != 1) return redirect('/' . session('dashboard_path', 'user/dashboard'));
+
+    $data = $request->validate([
+        'ten_lop' => 'required|string|max:100',
+        'mo_ta' => 'nullable|string',
+        'lich_tap' => 'nullable|string|max:255',
+        'suc_chua' => 'nullable|integer|min:1',
+        'trang_thai' => 'required|string|max:30',
+        'anh' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+    ]);
+
+    unset($data['anh']);
+    if ($request->hasFile('anh')) {
+        $name = 'class_' . time() . '.' . $request->file('anh')->extension();
+        $request->file('anh')->move(public_path('img'), $name);
+        $data['anh'] = 'img/' . $name;
+    }
+
+    DB::table('lop_tap')->insert($data);
+
+    return redirect('/admin/classes')->with('success', 'Đã thêm lớp tập thành công.');
+});
+
+Route::get('/admin/classes/{id}/edit', function ($id) {
+    if (!session()->has('user')) return redirect('/login');
+    if (session('role_id') != 1) return redirect('/' . session('dashboard_path', 'user/dashboard'));
+
+    $lop = DB::table('lop_tap')->where('lop_tap_id', $id)->first();
+    if (!$lop) return redirect('/admin/classes')->with('error', 'Không tìm thấy lớp tập.');
+
+    return view('admin.class-edit', compact('lop'));
+});
+
+Route::post('/admin/classes/{id}/edit', function (Request $request, $id) {
+    if (!session()->has('user')) return redirect('/login');
+    if (session('role_id') != 1) return redirect('/' . session('dashboard_path', 'user/dashboard'));
+
+    $lop = DB::table('lop_tap')->where('lop_tap_id', $id)->first();
+    if (!$lop) return redirect('/admin/classes')->with('error', 'Không tìm thấy lớp tập.');
+
+    $data = $request->validate([
+        'ten_lop' => 'required|string|max:100',
+        'mo_ta' => 'nullable|string',
+        'lich_tap' => 'nullable|string|max:255',
+        'suc_chua' => 'nullable|integer|min:1',
+        'trang_thai' => 'required|string|max:30',
+        'anh' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+    ]);
+
+    unset($data['anh']);
+    if ($request->hasFile('anh')) {
+        $name = 'class_' . time() . '.' . $request->file('anh')->extension();
+        $request->file('anh')->move(public_path('img'), $name);
+        $data['anh'] = 'img/' . $name;
+    }
+
+    DB::table('lop_tap')->where('lop_tap_id', $id)->update($data);
+
+    return redirect('/admin/classes')->with('success', 'Đã cập nhật lớp tập.');
+});
+
+Route::post('/admin/classes/{id}/delete', function ($id) {
+    if (!session()->has('user')) return redirect('/login');
+    if (session('role_id') != 1) return redirect('/' . session('dashboard_path', 'user/dashboard'));
+
+    $lop = DB::table('lop_tap')->where('lop_tap_id', $id)->first();
+    if (!$lop) return redirect('/admin/classes')->with('error', 'Không tìm thấy lớp tập.');
+
+    $coDangKy = DB::table('dang_ky_lop')->where('lop_tap_id', $id)->exists();
+    if ($coDangKy) {
+        return redirect('/admin/classes')->with('error', 'Lớp đã có đăng ký; hãy đổi trạng thái sang ngừng hoạt động để giữ lịch sử.');
+    }
+
+    DB::table('lop_tap')->where('lop_tap_id', $id)->delete();
+    return redirect('/admin/classes')->with('success', 'Đã xóa lớp tập.');
+});
 
 
 
