@@ -2631,6 +2631,76 @@ Route::post('/admin/packages/{id}/toggle-status', function ($id) {
 });
 
 
+ // =====================================================
+ // ADMIN - XÓA GÓI TẬP
+ // =====================================================
+
+Route::post('/admin/packages/{id}/delete', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $package = DB::table('goi_tap')
+        ->where('goi_tap_id', $id)
+        ->first();
+
+    if (!$package) {
+        return redirect('/admin/packages')
+            ->with('error', 'Không tìm thấy gói tập.');
+    }
+
+    // Không xóa gói đã có đăng ký
+    $hasRegistration = DB::table('dang_ky_goi_tap')
+        ->where('goi_tap_id', $id)
+        ->exists();
+
+    if ($hasRegistration) {
+        return redirect('/admin/packages')
+            ->with(
+                'error',
+                'Không thể xóa gói tập vì đã có lịch sử đăng ký. Hãy tạm ngưng gói nếu không muốn tiếp tục sử dụng.'
+            );
+    }
+
+    // Không xóa gói đã được ghi nhận trong chi tiết hóa đơn
+    $hasInvoice = DB::table('chi_tiet_hoa_don')
+        ->where('goi_tap_id', $id)
+        ->exists();
+
+    if ($hasInvoice) {
+        return redirect('/admin/packages')
+            ->with(
+                'error',
+                'Không thể xóa gói tập vì đã có hóa đơn liên quan.'
+            );
+    }
+
+    try {
+        DB::table('goi_tap')
+            ->where('goi_tap_id', $id)
+            ->delete();
+
+        return redirect('/admin/packages')
+            ->with('success', 'Đã xóa gói tập thành công.');
+
+    } catch (\Throwable $e) {
+        report($e);
+
+        return redirect('/admin/packages')
+            ->with(
+                'error',
+                'Không thể xóa gói tập. Vui lòng kiểm tra dữ liệu liên quan.'
+            );
+    }
+});
+
+
+
 Route::get('/admin/packages/{id}', function ($id) {
 
     if (!session()->has('user')) {
@@ -2711,6 +2781,7 @@ Route::get('/admin/trainers', function () {
             'huan_luyen_vien.pt_id',
             'huan_luyen_vien.chuyen_mon',
             'huan_luyen_vien.so_dien_thoai',
+            'huan_luyen_vien.anh',
             'nguoi_dung.nguoi_dung_id',
             'nguoi_dung.ho_ten',
             'nguoi_dung.email',
@@ -2755,6 +2826,94 @@ Route::get('/admin/trainers', function () {
     ));
 
 });
+
+
+Route::get('/admin/trainers/create', function () {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    return view('admin.trainer-create');
+});
+
+
+Route::post('/admin/trainers/create', function () {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $request = request();
+
+    $request->validate([
+        'ho_ten' => 'required|string|max:100',
+        'email' => 'required|email|max:100',
+        'so_dien_thoai' => 'nullable|string|max:20',
+        'chuyen_mon' => 'required|string|max:255',
+        'anh' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+    ]);
+
+    if (DB::table('nguoi_dung')
+        ->where('email', $request->email)
+        ->exists()) {
+        return back()
+            ->withInput()
+            ->with('error', 'Email này đã được sử dụng.');
+    }
+
+    $anh = null;
+    $duongDanAnh = null;
+
+    try {
+        DB::transaction(function () use ($request, &$anh, &$duongDanAnh) {
+            if ($request->hasFile('anh')) {
+                $file = $request->file('anh');
+                $tenFile = uniqid('trainer_', true) . '.' .
+                    $file->getClientOriginalExtension();
+
+                $file->move(public_path('img'), $tenFile);
+                $anh = public_path('img/' . $tenFile);
+                $duongDanAnh = 'img/' . $tenFile;
+            }
+
+            $nguoiDungId = DB::table('nguoi_dung')->insertGetId([
+                'vai_tro_id' => 4,
+                'ho_ten' => $request->ho_ten,
+                'email' => $request->email,
+                'mat_khau' => \Illuminate\Support\Facades\Hash::make('Hlv@123456'),
+                'trang_thai' => 'hoat_dong',
+            ]);
+
+            DB::table('huan_luyen_vien')->insert([
+                'nguoi_dung_id' => $nguoiDungId,
+                'chuyen_mon' => $request->chuyen_mon,
+                'so_dien_thoai' => $request->so_dien_thoai,
+                'anh' => $duongDanAnh,
+            ]);
+        });
+    } catch (\Throwable $e) {
+        if ($anh && file_exists($anh)) {
+            @unlink($anh);
+        }
+
+        report($e);
+
+        return back()
+            ->withInput()
+            ->with('error', 'Chưa thêm được HLV. Hãy kiểm tra lỗi trong Laravel log.');
+    }
+
+    return redirect('/admin/trainers')
+        ->with('success', 'Thêm huấn luyện viên thành công.');
+});
+
 
 
 Route::get('/admin/trainers/{id}', function ($id) {
@@ -2816,6 +2975,79 @@ Route::get('/admin/trainers/{id}', function ($id) {
 
     return view('admin.trainer-detail', compact('trainer', 'schedules'));
 });
+
+
+Route::post('/admin/trainers/{id}/delete', function ($id) {
+
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $trainer = DB::table('huan_luyen_vien')
+        ->where('pt_id', $id)
+        ->first();
+
+    if (!$trainer) {
+        return redirect('/admin/trainers')
+            ->with('error', 'Không tìm thấy huấn luyện viên.');
+    }
+
+    // Không xóa nếu huấn luyện viên còn lịch PT
+    $hasSchedule = DB::table('lich_pt')
+        ->where('pt_id', $id)
+        ->exists();
+
+    if ($hasSchedule) {
+        return redirect('/admin/trainers')
+            ->with(
+                'error',
+                'Không thể xóa HLV vì vẫn còn lịch PT liên quan. Hãy xử lý lịch tập trước.'
+            );
+    }
+
+    // Không xóa nếu còn đăng ký gói PT
+    $hasRegistration = DB::table('dang_ky_goi_pt')
+        ->where('pt_id', $id)
+        ->exists();
+
+    if ($hasRegistration) {
+        return redirect('/admin/trainers')
+            ->with(
+                'error',
+                'Không thể xóa HLV vì vẫn còn đăng ký gói PT liên quan.'
+            );
+    }
+
+    try {
+        DB::transaction(function () use ($trainer, $id) {
+            DB::table('huan_luyen_vien')
+                ->where('pt_id', $id)
+                ->delete();
+
+            DB::table('nguoi_dung')
+                ->where('nguoi_dung_id', $trainer->nguoi_dung_id)
+                ->where('vai_tro_id', 4)
+                ->delete();
+        });
+    } catch (\Throwable $e) {
+        report($e);
+
+        return redirect('/admin/trainers')
+            ->with(
+                'error',
+                'Chưa thể xóa HLV vì còn dữ liệu liên quan trong hệ thống.'
+            );
+    }
+
+    return redirect('/admin/trainers')
+        ->with('success', 'Xóa huấn luyện viên thành công.');
+
+});
+
 
 // ===============================
 // ADMIN - SỬA THÔNG TIN HUẤN LUYỆN VIÊN
@@ -7193,7 +7425,119 @@ Route::get('/trainer/profile', function () {
 });
 
 
-            
+    // ADMIN - QUẢN LÝ GÓI PT
+Route::get('/admin/pt-packages', function () {
+    if (!session()->has('user')) return redirect('/login');
+    if ((int)session('role_id') !== 1) return redirect('/'.session('dashboard_path','user/dashboard'));
+    $keyword = trim(request('q',''));
+    $query = DB::table('goi_pt');
+    if ($keyword !== '') $query->where('ten_goi_pt','like','%'.$keyword.'%');
+    $packages = $query->orderByDesc('goi_pt_id')->get();
+    return view('admin.pt-packages', compact('packages','keyword'));
+});
+Route::get('/admin/pt-packages/create', function () {
+    if (!session()->has('user')) return redirect('/login');
+    if ((int)session('role_id') !== 1) return redirect('/'.session('dashboard_path','user/dashboard'));
+    return view('admin.pt-package-create');
+});
+Route::post('/admin/pt-packages', function (\Illuminate\Http\Request $request) {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $data = $request->validate([
+        'ten_goi_pt' => 'required|string|max:100',
+        'gia' => 'required|numeric|min:0',
+        'so_buoi' => 'required|integer|min:1',
+        'thoi_han_ngay' => 'required|integer|min:1',
+        'trang_thai' => 'required|in:hoat_dong,tam_ngung',
+        'anh' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+    ], [
+        'anh.image' => 'File tải lên phải là hình ảnh.',
+        'anh.mimes' => 'Ảnh chỉ được có định dạng JPG, PNG hoặc WEBP.',
+        'anh.max' => 'Ảnh không được vượt quá 2 MB.',
+    ]);
+
+    if ($request->hasFile('anh')) {
+        $data['anh'] = $request->file('anh')->store('pt-packages', 'public');
+    }
+
+    DB::table('goi_pt')->insert($data);
+
+    return redirect('/admin/pt-packages')
+        ->with('success', 'Đã thêm gói PT.');
+});
+Route::get('/admin/pt-packages/{id}/edit', function ($id) {
+    if (!session()->has('user')) return redirect('/login');
+    if ((int)session('role_id') !== 1) return redirect('/'.session('dashboard_path','user/dashboard'));
+    $package=DB::table('goi_pt')->where('goi_pt_id',$id)->first();
+    if (!$package) return redirect('/admin/pt-packages')->with('error','Không tìm thấy gói PT.');
+    return view('admin.pt-package-edit',compact('package'));
+});
+Route::post('/admin/pt-packages/{id}/update', function (\Illuminate\Http\Request $request, $id) {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $package = DB::table('goi_pt')->where('goi_pt_id', $id)->first();
+
+    if (!$package) {
+        return redirect('/admin/pt-packages')
+            ->with('error', 'Không tìm thấy gói PT.');
+    }
+
+    $data = $request->validate([
+        'ten_goi_pt' => 'required|string|max:100',
+        'gia' => 'required|numeric|min:0',
+        'so_buoi' => 'required|integer|min:1',
+        'thoi_han_ngay' => 'required|integer|min:1',
+        'trang_thai' => 'required|in:hoat_dong,tam_ngung',
+        'anh' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+    ], [
+        'anh.image' => 'File tải lên phải là hình ảnh.',
+        'anh.mimes' => 'Ảnh chỉ được có định dạng JPG, PNG hoặc WEBP.',
+        'anh.max' => 'Ảnh không được vượt quá 2 MB.',
+    ]);
+
+    if ($request->hasFile('anh')) {
+        $newImage = $request->file('anh')->store('pt-packages', 'public');
+        $data['anh'] = $newImage;
+
+        if (!empty($package->anh)) {
+            \Illuminate\Support\Facades\Storage::disk('public')
+                ->delete($package->anh);
+        }
+    } else {
+        unset($data['anh']);
+    }
+
+    DB::table('goi_pt')
+        ->where('goi_pt_id', $id)
+        ->update($data);
+
+    return redirect('/admin/pt-packages')
+        ->with('success', 'Đã cập nhật gói PT.');
+});
+Route::post('/admin/pt-packages/{id}/delete', function ($id) {
+    if (!session()->has('user')) return redirect('/login');
+    if ((int)session('role_id') !== 1) return redirect('/'.session('dashboard_path','user/dashboard'));
+    if (!DB::table('goi_pt')->where('goi_pt_id',$id)->exists()) return redirect('/admin/pt-packages')->with('error','Không tìm thấy gói PT.');
+    if (DB::table('dang_ky_goi_pt')->where('goi_pt_id',$id)->exists() ||
+        DB::table('chi_tiet_hoa_don')->where('goi_pt_id',$id)->exists()) {
+        return redirect('/admin/pt-packages')->with('error','Gói PT đã có đăng ký hoặc hóa đơn. Hãy chuyển sang Tạm ngưng để giữ lịch sử.');
+    }
+    DB::table('goi_pt')->where('goi_pt_id',$id)->delete();
+    return redirect('/admin/pt-packages')->with('success','Đã xóa gói PT.');
+});
+        
 
 
 

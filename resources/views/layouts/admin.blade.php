@@ -345,6 +345,7 @@
                 grid-template-columns: 1fr;
             }
         }
+        
     </style>
 </head>
 
@@ -378,7 +379,10 @@
                 <div class="menu-icon">💳</div>
                 <span>Gói tập</span>
             </a>
-
+            <a href="/admin/pt-packages" class="menu-item">
+               <div class="menu-icon">🏋🏼‍♀️</div>
+                <span>Gói PT</span>
+            </a>
             <a href="/admin/trainers">
                 <div class="menu-icon">🏋</div>
                 <span>Huấn luyện viên</span>

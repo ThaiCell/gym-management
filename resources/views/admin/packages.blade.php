@@ -144,6 +144,61 @@
             color: #777 !important;
         }
 
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .edit-btn, .delete-btn {
+            display: inline-block;
+            border: 0;
+            border-radius: 6px;
+            padding: 7px 11px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background: #333;
+            color: #fff;
+        }
+
+        .edit-btn:hover {
+            background: #444;
+            color: #fff;
+        }
+
+        .delete-btn {
+            background: #ed1c24;
+            color: #fff;
+        }
+
+        .delete-btn:hover {
+            background: #c9141b;
+        }
+
+        .alert-success, .alert-error {
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border-radius: 7px;
+        }
+
+        .alert-success {
+            background: rgba(0, 200, 83, .12);
+            color: #00c853;
+            border: 1px solid rgba(0, 200, 83, .3);
+        }
+
+        .alert-error {
+            background: rgba(237, 28, 36, .12);
+            color: #ff6b72;
+            border: 1px solid rgba(237, 28, 36, .3);
+        }
+
         @media (max-width: 900px) {
             .package-toolbar {
                 flex-direction: column;
@@ -205,6 +260,14 @@
             </a>
         </div>
 
+        @if (session('success'))
+            <div class="alert-success">{{ session('success') }}</div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert-error">{{ session('error') }}</div>
+        @endif
+
         <div class="package-card">
 
             <div class="package-toolbar">
@@ -237,6 +300,7 @@
                         <th>THỜI HẠN</th>
                         <th>SỐ BUỔI</th>
                         <th>TRẠNG THÁI</th>
+                        <th>THAO TÁC</th>
                     </tr>
                 </thead>
 
@@ -289,12 +353,30 @@
 
                             </td>
 
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="/admin/packages/{{ $package->goi_tap_id }}/edit"
+                                       class="edit-btn">
+                                        Sửa
+                                    </a>
+
+                                    <form action="/admin/packages/{{ $package->goi_tap_id }}/delete"
+                                          method="POST"
+                                          onsubmit="return confirm('Mày có chắc muốn xóa gói tập này không? Chỉ xóa được khi gói chưa có đăng ký hoặc hóa đơn liên quan.');">
+                                        @csrf
+                                        <button type="submit" class="delete-btn">
+                                            Xóa
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+
                         </tr>
 
                     @empty
 
                         <tr>
-                            <td colspan="6" class="empty-row">
+                            <td colspan="7" class="empty-row">
                                 Không tìm thấy gói tập nào.
                             </td>
                         </tr>

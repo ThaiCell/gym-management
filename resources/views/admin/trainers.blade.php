@@ -180,20 +180,53 @@
                 width: 100%;
             }
         }
+        
+.trainer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.add-trainer-btn {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #ed1c24;
+    color: #fff;
+    border-radius: 7px;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.add-trainer-btn:hover {
+    background: #c9141b;
+    color: #fff;
+}
+.trainer-avatar {
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #393939;
+}
     </style>
 
 
     <div class="trainer-page">
 
-        <div class="page-header">
+       
+        <div class="page-header trainer-header">
+            <div>
+                <h2>Quản lý huấn luyện viên</h2>
+                <p>Danh sách huấn luyện viên trong hệ thống Gym Management</p>
+            </div>
 
-            <h2>Quản lý huấn luyện viên</h2>
-
-            <p>
-                Danh sách huấn luyện viên trong hệ thống Gym Management
-            </p>
-
+            <a href="/admin/trainers/create" class="add-trainer-btn">
+                + Thêm huấn luyện viên
+            </a>
         </div>
+
 
 
         <div class="table-card">
@@ -229,6 +262,8 @@
 
                             <th>ID</th>
 
+                            <th>ẢNH</th>
+
                             <th>HỌ VÀ TÊN</th>
 
                             <th>EMAIL</th>
@@ -256,7 +291,18 @@
                                         {{ $trainer->pt_id }}
                                     </span>
                                 </td>
-
+                                
+                                <td>
+                                    @if (!empty($trainer->anh))
+                                        <img
+                                            src="{{ asset($trainer->anh) }}"
+                                            alt="Ảnh HLV"
+                                            class="trainer-avatar"
+                                        >
+                                    @else
+                                        <span style="color:#888">Chưa có ảnh</span>
+                                    @endif
+                                </td>
 
                                 <td>
                                     <span class="trainer-name">
@@ -302,8 +348,20 @@
                                     <a href="/admin/trainers/{{ $trainer->pt_id }}" class="detail-btn">
                                         Xem chi tiết
                                     </a>
+                                        <form action="/admin/trainers/{{ $trainer->pt_id }}/delete"
+                                    method="POST"
+                                    style="display:inline-block"
+                                    onsubmit="return confirm('Bạn có chắc muốn xóa huấn luyện viên này không?')">
+                                    @csrf
 
+                                    <button type="submit"
+                                            style="background:#ed1c24;color:white;border:0;
+                                                padding:7px 12px;border-radius:6px;cursor:pointer">
+                                        Xóa
+                                    </button>
+                                </form>
                                 </td>
+                                
 
                             </tr>
 
