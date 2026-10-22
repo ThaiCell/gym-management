@@ -953,7 +953,7 @@
                                 @if ((str_contains($status, 'đặt') || str_contains($status, 'dat')) && $batDau->isFuture())
                                     <form action="{{ url('/user/pt-schedule/' . $lich->lich_pt_id . '/cancel') }}"
                                         method="POST" class="cancel-form"
-                                        onsubmit="return confirm('Bạn có chắc chắn muốn hủy lịch PT này không?');">
+                                        data-confirm-submit="Bạn có chắc chắn muốn hủy lịch PT này không?">
 
                                         @csrf
 

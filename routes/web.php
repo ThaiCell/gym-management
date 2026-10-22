@@ -449,7 +449,7 @@ Route::post('/packages/register/{goiTapId}', function ($goiTapId) use ($xuLyGoiT
                         $goi->so_buoi ?? 0,
 
                     'trang_thai' =>
-                        'đang hoạt động',
+                        'không hoạt động',
 
                 ]);
 
@@ -1224,7 +1224,7 @@ Route::post('/pt-packages/{id}/register', function ($id) {
 
             'so_buoi_con_lai' => $goiPt->so_buoi,
 
-            'trang_thai' => 'đang hoạt động',
+            'trang_thai' => 'không hoạt động',
 
         ]);
 
@@ -4507,9 +4507,62 @@ Route::post('/staff/payments/{id}/confirm', function ($id) {
                         $phuongThuc,
 
                 ]);
+                
 
 
             // -------------------------------------------------
+            // Kich hoat dang ky goi tuong ung voi hoa don vua thanh toan.
+            $chiTietHoaDon = DB::table('chi_tiet_hoa_don')
+                ->where('hoa_don_id', $id)
+                ->get();
+
+            $ngayHoaDon = \Carbon\Carbon::parse($hoaDon->ngay_lap)->toDateString();
+
+            foreach ($chiTietHoaDon as $chiTiet) {
+                if (!empty($chiTiet->goi_tap_id)) {
+                    $dangKyGoiTap = DB::table('dang_ky_goi_tap')
+                        ->where('hoi_vien_id', $hoaDon->hoi_vien_id)
+                        ->where('goi_tap_id', $chiTiet->goi_tap_id)
+                        ->whereDate('ngay_bat_dau', $ngayHoaDon)
+                        ->whereIn('trang_thai', [
+                            'không hoạt động',
+                            'chờ thanh toán',
+                            'cho thanh toan',
+                            'cho_thanh_toan',
+                            'pending'
+                        ])
+                        ->orderByDesc('dang_ky_goi_tap_id')
+                        ->first();
+
+                    if ($dangKyGoiTap) {
+                        DB::table('dang_ky_goi_tap')
+                            ->where('dang_ky_goi_tap_id', $dangKyGoiTap->dang_ky_goi_tap_id)
+                            ->update(['trang_thai' => 'đang hoạt động']);
+                    }
+                }
+
+                if (!empty($chiTiet->goi_pt_id)) {
+                    $dangKyPT = DB::table('dang_ky_goi_pt')
+                        ->where('hoi_vien_id', $hoaDon->hoi_vien_id)
+                        ->where('goi_pt_id', $chiTiet->goi_pt_id)
+                        ->whereDate('ngay_bat_dau', $ngayHoaDon)
+                        ->whereIn('trang_thai', [
+                            'không hoạt động',
+                            'chờ thanh toán',
+                            'cho thanh toan',
+                            'cho_thanh_toan',
+                            'pending'
+                        ])
+                        ->orderByDesc('dang_ky_goi_pt_id')
+                        ->first();
+
+                    if ($dangKyPT) {
+                        DB::table('dang_ky_goi_pt')
+                            ->where('dang_ky_goi_pt_id', $dangKyPT->dang_ky_goi_pt_id)
+                            ->update(['trang_thai' => 'đang hoạt động']);
+                    }
+                }
+            }
             // 2. TẠO THÔNG BÁO CHO HỘI VIÊN
             // -------------------------------------------------
 
@@ -5473,7 +5526,8 @@ Route::post('/user/packages/{id}/cancel', function ($id) {
 |--------------------------------------------------------------------------
 */
 
-Route::post('/user/pt-packages/{id}/cancel', function ($id) {
+
+Route::post('/pt-packages/{id}/register', function ($id) {
 
     if (!session()->has('user')) {
         return redirect('/login');
@@ -5490,35 +5544,144 @@ Route::post('/user/pt-packages/{id}/cancel', function ($id) {
         ->first();
 
     if (!$hoiVien) {
-        return redirect('/user/dashboard')
-            ->with('error', 'Không tìm thấy hồ sơ hội viên.');
+        return back()->with('error', 'Không tìm thấy hồ sơ hội viên.');
     }
 
-    $dangKy = DB::table('dang_ky_goi_pt')
-        ->join('goi_pt', 'dang_ky_goi_pt.goi_pt_id', '=', 'goi_pt.goi_pt_id')
-        ->where('dang_ky_goi_pt.dang_ky_goi_pt_id', $id)
-        ->where('dang_ky_goi_pt.hoi_vien_id', $hoiVien->hoi_vien_id)
-        ->select('dang_ky_goi_pt.*', 'goi_pt.ten_goi_pt')
+    $goiPt = DB::table('goi_pt')
+        ->where('goi_pt_id', $id)
         ->first();
 
-    if (!$dangKy) {
-        return redirect('/user/dashboard')
-            ->with('error', 'Không tìm thấy gói PT.');
+    if (!$goiPt) {
+        return back()->with('error', 'Gói PT không tồn tại.');
     }
 
-    if (mb_strtolower(trim($dangKy->trang_thai ?? '')) !== 'đang hoạt động') {
-        return redirect('/user/dashboard')
-            ->with('error', 'Gói PT này không còn hoạt động.');
+    if (!in_array($goiPt->trang_thai, [
+        'hoat_dong', 'hoạt_động', 'đang hoạt động', 'dang_hoat_dong'
+    ], true)) {
+        return back()->with('error', 'Gói PT này hiện không hoạt động.');
     }
 
-    DB::table('dang_ky_goi_pt')
-        ->where('dang_ky_goi_pt_id', $id)
-        ->update(['trang_thai' => 'đã hủy']);
+    // Chỉ cho phép mỗi hội viên có một gói PT tại một thời điểm.
+    // Gói đang hoạt động hoặc đang chờ thanh toán đều được tính;
+    // gói đã hủy và gói đã hết hạn không chặn đăng ký mới.
+    $goiPtHienTai = DB::table('dang_ky_goi_pt')
+        ->where('hoi_vien_id', $hoiVien->hoi_vien_id)
+        ->whereDate('ngay_ket_thuc', '>=', now()->toDateString())
+        ->whereIn('trang_thai', [
+            'đang hoạt động', 'dang_hoat_dong', 'hoạt_động', 'hoat_dong',
+            'không hoạt động', 'khong hoat dong', 'không_hoạt_động',
+            'khong_hoat_dong', 'inactive'
+        ])
+        ->orderByDesc('dang_ky_goi_pt_id')
+        ->first();
 
-    return redirect('/user/dashboard')
-        ->with('success', 'Đã hủy gói PT "' . $dangKy->ten_goi_pt . '".');
+    if ($goiPtHienTai) {
+        $hoaDonChoThanhToan = DB::table('chi_tiet_hoa_don')
+            ->join('hoa_don', 'chi_tiet_hoa_don.hoa_don_id', '=', 'hoa_don.hoa_don_id')
+            ->where('hoa_don.hoi_vien_id', $hoiVien->hoi_vien_id)
+            ->where('chi_tiet_hoa_don.goi_pt_id', $goiPtHienTai->goi_pt_id)
+            ->whereIn('hoa_don.trang_thai', ['chờ thanh toán', 'cho thanh toan', 'cho_thanh_toan', 'pending'])
+            ->exists();
 
-})->middleware(NoCache::class);
+        $thongBao = $hoaDonChoThanhToan
+            ? 'Bạn đã đăng ký một gói PT và hóa đơn đang chờ thanh toán. Vui lòng thanh toán hoặc hủy đăng ký hiện tại trước khi đăng ký gói mới.'
+            : 'Bạn đang có gói PT còn hiệu lực, chưa thể đăng ký gói mới.';
+
+        return redirect('/pt-packages')->with('error', $thongBao);
+    }
+
+    $pt = DB::table('huan_luyen_vien')
+        ->orderBy('pt_id')
+        ->first();
+
+    if (!$pt) {
+        return back()->with('error', 'Hiện tại chưa có huấn luyện viên.');
+    }
+
+    $nhanVien = DB::table('nhan_vien')
+        ->orderBy('nhan_vien_id')
+        ->first();
+
+    if (!$nhanVien) {
+        return back()->with(
+            'error',
+            'Hệ thống chưa có nhân viên để lập hóa đơn.'
+        );
+    }
+
+    $ngayBatDau = now()->toDateString();
+    $ngayKetThuc = now()
+        ->addDays(max(1, (int) $goiPt->thoi_han_ngay) - 1)
+        ->toDateString();
+
+    try {
+        DB::transaction(function () use (
+            $hoiVien,
+            $goiPt,
+            $pt,
+            $nhanVien,
+            $nguoiDungId,
+            $ngayBatDau,
+            $ngayKetThuc
+        ) {
+            // 1. Tạo đăng ký PT.
+            DB::table('dang_ky_goi_pt')->insert([
+                'hoi_vien_id' => $hoiVien->hoi_vien_id,
+                'goi_pt_id' => $goiPt->goi_pt_id,
+                'pt_id' => $pt->pt_id,
+                'ngay_bat_dau' => $ngayBatDau,
+                'ngay_ket_thuc' => $ngayKetThuc,
+                'so_buoi_con_lai' => $goiPt->so_buoi,
+                'trang_thai' => 'không hoạt động',
+            ]);
+
+            // 2. Tạo hóa đơn chờ thanh toán.
+            $hoaDonId = DB::table('hoa_don')->insertGetId([
+                'hoi_vien_id' => $hoiVien->hoi_vien_id,
+                'nhan_vien_id' => $nhanVien->nhan_vien_id,
+                'ngay_lap' => now(),
+                'tong_tien' => $goiPt->gia,
+                'trang_thai' => 'chờ thanh toán',
+                'phuong_thuc_thanh_toan' => null,
+            ]);
+
+            // 3. Gắn đúng gói PT vào chi tiết hóa đơn.
+            DB::table('chi_tiet_hoa_don')->insert([
+                'hoa_don_id' => $hoaDonId,
+                'goi_tap_id' => null,
+                'goi_pt_id' => $goiPt->goi_pt_id,
+                'so_luong' => 1,
+                'don_gia' => $goiPt->gia,
+                'thanh_tien' => $goiPt->gia,
+            ]);
+
+            // 4. Thông báo cho hội viên.
+            DB::table('thong_bao')->insert([
+                'nguoi_dung_id' => $nguoiDungId,
+                'tieu_de' => 'Đăng ký gói PT thành công',
+                'noi_dung' => 'Đã tạo hóa đơn #HD'
+                    . str_pad($hoaDonId, 5, '0', STR_PAD_LEFT)
+                    . ' cho gói PT ' . $goiPt->ten_goi_pt
+                    . '. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.',
+                'da_doc' => 0,
+                'tao_luc' => now(),
+            ]);
+        });
+
+        return redirect('/pt-packages')
+    ->with(
+        'success',
+        'Đăng ký gói PT thành công! Hóa đơn đã được tạo và đang chờ thanh toán.'
+    );
+
+    } catch (\Throwable $e) {
+        report($e);
+
+        return redirect('/pt-packages')
+    ->with('error', 'Không thể tạo đăng ký và hóa đơn. Vui lòng thử lại.');
+    }
+
+});
 
 
 /*
@@ -6904,8 +7067,98 @@ Route::get('/user/payments', function () use ($xuLyGoiTapCuaHoiVien) {
         )
     );
 
+ })->middleware(NoCache::class);
+
+/*
+|--------------------------------------------------------------------------
+| THANH TOÁN HÓA ĐƠN HỘI VIÊN (MÔ PHỎNG)
+|--------------------------------------------------------------------------
+*/
+Route::get('/user/payments/checkout/{id}', function ($id) use ($xuLyGoiTapCuaHoiVien) {
+    if (!session()->has('user')) return redirect('/login');
+    if (session('role_id') != 3) return redirect('/' . session('dashboard_path'));
+
+    $nguoiDungId = session('user')->nguoi_dung_id;
+    $hoiVien = DB::table('hoi_vien')->where('nguoi_dung_id', $nguoiDungId)->first();
+    if (!$hoiVien) return redirect('/user/payments')->with('error', 'Không tìm thấy hồ sơ hội viên.');
+
+    $xuLyGoiTapCuaHoiVien($hoiVien->hoi_vien_id);
+    $hoaDon = DB::table('hoa_don')->where('hoa_don_id', $id)
+        ->where('hoi_vien_id', $hoiVien->hoi_vien_id)->first();
+    if (!$hoaDon) return redirect('/user/payments')->with('error', 'Không tìm thấy hóa đơn của bạn.');
+    if (!in_array(mb_strtolower(trim($hoaDon->trang_thai ?? ''), 'UTF-8'), ['chờ thanh toán','cho thanh toan','cho_thanh_toan','pending'], true)) {
+        return redirect('/user/payments')->with('error', 'Hóa đơn này không còn chờ thanh toán.');
+    }
+
+    $hoaDonChoThanhToan = DB::table('hoa_don')->where('hoi_vien_id', $hoiVien->hoi_vien_id)
+        ->whereIn('trang_thai', ['chờ thanh toán','cho thanh toan','cho_thanh_toan','pending'])
+        ->orderBy('ngay_lap')->get();
+    $hoaDonIds = $hoaDonChoThanhToan->pluck('hoa_don_id');
+    $chiTiet = DB::table('chi_tiet_hoa_don')
+        ->leftJoin('goi_tap', 'chi_tiet_hoa_don.goi_tap_id', '=', 'goi_tap.goi_tap_id')
+        ->leftJoin('goi_pt', 'chi_tiet_hoa_don.goi_pt_id', '=', 'goi_pt.goi_pt_id')
+        ->whereIn('chi_tiet_hoa_don.hoa_don_id', $hoaDonIds)
+        ->select('chi_tiet_hoa_don.*', 'goi_tap.ten_goi', 'goi_pt.ten_goi_pt')
+        ->get()->groupBy('hoa_don_id');
+
+    return view('user.payment-checkout', compact('hoaDon', 'hoaDonChoThanhToan', 'chiTiet'));
 })->middleware(NoCache::class);
 
+Route::post('/user/payments/checkout', function () use ($xuLyGoiTapCuaHoiVien) {
+    if (!session()->has('user')) return redirect('/login');
+    if (session('role_id') != 3) return redirect('/' . session('dashboard_path'));
+
+    $nguoiDungId = session('user')->nguoi_dung_id;
+    $hoiVien = DB::table('hoi_vien')->where('nguoi_dung_id', $nguoiDungId)->first();
+    if (!$hoiVien) return redirect('/user/payments')->with('error', 'Không tìm thấy hồ sơ hội viên.');
+
+    $xuLyGoiTapCuaHoiVien($hoiVien->hoi_vien_id);
+    $mode = request('mode', 'single');
+    $invoiceId = (int) request('invoice_id');
+    $method = request('phuong_thuc_thanh_toan');
+    if (!in_array($mode, ['single', 'all'], true) || !in_array($method, ['Tiền mặt', 'Chuyển khoản', 'Thẻ'], true)) {
+        return back()->withInput()->with('error', 'Vui lòng chọn cách thanh toán và phương thức hợp lệ.');
+    }
+
+    $pending = DB::table('hoa_don')->where('hoi_vien_id', $hoiVien->hoi_vien_id)
+        ->whereIn('trang_thai', ['chờ thanh toán','cho thanh toan','cho_thanh_toan','pending']);
+    if ($mode === 'single') $pending->where('hoa_don_id', $invoiceId);
+    $invoices = $pending->get();
+    if ($invoices->isEmpty()) return redirect('/user/payments')->with('error', 'Không có hóa đơn nào đang chờ thanh toán.');
+
+    $paidIds = [];
+    DB::transaction(function () use ($invoices, $method, &$paidIds) {
+        foreach ($invoices as $hd) {
+            $updated = DB::table('hoa_don')->where('hoa_don_id', $hd->hoa_don_id)
+                ->whereIn('trang_thai', ['chờ thanh toán','cho thanh toan','cho_thanh_toan','pending'])
+                ->update(['trang_thai' => 'đã thanh toán', 'phuong_thuc_thanh_toan' => $method]);
+            if (!$updated) continue;
+            $paidIds[] = $hd->hoa_don_id;
+            $details = DB::table('chi_tiet_hoa_don')->where('hoa_don_id', $hd->hoa_don_id)->get();
+            $invoiceDate = \Carbon\Carbon::parse($hd->ngay_lap)->toDateString();
+            foreach ($details as $detail) {
+                if (!empty($detail->goi_tap_id)) {
+                    $reg = DB::table('dang_ky_goi_tap')->where('hoi_vien_id', $hd->hoi_vien_id)
+                        ->where('goi_tap_id', $detail->goi_tap_id)->whereDate('ngay_bat_dau', $invoiceDate)
+                        ->whereIn('trang_thai', ['không hoạt động','chờ thanh toán','cho thanh toan','cho_thanh_toan','pending'])
+                        ->orderByDesc('dang_ky_goi_tap_id')->first();
+                    if ($reg) DB::table('dang_ky_goi_tap')->where('dang_ky_goi_tap_id', $reg->dang_ky_goi_tap_id)->update(['trang_thai' => 'đang hoạt động']);
+                }
+                if (!empty($detail->goi_pt_id)) {
+                    $reg = DB::table('dang_ky_goi_pt')->where('hoi_vien_id', $hd->hoi_vien_id)
+                        ->where('goi_pt_id', $detail->goi_pt_id)->whereDate('ngay_bat_dau', $invoiceDate)
+                        ->whereIn('trang_thai', ['không hoạt động','chờ thanh toán','cho thanh toan','cho_thanh_toan','pending'])
+                        ->orderByDesc('dang_ky_goi_pt_id')->first();
+                    if ($reg) DB::table('dang_ky_goi_pt')->where('dang_ky_goi_pt_id', $reg->dang_ky_goi_pt_id)->update(['trang_thai' => 'đang hoạt động']);
+                }
+            }
+        }
+    });
+
+    if (empty($paidIds)) return redirect('/user/payments')->with('error', 'Hóa đơn đã được xử lý trước đó.');
+    $tongTien = DB::table('hoa_don')->whereIn('hoa_don_id', $paidIds)->sum('tong_tien');
+    return view('user.payment-success', ['soHoaDon' => count($paidIds), 'tongTien' => $tongTien, 'phuongThuc' => $method]);
+})->middleware(NoCache::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -7658,3 +7911,119 @@ Route::post('/admin/classes/{id}/delete', function ($id) {
 
 
 
+
+// HỦY GÓI PT - HỘI VIÊN
+Route::post('/user/pt-packages/{id}/cancel', function ($id) {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 3) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $nguoiDungId = session('user')->nguoi_dung_id;
+
+    $hoiVien = DB::table('hoi_vien')
+        ->where('nguoi_dung_id', $nguoiDungId)
+        ->first();
+
+    if (!$hoiVien) {
+        return redirect('/user/dashboard')
+            ->with('error', 'Không tìm thấy hồ sơ hội viên.');
+    }
+
+    // Lấy đúng đăng ký của hội viên, không nối hóa đơn chỉ theo mã gói
+    // vì một gói có thể được nhiều hội viên đăng ký nhiều lần.
+    $dangKy = DB::table('dang_ky_goi_pt')
+        ->join('goi_pt', 'dang_ky_goi_pt.goi_pt_id', '=', 'goi_pt.goi_pt_id')
+        ->where('dang_ky_goi_pt.dang_ky_goi_pt_id', $id)
+        ->where('dang_ky_goi_pt.hoi_vien_id', $hoiVien->hoi_vien_id)
+        ->select('dang_ky_goi_pt.*', 'goi_pt.ten_goi_pt')
+        ->first();
+
+    if (!$dangKy) {
+        return redirect('/user/dashboard')
+            ->with('error', 'Không tìm thấy đăng ký gói PT.');
+    }
+
+    // Tìm hóa đơn chờ thanh toán của hội viên cho gói PT này.
+    $hoaDon = DB::table('chi_tiet_hoa_don')
+        ->join('hoa_don', 'chi_tiet_hoa_don.hoa_don_id', '=', 'hoa_don.hoa_don_id')
+        ->where('chi_tiet_hoa_don.goi_pt_id', $dangKy->goi_pt_id)
+        ->where('hoa_don.hoi_vien_id', $hoiVien->hoi_vien_id)
+        ->whereDate('hoa_don.ngay_lap', '>=', $dangKy->ngay_bat_dau)
+        ->select('hoa_don.hoa_don_id', 'hoa_don.ngay_lap', 'hoa_don.trang_thai')
+        ->orderByDesc('hoa_don.ngay_lap')
+        ->first();
+
+    $trangThaiGoi = mb_strtolower(trim($dangKy->trang_thai ?? ''));
+    $trangThaiHoaDon = mb_strtolower(trim($hoaDon->trang_thai ?? ''));
+
+    $trangThaiChoThanhToan = in_array($trangThaiHoaDon, [
+        'chờ thanh toán', 'cho thanh toan', 'cho_thanh_toan', 'pending'
+    ], true);
+    $trangThaiDaThanhToan = in_array($trangThaiHoaDon, [
+        'đã thanh toán', 'da thanh toan', 'da_thanh_toan', 'paid'
+    ], true);
+    $goiChuaXuLy = in_array($trangThaiGoi, [
+        'không hoạt động', 'khong hoat dong', 'khong_hoat_dong', 'inactive'
+    ], true);
+    $goiDangHoatDong = in_array($trangThaiGoi, [
+        'đang hoạt động', 'dang_hoat_dong', 'hoạt_động', 'hoat_dong'
+    ], true);
+
+    // Cho hủy khi đăng ký đang hoạt động hoặc chưa hoạt động vì chờ thanh toán.
+    if (!$goiDangHoatDong && !($goiChuaXuLy && $trangThaiChoThanhToan)) {
+        return redirect('/user/dashboard')
+            ->with('error', 'Gói PT không còn ở trạng thái có thể hủy.');
+    }
+
+    if ($trangThaiDaThanhToan) {
+        return redirect('/user/dashboard')
+            ->with('error', 'Gói PT đã thanh toán nên không thể hủy tại đây. Vui lòng liên hệ nhân viên.');
+    }
+
+    if (!$trangThaiChoThanhToan || !$hoaDon) {
+        return redirect('/user/dashboard')
+            ->with('error', 'Không tìm thấy hóa đơn đang chờ thanh toán của gói PT này.');
+    }
+
+    if (!$hoaDon->ngay_lap || now()->greaterThanOrEqualTo(\Carbon\Carbon::parse($hoaDon->ngay_lap)->addHours(72))) {
+        return redirect('/user/dashboard')
+            ->with('error', 'Hóa đơn đã quá hạn 72 giờ. Vui lòng liên hệ nhân viên.');
+    }
+
+    DB::transaction(function () use ($id, $dangKy, $hoaDon, $nguoiDungId) {
+        DB::table('chi_tiet_hoa_don')
+            ->where('hoa_don_id', $hoaDon->hoa_don_id)
+            ->where('goi_pt_id', $dangKy->goi_pt_id)
+            ->delete();
+
+        $conChiTiet = DB::table('chi_tiet_hoa_don')
+            ->where('hoa_don_id', $hoaDon->hoa_don_id)
+            ->exists();
+
+        if (!$conChiTiet) {
+            DB::table('hoa_don')
+                ->where('hoa_don_id', $hoaDon->hoa_don_id)
+                ->delete();
+        }
+
+        DB::table('dang_ky_goi_pt')
+            ->where('dang_ky_goi_pt_id', $id)
+            ->where('hoi_vien_id', DB::table('hoi_vien')->where('nguoi_dung_id', $nguoiDungId)->value('hoi_vien_id'))
+            ->update(['trang_thai' => 'đã hủy']);
+
+        DB::table('thong_bao')->insert([
+            'nguoi_dung_id' => $nguoiDungId,
+            'tieu_de' => 'Hủy gói PT thành công',
+            'noi_dung' => 'Bạn đã hủy đăng ký gói PT ' . $dangKy->ten_goi_pt . '.',
+            'da_doc' => 0,
+            'tao_luc' => now(),
+        ]);
+    });
+
+    return redirect('/user/dashboard')
+        ->with('success', 'Đã hủy gói PT ' . $dangKy->ten_goi_pt . ' thành công.');
+})->middleware(NoCache::class);

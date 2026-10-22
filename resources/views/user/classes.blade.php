@@ -1133,7 +1133,7 @@
                                             @csrf
 
                                             <button type="submit" class="cancel-btn"
-                                                onclick="return confirm('Bạn có chắc muốn hủy đăng ký lớp này?')">
+                                                data-confirm="Bạn có chắc muốn hủy đăng ký lớp này?">
                                                 HỦY
                                             </button>
 

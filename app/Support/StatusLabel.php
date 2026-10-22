@@ -54,6 +54,8 @@ class StatusLabel
 
             'đã xác nhận' => 'Đã xác nhận',
             'da xac nhan' => 'Đã xác nhận',
+
+            'không hoạt động' => 'Không hoạt động'
         ];
 
         return $labels[$key] ?? $status;

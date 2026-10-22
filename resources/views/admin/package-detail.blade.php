@@ -196,7 +196,7 @@
                     color: #fff;
                     cursor: pointer;
                 "
-                            onclick="return confirm('Bạn có chắc muốn tạm ngưng gói tập này?')">
+                            data-confirm="Bạn có chắc muốn tạm ngưng gói tập này?">
                             ⏸ Tạm ngưng
                         </button>
                     @else
@@ -207,7 +207,7 @@
                     color: #fff;
                     cursor: pointer;
                 "
-                            onclick="return confirm('Bạn có chắc muốn kích hoạt lại gói tập này?')">
+                            data-confirm="Bạn có chắc muốn kích hoạt lại gói tập này?">
                             ▶ Kích hoạt
                         </button>
                     @endif

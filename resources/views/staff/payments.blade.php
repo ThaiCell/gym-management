@@ -732,7 +732,7 @@
 
 
                                         <button type="submit" class="confirm-btn"
-                                            onclick="return confirm('Bạn có chắc chắn muốn xác nhận hóa đơn này đã thanh toán?')">
+                                            data-confirm="Bạn có chắc chắn muốn xác nhận hóa đơn này đã thanh toán?">
                                             ✓ XÁC NHẬN THANH TOÁN
                                         </button>
 

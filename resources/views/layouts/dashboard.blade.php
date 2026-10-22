@@ -138,7 +138,7 @@
         .dashboard-btn {
             color: #fff;
             border: 1px solid #555;
-            padding: 10px 37.5px;
+            padding: 10px 18px;
             border-radius: 5px;
             font-size: 14px;
             transition: 0.3s;
@@ -919,7 +919,7 @@
 
             {{-- ĐĂNG XUẤT --}}
             <form action="/logout" method="POST" style="display: inline;"
-                onsubmit="return confirm('Bạn có chắc chắn muốn đăng xuất không?');">
+                data-confirm-submit="Bạn có chắc chắn muốn đăng xuất không?">
 
                 @csrf
 
@@ -1041,6 +1041,8 @@
 
         });
     </script>
+
+    @include('layouts.partials.gym-modal')
 
 </body>
 

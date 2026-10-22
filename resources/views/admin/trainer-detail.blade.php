@@ -54,7 +54,7 @@
 
                     @if ($trainer->trang_thai === 'hoat_dong')
                         <button type="submit"
-                            onclick="return confirm('Bạn có chắc muốn khóa tài khoản huấn luyện viên này?')"
+                            data-confirm="Bạn có chắc muốn khóa tài khoản huấn luyện viên này?"
                             style="
                         background:#a97900;
                         color:white;
@@ -67,7 +67,7 @@
                         </button>
                     @else
                         <button type="submit"
-                            onclick="return confirm('Bạn có chắc muốn kích hoạt tài khoản huấn luyện viên này?')"
+                            data-confirm="Bạn có chắc muốn kích hoạt tài khoản huấn luyện viên này?"
                             style="
                         background:#008f4c;
                         color:white;

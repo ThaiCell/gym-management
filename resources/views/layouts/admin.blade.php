@@ -414,7 +414,7 @@
                 <span>Cài đặt</span>
             </a>
             <form action="/logout" method="POST" style="margin-top: 20px;"
-                onsubmit="return confirm('Bạn có chắc chắn muốn đăng xuất không?');">
+                data-confirm-submit="Bạn có chắc chắn muốn đăng xuất không?">
                 @csrf
 
                 <button type="submit" class="logout-btn">
@@ -464,6 +464,8 @@
         </section>
 
     </main>
+
+    @include('layouts.partials.gym-modal')
 
 </body>
 

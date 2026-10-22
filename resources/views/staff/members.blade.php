@@ -374,7 +374,7 @@
 
 
                                         <form action="/staff/members/{{ $hv->hoi_vien_id }}/delete" method="POST"
-                                            onsubmit="return confirm('Bạn có chắc muốn xóa hội viên này không?');">
+                                            data-confirm-submit="Bạn có chắc muốn xóa hội viên này không?">
 
                                             @csrf
 

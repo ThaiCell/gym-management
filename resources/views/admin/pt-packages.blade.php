@@ -231,7 +231,7 @@
                                     <a class="pt-btn" href="/admin/pt-packages/{{ $package->goi_pt_id }}/edit">Sửa</a>
 
                                     <form method="POST" action="/admin/pt-packages/{{ $package->goi_pt_id }}/delete"
-                                        onsubmit="return confirm('Chỉ xóa được khi gói chưa có đăng ký hoặc hóa đơn. Tiếp tục?')">
+                                        data-confirm-submit="Chỉ xóa được khi gói chưa có đăng ký hoặc hóa đơn. Tiếp tục?">
                                         @csrf
                                         <button class="pt-btn pt-danger" type="submit">Xóa</button>
                                     </form>

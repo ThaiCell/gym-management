@@ -362,7 +362,7 @@
 
                                     <form action="/admin/packages/{{ $package->goi_tap_id }}/delete"
                                           method="POST"
-                                          onsubmit="return confirm('Mày có chắc muốn xóa gói tập này không? Chỉ xóa được khi gói chưa có đăng ký hoặc hóa đơn liên quan.');">
+                                          data-confirm-submit="Mày có chắc muốn xóa gói tập này không? Chỉ xóa được khi gói chưa có đăng ký hoặc hóa đơn liên quan.">
                                         @csrf
                                         <button type="submit" class="delete-btn">
                                             Xóa

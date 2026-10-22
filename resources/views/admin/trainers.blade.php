@@ -351,7 +351,7 @@
                                         <form action="/admin/trainers/{{ $trainer->pt_id }}/delete"
                                     method="POST"
                                     style="display:inline-block"
-                                    onsubmit="return confirm('Bạn có chắc muốn xóa huấn luyện viên này không?')">
+                                    data-confirm-submit="Bạn có chắc muốn xóa huấn luyện viên này không?">
                                     @csrf
 
                                     <button type="submit"

@@ -428,6 +428,9 @@
                 font-size: 19px;
             }
         }
+
+        .pay-invoice-btn { display:inline-flex; align-items:center; justify-content:center; margin-top:12px; padding:10px 18px; border-radius:5px; background:#e50914; color:#fff; font-weight:800; text-decoration:none; font-size:12px; transition:.2s; }
+        .pay-invoice-btn:hover { background:#b80710; color:#fff; transform:translateY(-1px); }
     </style>
 
 
@@ -853,8 +856,8 @@
 
                                     <br>
 
-                                    Vui lòng liên hệ nhân viên để xác nhận thanh toán.
-
+                                    <br>
+                                    <a href="{{ url('/user/payments/checkout/' . $hd->hoa_don_id) }}" class="pay-invoice-btn">Thanh toán</a>
                                 </div>
                             @endif
 

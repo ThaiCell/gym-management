@@ -132,7 +132,7 @@
                                class="class-btn class-btn-edit">Sửa</a>
                             <form action="{{ url('/admin/classes/'.$lop->lop_tap_id.'/delete') }}"
                                   method="POST"
-                                  onsubmit="return confirm('Xóa lớp tập này? Chỉ lớp chưa có đăng ký mới được xóa.');">
+                                  data-confirm-submit="Xóa lớp tập này? Chỉ lớp chưa có đăng ký mới được xóa.">
                                 @csrf
                                 <button type="submit" class="class-btn class-btn-delete">Xóa</button>
                             </form>

@@ -221,11 +221,9 @@
                 </a>
 
                 <form action="/admin/members/{{ $member->hoi_vien_id }}/toggle-status" method="POST" style="margin: 0;"
-                    onsubmit="return confirm(
-                    '{{ $member->trang_thai === 'hoat_dong'
+                    data-confirm-submit="{{ $member->trang_thai === 'hoat_dong'
                         ? 'Bạn có chắc muốn KHÓA tài khoản hội viên này?'
-                        : 'Bạn có chắc muốn MỞ KHÓA tài khoản hội viên này?' }}'
-                );">
+                        : 'Bạn có chắc muốn MỞ KHÓA tài khoản hội viên này?' }}">
 
                     @csrf
 
@@ -253,7 +251,7 @@
                 <form action="/admin/members/{{ $member->hoi_vien_id }}/delete"
                 method="POST"
                 style="margin:0;"
-                onsubmit="return confirm('Bạn chắc chắn muốn xóa hội viên này? Thao tác này không thể hoàn tác.');">
+                data-confirm-submit="Bạn chắc chắn muốn xóa hội viên này? Thao tác này không thể hoàn tác.">
                 @csrf
                 <button type="submit" class="back-btn"
                     style="background:#7f1d1d;border-color:#991b1b;cursor:pointer;">

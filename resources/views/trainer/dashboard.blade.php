@@ -591,7 +591,7 @@
                                     @if ($coTheHoanThanh)
                                         <form action="{{ url('/trainer/pt-schedule/' . $lich->lich_pt_id . '/complete') }}"
                                             method="POST"
-                                            onsubmit="return confirm('Bạn có chắc chắn muốn xác nhận buổi PT này đã hoàn thành không?');">
+                                            data-confirm-submit="Bạn có chắc chắn muốn xác nhận buổi PT này đã hoàn thành không?">
 
                                             @csrf
 

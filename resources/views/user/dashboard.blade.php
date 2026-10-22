@@ -14,8 +14,8 @@
         }
 
         /* =========================
-                                                                               WELCOME
-                                                                            ========================= */
+                                                                                   WELCOME
+                                                                                ========================= */
 
         .dashboard-hero {
             position: relative;
@@ -80,8 +80,8 @@
         }
 
         /* =========================
-                                                                               STATS
-                                                                            ========================= */
+                                                                                   STATS
+                                                                                ========================= */
 
         .dashboard-stats {
             display: grid;
@@ -139,8 +139,8 @@
         }
 
         /* =========================
-                                                                               CONTENT GRID
-                                                                            ========================= */
+                                                                                   CONTENT GRID
+                                                                                ========================= */
 
         .dashboard-grid {
             display: grid;
@@ -189,8 +189,8 @@
         }
 
         /* =========================
-                                                                               LIST
-                                                                            ========================= */
+                                                                                   LIST
+                                                                                ========================= */
 
         .dashboard-list {
             padding: 8px 24px 18px;
@@ -246,8 +246,8 @@
         }
 
         /* =========================
-                                                                               BADGE
-                                                                            ========================= */
+                                                                                   BADGE
+                                                                                ========================= */
 
         .status-badge {
             flex-shrink: 0;
@@ -261,8 +261,8 @@
         }
 
         /* =========================
-                                                                               EMPTY
-                                                                            ========================= */
+                                                                                   EMPTY
+                                                                                ========================= */
 
         .empty-box {
             text-align: center;
@@ -375,8 +375,8 @@
         }
 
         /* =========================
-                                                                               RESPONSIVE
-                                                                            ========================= */
+                                                                                   RESPONSIVE
+                                                                                ========================= */
 
         @media (max-width: 1000px) {
 
@@ -596,6 +596,28 @@
                                         );
                                     }
 
+                                    $trangThaiGoiGoc = mb_strtolower(trim($goi->trang_thai ?? ''));
+                                    $trangThaiGoiHienThi = $goi->trang_thai ?? '';
+                                    if (
+                                        $hoaDonChoThanhToan &&
+                                        !in_array(
+                                            $trangThaiGoiGoc,
+                                            [
+                                                'đã hủy',
+                                                'da huy',
+                                                'đã huỷ',
+                                                'da_huy',
+                                                'đã hết hạn',
+                                                'da het han',
+                                                'hết hạn',
+                                                'het han',
+                                            ],
+                                            true,
+                                        )
+                                    ) {
+                                        $trangThaiGoiHienThi = 'không hoạt động';
+                                    }
+
                                     $goiHetHan =
                                         $goi->ngay_ket_thuc &&
                                         \Carbon\Carbon::parse($goi->ngay_ket_thuc)
@@ -606,13 +628,13 @@
                                 <div class="action-group">
 
                                     <span class="status-badge">
-                                        {{ \App\Support\StatusLabel::format($goi->trang_thai) }}
+                                        {{ mb_strtoupper(mb_substr(\App\Support\StatusLabel::format($trangThaiGoiHienThi), 0, 1, 'UTF-8'), 'UTF-8') . mb_substr(\App\Support\StatusLabel::format($trangThaiGoiHienThi), 1, null, 'UTF-8') }}
                                     </span>
 
                                     @if (!$goiHetHan && !$hoaDonDaThanhToan && $hoaDonChoThanhToan && $conTrong72Gio)
                                         <form action="/user/packages/{{ $goi->dang_ky_goi_tap_id }}/cancel" method="POST"
                                             class="cancel-form"
-                                            onsubmit="return confirm('Bạn có chắc chắn muốn hủy gói tập này không?');">
+                                            data-confirm-submit="Bạn có chắc chắn muốn hủy gói tập này không?">
                                             @csrf
                                             <button type="submit" class="action-btn cancel-btn">HỦY GÓI</button>
                                         </form>
@@ -695,36 +717,80 @@
                                 </div>
 
                                 @php
-                                    $ptHoaDonDaThanhToan = DB::table('chi_tiet_hoa_don')
+                                    $ptHoaDonCoLienQuan = DB::table('chi_tiet_hoa_don')
                                         ->join('hoa_don', 'chi_tiet_hoa_don.hoa_don_id', '=', 'hoa_don.hoa_don_id')
                                         ->where('chi_tiet_hoa_don.goi_pt_id', $pt->goi_pt_id)
                                         ->where('hoa_don.hoi_vien_id', function ($query) {
-                                            $query->select('hoi_vien_id')
+                                            $query
+                                                ->select('hoi_vien_id')
                                                 ->from('hoi_vien')
                                                 ->where('nguoi_dung_id', session('user')->nguoi_dung_id)
                                                 ->limit(1);
                                         })
-                                        ->whereDate('hoa_don.ngay_lap', '>=', $pt->ngay_bat_dau)
+                                        ->whereDate('hoa_don.ngay_lap', '>=', $pt->ngay_bat_dau);
+
+                                    $ptHoaDonDaThanhToan = (clone $ptHoaDonCoLienQuan)
                                         ->whereIn(DB::raw('LOWER(TRIM(hoa_don.trang_thai))'), [
-                                            'đã thanh toán', 'da thanh toan', 'da_thanh_toan', 'paid'
+                                            'đã thanh toán',
+                                            'da thanh toan',
+                                            'da_thanh_toan',
+                                            'paid',
                                         ])
                                         ->exists();
+
+                                    $ptHoaDonChoThanhToan = (clone $ptHoaDonCoLienQuan)
+                                        ->whereIn(DB::raw('LOWER(TRIM(hoa_don.trang_thai))'), [
+                                            'chờ thanh toán',
+                                            'cho thanh toan',
+                                            'cho_thanh_toan',
+                                            'pending',
+                                        ])
+                                        ->exists();
+
+                                    $ptHoaDonNgayLap = (clone $ptHoaDonCoLienQuan)->value('hoa_don.ngay_lap');
+                                    $ptConTrong72Gio =
+                                        $ptHoaDonChoThanhToan &&
+                                        $ptHoaDonNgayLap &&
+                                        now()->lessThan(\Carbon\Carbon::parse($ptHoaDonNgayLap)->addHours(72));
+
+                                    $trangThaiPTGoc = mb_strtolower(trim($pt->trang_thai ?? ''));
+                                    $trangThaiPTHienThi = $pt->trang_thai ?? '';
+                                    $ptDaHuyHoacHetHan = in_array(
+                                        $trangThaiPTGoc,
+                                        [
+                                            'đã hủy',
+                                            'da huy',
+                                            'đã huỷ',
+                                            'da_huy',
+                                            'đã hết hạn',
+                                            'da het han',
+                                            'hết hạn',
+                                            'het han',
+                                        ],
+                                        true,
+                                    );
+
+                                    if ($ptHoaDonChoThanhToan && !$ptDaHuyHoacHetHan) {
+                                        $trangThaiPTHienThi = 'không hoạt động';
+                                    }
                                 @endphp
 
                                 <div class="action-group">
                                     <span class="status-badge">
-                                        {{ \App\Support\StatusLabel::format($pt->trang_thai) }}
+                                        {{ mb_strtoupper(mb_substr(\App\Support\StatusLabel::format($trangThaiPTHienThi), 0, 1, 'UTF-8'), 'UTF-8') . mb_substr(\App\Support\StatusLabel::format($trangThaiPTHienThi), 1, null, 'UTF-8') }}
                                     </span>
 
                                     @if (
-                                        !$ptHoaDonDaThanhToan &&
-                                        in_array(mb_strtolower(trim($pt->trang_thai ?? '')),
-                                            ['đang hoạt động', 'dang_hoat_dong', 'hoạt_động', 'hoat_dong'],
-                                            true)
-                                    )
+                                        !$ptDaHuyHoacHetHan &&
+                                            !$ptHoaDonDaThanhToan &&
+                                            ($ptConTrong72Gio ||
+                                                in_array(
+                                                    $ptHoaDonChoThanhToan ? 'không hoạt động' : $trangThaiPTGoc,
+                                                    ['đang hoạt động', 'dang_hoat_dong', 'hoạt_động', 'hoat_dong', 'không hoạt động'],
+                                                    true)))
                                         <form action="/user/pt-packages/{{ $pt->dang_ky_goi_pt_id }}/cancel" method="POST"
                                             class="cancel-form"
-                                            onsubmit="return confirm('Bạn có chắc chắn muốn hủy gói PT này không?');">
+                                            data-confirm-submit="Bạn có chắc chắn muốn hủy gói PT này không?">
                                             @csrf
                                             <button type="submit" class="action-btn cancel-btn">HỦY GÓI PT</button>
                                         </form>
@@ -809,7 +875,7 @@
 
                                 <div class="action-group">
                                     <span class="status-badge">
-                                        {{ \App\Support\StatusLabel::format($lop->trang_thai) }}
+                                        {{ mb_strtoupper(mb_substr(\App\Support\StatusLabel::format($lop->trang_thai), 0, 1, 'UTF-8'), 'UTF-8') . mb_substr(\App\Support\StatusLabel::format($lop->trang_thai), 1, null, 'UTF-8') }}
                                     </span>
 
                                     @if (in_array(mb_strtolower(trim($lop->trang_thai ?? '')),
@@ -817,7 +883,7 @@
                                             true))
                                         <form action="/classes/cancel/{{ $lop->dang_ky_lop_id }}" method="POST"
                                             class="cancel-form"
-                                            onsubmit="return confirm('Bạn có chắc chắn muốn rời lớp này không?');">
+                                            data-confirm-submit="Bạn có chắc chắn muốn rời lớp này không?">
                                             @csrf
                                             <button type="submit" class="action-btn cancel-btn">
                                                 RỜI LỚP
@@ -905,7 +971,7 @@
                                 </div>
 
                                 <span class="status-badge">
-                                    {{ \App\Support\StatusLabel::format($hd->trang_thai) }}
+                                    {{ mb_strtoupper(mb_substr(\App\Support\StatusLabel::format($hd->trang_thai), 0, 1, 'UTF-8'), 'UTF-8') . mb_substr(\App\Support\StatusLabel::format($hd->trang_thai), 1, null, 'UTF-8') }}
                                 </span>
 
                             </div>
