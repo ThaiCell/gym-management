@@ -118,6 +118,99 @@
             font-weight: 700;
         }
 
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .chart-box {
+            min-width: 0;
+            padding: 18px 20px;
+            background: #171717;
+            border: 1px solid #292929;
+            border-radius: 10px;
+        }
+
+        .chart-heading {
+            margin-bottom: 4px;
+            font-size: 17px;
+        }
+
+        .chart-description {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .trend-chart {
+            display: grid;
+            grid-template-columns: repeat({{ max(1, $trends->count()) }}, minmax(0, 1fr));
+            align-items: end;
+            gap: 8px;
+            height: 220px;
+            margin-top: 18px;
+        }
+
+        .trend-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 7px;
+            min-width: 0;
+            height: 100%;
+        }
+
+        .trend-value {
+            max-width: 100%;
+            overflow: hidden;
+            color: #aaa;
+            font-size: 10px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .trend-track {
+            display: flex;
+            align-items: end;
+            width: min(100%, 38px);
+            height: 155px;
+            overflow: hidden;
+            background: #252525;
+            border-radius: 6px 6px 3px 3px;
+        }
+
+        .trend-bar {
+            width: 100%;
+            min-height: 2px;
+            border-radius: 6px 6px 3px 3px;
+            transition: height 0.25s ease;
+        }
+
+        .trend-bar.revenue-bar {
+            background: linear-gradient(180deg, #ff3943, #b20710);
+        }
+
+        .trend-bar.check-in-bar {
+            background: linear-gradient(180deg, #44e69a, #008c52);
+        }
+
+        .trend-label {
+            color: #aaa;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .chart-empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 220px;
+            color: #888;
+            font-size: 14px;
+        }
+
         .data-row {
             display: flex;
             justify-content: space-between;
@@ -152,6 +245,10 @@
         @media (max-width: 1000px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -264,6 +361,66 @@
 
     </div>
 
+    {{-- BIỂU ĐỒ --}}
+    <div class="charts-grid">
+        @php
+            $maxRevenue = max(1, $trends->max('revenue') ?? 0);
+            $maxCheckIns = max(1, $trends->max('check_ins') ?? 0);
+        @endphp
+
+        <section class="chart-box">
+            <h2 class="chart-heading">Doanh thu</h2>
+            <p class="chart-description">
+                {{ $from || $to ? 'Theo khoảng thời gian đã lọc' : '12 tháng gần nhất' }}
+                · Hóa đơn đã thanh toán
+            </p>
+
+            @if ($trends->isEmpty())
+                <div class="chart-empty">Chưa có dữ liệu doanh thu trong khoảng thời gian này.</div>
+            @else
+                <div class="trend-chart" role="img" aria-label="Biểu đồ doanh thu theo thời gian">
+                    @foreach ($trends as $trend)
+                        @php
+                            $height = ($trend['revenue'] / $maxRevenue) * 100;
+                        @endphp
+                        <div class="trend-column" title="{{ $trend['label'] }}: {{ number_format($trend['revenue'], 0, ',', '.') }} đ">
+                            <span class="trend-value">{{ number_format($trend['revenue'], 0, ',', '.') }}</span>
+                            <div class="trend-track">
+                                <div class="trend-bar revenue-bar" style="height: {{ $height }}%"></div>
+                            </div>
+                            <span class="trend-label">{{ $trend['label'] }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </section>
+
+        <section class="chart-box">
+            <h2 class="chart-heading">Lượt check-in</h2>
+            <p class="chart-description">
+                {{ $from || $to ? 'Theo khoảng thời gian đã lọc' : '12 tháng gần nhất' }}
+            </p>
+
+            @if ($trends->isEmpty())
+                <div class="chart-empty">Chưa có dữ liệu check-in trong khoảng thời gian này.</div>
+            @else
+                <div class="trend-chart" role="img" aria-label="Biểu đồ lượt check-in theo thời gian">
+                    @foreach ($trends as $trend)
+                        @php
+                            $height = ($trend['check_ins'] / $maxCheckIns) * 100;
+                        @endphp
+                        <div class="trend-column" title="{{ $trend['label'] }}: {{ number_format($trend['check_ins']) }} lượt">
+                            <span class="trend-value">{{ number_format($trend['check_ins']) }}</span>
+                            <div class="trend-track">
+                                <div class="trend-bar check-in-bar" style="height: {{ $height }}%"></div>
+                            </div>
+                            <span class="trend-label">{{ $trend['label'] }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </section>
+    </div>
 
     {{-- LỊCH PT --}}
     <div class="box">

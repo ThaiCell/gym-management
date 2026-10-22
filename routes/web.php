@@ -3559,6 +3559,74 @@ Route::get('/admin/statistics', function (Illuminate\Http\Request $request) {
         $scheduleQuery->whereDate('thoi_gian_bat_dau', '<=', $to);
     }
 
+    $trendEnd = $to
+        ? Illuminate\Support\Carbon::parse($to)->endOfDay()
+        : Illuminate\Support\Carbon::now()->endOfDay();
+    $trendStart = $from
+        ? Illuminate\Support\Carbon::parse($from)->startOfDay()
+        : $trendEnd->copy()->startOfMonth()->subMonths(11);
+    $trendByDay = $from && $to
+        && Illuminate\Support\Carbon::parse($from)->diffInDays(Illuminate\Support\Carbon::parse($to)) <= 7;
+    $trendByYear = $trendStart->diffInDays($trendEnd) > 730;
+
+    $invoiceTrendQuery = DB::table('hoa_don')
+        ->where('trang_thai', 'đã thanh toán')
+        ->whereDate('ngay_lap', '>=', $trendStart->toDateString())
+        ->whereDate('ngay_lap', '<=', $trendEnd->toDateString());
+    $checkInTrendQuery = DB::table('check_in')
+        ->whereDate('thoi_gian', '>=', $trendStart->toDateString())
+        ->whereDate('thoi_gian', '<=', $trendEnd->toDateString());
+
+    $revenueByDay = $invoiceTrendQuery
+        ->selectRaw('DATE(ngay_lap) as ngay, SUM(tong_tien) as gia_tri')
+        ->groupByRaw('DATE(ngay_lap)')
+        ->orderBy('ngay')
+        ->get()
+        ->keyBy(fn ($row) => Illuminate\Support\Carbon::parse($row->ngay)->format('Y-m-d'));
+
+    $checkInsByDay = $checkInTrendQuery
+        ->selectRaw('DATE(thoi_gian) as ngay, COUNT(*) as gia_tri')
+        ->groupByRaw('DATE(thoi_gian)')
+        ->orderBy('ngay')
+        ->get()
+        ->keyBy(fn ($row) => Illuminate\Support\Carbon::parse($row->ngay)->format('Y-m-d'));
+
+    $trendFormat = $trendByDay ? 'Y-m-d' : ($trendByYear ? 'Y' : 'Y-m');
+    if ($trendByDay) {
+        $trendStart = $trendStart->copy();
+        $trendEnd = $trendEnd->copy();
+    } elseif ($trendByYear) {
+        $trendStart = $trendStart->copy()->startOfYear();
+        $trendEnd = $trendEnd->copy()->startOfYear();
+    } else {
+        $trendStart = $trendStart->copy()->startOfMonth();
+        $trendEnd = $trendEnd->copy()->startOfMonth();
+    }
+    $revenueByPeriod = $revenueByDay
+        ->groupBy(fn ($row, $date) => Illuminate\Support\Carbon::parse($date)->format($trendFormat))
+        ->map(fn ($rows) => $rows->sum('gia_tri'));
+    $checkInsByPeriod = $checkInsByDay
+        ->groupBy(fn ($row, $date) => Illuminate\Support\Carbon::parse($date)->format($trendFormat))
+        ->map(fn ($rows) => $rows->sum('gia_tri'));
+    $trends = collect();
+
+    while ($trendStart->lte($trendEnd)) {
+        $period = $trendStart->format($trendFormat);
+        $trends->push([
+            'label' => $trendStart->format($trendByDay ? 'd/m' : ($trendByYear ? 'Y' : 'm/Y')),
+            'revenue' => $revenueByPeriod->get($period, 0),
+            'check_ins' => $checkInsByPeriod->get($period, 0),
+        ]);
+
+        if ($trendByDay) {
+            $trendStart->addDay();
+        } elseif ($trendByYear) {
+            $trendStart->addYear();
+        } else {
+            $trendStart->addMonth();
+        }
+    }
+
     // Doanh thu
     $revenue = $invoiceQuery->sum('tong_tien');
 
@@ -3609,7 +3677,8 @@ Route::get('/admin/statistics', function (Illuminate\Http\Request $request) {
         'members',
         'activeMembers',
         'completedSchedules',
-        'cancelledSchedules'
+        'cancelledSchedules',
+        'trends'
     ));
 });
 

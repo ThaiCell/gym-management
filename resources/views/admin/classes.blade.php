@@ -80,7 +80,7 @@
         <table class="class-table">
             <thead>
                 <tr>
-                    <th>Mã</th>
+                    <th>ID</th>
                     <th>Ảnh</th>
                     <th>Tên lớp tập</th>
                     <th>Lịch tập</th>
