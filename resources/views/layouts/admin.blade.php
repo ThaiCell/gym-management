@@ -141,6 +141,10 @@
             border-radius: 12px;
             padding: 25px;
             margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
         }
 
         .welcome h2 {
@@ -154,6 +158,25 @@
 
         .welcome p {
             color: #888;
+        }
+
+        .home-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            padding: 11px 16px;
+            border-radius: 8px;
+            background: #e50914;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .home-button:hover {
+            background: #b20710;
         }
 
         /* STAT CARDS */
@@ -222,6 +245,55 @@
 
         .panel h3 {
             margin-bottom: 20px;
+        }
+
+        .revenue-chart {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            align-items: end;
+            gap: 12px;
+            height: 250px;
+            padding-top: 12px;
+        }
+
+        .revenue-chart-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+            min-width: 0;
+            height: 100%;
+        }
+
+        .revenue-chart-value {
+            color: #aaa;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .revenue-chart-track {
+            display: flex;
+            align-items: end;
+            width: min(100%, 48px);
+            height: 175px;
+            overflow: hidden;
+            background: #252525;
+            border-radius: 7px 7px 3px 3px;
+        }
+
+        .revenue-chart-bar {
+            width: 100%;
+            min-height: 3px;
+            background: linear-gradient(180deg, #ff3943, #b20710);
+            border-radius: 7px 7px 3px 3px;
+            transition: height 0.3s ease;
+        }
+
+        .revenue-chart-label {
+            color: #aaa;
+            font-size: 12px;
+            white-space: nowrap;
         }
 
         .chart {
@@ -343,6 +415,23 @@
 
             .stats {
                 grid-template-columns: 1fr;
+            }
+
+            .revenue-chart {
+                gap: 6px;
+            }
+
+            .revenue-chart-value {
+                font-size: 9px;
+            }
+
+            .revenue-chart-label {
+                font-size: 10px;
+            }
+
+            .welcome {
+                align-items: flex-start;
+                flex-direction: column;
             }
         }
         

@@ -3,15 +3,18 @@
 @section('content')
     <div class="welcome">
 
-        <h2>
-            Chào mừng đến với
-            <span>Gym Management</span>
-        </h2>
+        <div>
+            <h2>
+                Chào mừng đến với
+                <span>Gym Management</span>
+            </h2>
 
-        <p>
-            Tổng quan hoạt động phòng gym.
-        </p>
+            <p>
+                Tổng quan hoạt động phòng gym.
+            </p>
+        </div>
 
+        <a href="{{ url('/') }}" class="home-button">Về trang chủ</a>
     </div>
 
 
@@ -116,36 +119,28 @@
 
         <div class="panel">
 
-            <h3>Thông tin hệ thống</h3>
+            <h3>Doanh thu 6 tháng gần đây</h3>
 
-            <div
-                style="
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            height:230px;
-            color:#888;
-            text-align:center;
-        ">
+            @php
+                $doanhThuCaoNhat = max(1, $doanhThuTheoThang->max('doanh_thu'));
+            @endphp
 
-                <div>
+            <div class="revenue-chart" role="img" aria-label="Biểu đồ doanh thu đã thanh toán trong 6 tháng gần đây">
+                @foreach ($doanhThuTheoThang as $thang)
+                    @php
+                        $chieuCaoCot = ($thang['doanh_thu'] / $doanhThuCaoNhat) * 100;
+                    @endphp
 
-                    <div
-                        style="
-                    font-size:45px;
-                    color:#e50914;
-                    margin-bottom:10px;
-                ">
-                        📊
+                    <div class="revenue-chart-column">
+                        <span class="revenue-chart-value">
+                            {{ number_format($thang['doanh_thu'], 0, ',', '.') }} ₫
+                        </span>
+                        <div class="revenue-chart-track">
+                            <div class="revenue-chart-bar" style="height: {{ $chieuCaoCot }}%"></div>
+                        </div>
+                        <span class="revenue-chart-label">{{ $thang['nhan'] }}</span>
                     </div>
-
-                    <p>
-                        Dữ liệu Dashboard được lấy trực tiếp
-                        từ cơ sở dữ liệu.
-                    </p>
-
-                </div>
-
+                @endforeach
             </div>
 
         </div>

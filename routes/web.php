@@ -1876,6 +1876,26 @@ Route::get('/dashboard', function () {
         )
         ->count();
 
+    $thangBatDau = now()->startOfMonth()->subMonths(5);
+    $hoaDonTheoThang = DB::table('hoa_don')
+        ->whereIn('trang_thai', ['đã thanh toán', 'da thanh toan'])
+        ->where('ngay_lap', '>=', $thangBatDau->toDateString())
+        ->select('ngay_lap', 'tong_tien')
+        ->get()
+        ->groupBy(fn ($hoaDon) => substr($hoaDon->ngay_lap, 0, 7));
+
+    $doanhThuTheoThang = collect(range(0, 5))
+        ->map(function ($offset) use ($thangBatDau, $hoaDonTheoThang) {
+            $thang = $thangBatDau->copy()->addMonths($offset);
+
+            return [
+                'nhan' => $thang->format('m/Y'),
+                'doanh_thu' => $hoaDonTheoThang
+                    ->get($thang->format('Y-m'), collect())
+                    ->sum('tong_tien'),
+            ];
+        });
+
 
     /*
     |--------------------------------------------------------------------------
@@ -1921,6 +1941,7 @@ Route::get('/dashboard', function () {
             'hoiVienDangHoatDong',
             'doanhThu',
             'tongGoiTap',
+            'doanhThuTheoThang',
             'hoatDongGanDay'
         )
     );
