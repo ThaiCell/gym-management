@@ -17,6 +17,7 @@ class LopTap extends Model
         'mo_ta',
         'lich_tap',
         'suc_chua',
+        'anh',
         'trang_thai',
     ];
 }

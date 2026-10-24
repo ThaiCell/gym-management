@@ -17,6 +17,7 @@ class GoiPt extends Model
         'gia',
         'so_buoi',
         'thoi_han_ngay',
+        'anh',
         'trang_thai',
     ];
 }

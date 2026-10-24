@@ -15,6 +15,23 @@ class HuanLuyenVien extends Model
     protected $fillable = [
         'nguoi_dung_id',
         'chuyen_mon',
+        'thanh_tich',
         'so_dien_thoai',
+        'anh',
     ];
+
+    public function nguoiDung()
+    {
+        return $this->belongsTo(NguoiDung::class, 'nguoi_dung_id', 'nguoi_dung_id');
+    }
+
+    public function dangKyGoiPt()
+    {
+        return $this->hasMany(DangKyGoiPt::class, 'pt_id', 'pt_id');
+    }
+
+    public function lichPt()
+    {
+        return $this->hasMany(LichPt::class, 'pt_id', 'pt_id');
+    }
 }

@@ -182,6 +182,7 @@
             font-weight: bold;
 
             transition: .3s;
+            cursor: pointer;
         }
 
         .package-btn:hover {
@@ -240,8 +241,8 @@
         }
 
         /* ================================
-                        GYM TOAST NOTIFICATION
-                        ================================ */
+                            GYM TOAST NOTIFICATION
+                            ================================ */
 
         .gym-toast {
             position: fixed;
@@ -374,8 +375,8 @@
         }
 
         /* =========================
-                       THÔNG BÁO GÓI TẬP
-                    ========================= */
+                           THÔNG BÁO GÓI TẬP
+                        ========================= */
 
         .package-notice {
             width: 100%;

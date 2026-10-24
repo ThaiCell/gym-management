@@ -2,21 +2,6 @@
 
 @section('content')
 
-    @php
-        /*
-    |--------------------------------------------------------------------------
-    | ẢNH CHO TỪNG GÓI PT
-    |--------------------------------------------------------------------------
-    */
-        $ptImages = [
-            1 => 'pt1.jpg',
-            2 => 'pt2.jpg',
-            3 => 'pt3.jpg',
-            4 => 'pt4.jpg',
-        ];
-    @endphp
-
-
     <style>
         .pt-page {
             background: #080808;
@@ -27,8 +12,8 @@
 
 
         /* =========================================================
-                       HERO
-                    ========================================================= */
+                                                   HERO
+                                                ========================================================= */
 
         .pt-hero {
             min-height: 330px;
@@ -93,8 +78,8 @@
 
 
         /* =========================================================
-                       CONTENT
-                    ========================================================= */
+                                                   CONTENT
+                                                ========================================================= */
 
         .pt-container {
             width: min(1100px, 92%);
@@ -141,8 +126,8 @@
 
 
         /* =========================================================
-                       CARDS
-                    ========================================================= */
+                                                   CARDS
+                                                ========================================================= */
 
         .pt-grid {
             display: grid;
@@ -151,6 +136,8 @@
                 repeat(3, 1fr);
 
             gap: 24px;
+            /* Mỗi thẻ tự cao theo nội dung, không kéo dài theo thẻ bên cạnh */
+            align-items: start;
         }
 
 
@@ -195,8 +182,8 @@
 
 
         /* =========================================================
-                       BADGE
-                    ========================================================= */
+                                                   BADGE
+                                                ========================================================= */
 
         .pt-badge {
             position: absolute;
@@ -223,8 +210,8 @@
 
 
         /* =========================================================
-                       IMAGE
-                    ========================================================= */
+                                                   IMAGE
+                                                ========================================================= */
 
         .pt-image {
             height: 190px;
@@ -254,8 +241,8 @@
 
 
         /* =========================================================
-                       BODY
-                    ========================================================= */
+                                                   BODY
+                                                ========================================================= */
 
         .pt-body {
             padding: 25px;
@@ -273,8 +260,8 @@
 
 
         /* =========================================================
-                       PRICE
-                    ========================================================= */
+                                                   PRICE
+                                                ========================================================= */
 
         .pt-price {
             color: #e50914;
@@ -296,8 +283,8 @@
 
 
         /* =========================================================
-                       INFO
-                    ========================================================= */
+                                                   INFO
+                                                ========================================================= */
 
         .pt-info {
             margin: 20px 0;
@@ -343,8 +330,8 @@
 
 
         /* =========================================================
-                       BUTTON
-                    ========================================================= */
+                                                   BUTTON
+                                                ========================================================= */
 
         .pt-btn {
             display: block;
@@ -398,8 +385,8 @@
 
 
         /* =========================================================
-                       EMPTY
-                    ========================================================= */
+                                                   EMPTY
+                                                ========================================================= */
 
         .pt-empty {
             text-align: center;
@@ -419,8 +406,8 @@
 
 
         /* =========================================================
-                       TOAST
-                    ========================================================= */
+                                                   TOAST
+                                                ========================================================= */
 
         .gym-toast {
             position: fixed;
@@ -577,8 +564,8 @@
 
 
         /* =========================================================
-                       RESPONSIVE
-                    ========================================================= */
+                                                   RESPONSIVE
+                                                ========================================================= */
 
         @media (max-width: 900px) {
 
@@ -699,8 +686,8 @@
 
 
         <!-- =====================================================
-                         HERO
-                    ====================================================== -->
+                                                     HERO
+                                                ====================================================== -->
 
         <section class="pt-hero">
 
@@ -732,8 +719,8 @@
 
 
         <!-- =====================================================
-                         DANH SÁCH GÓI
-                    ====================================================== -->
+                                                     DANH SÁCH GÓI
+                                                ====================================================== -->
 
         <div class="pt-container">
 
@@ -881,23 +868,53 @@
                                 @if (session('user'))
                                     <form action="{{ url('/pt-packages/' . $pt->goi_pt_id . '/register') }}" method="POST"
                                         class="pt-btn-form">
-
                                         @csrf
 
-
-                                        <button type="submit" class="pt-btn">
-
+                                        <button type="button" class="pt-btn"
+                                            onclick="showPtSelection('{{ $pt->goi_pt_id }}')">
                                             ĐĂNG KÝ NGAY
-
                                         </button>
 
+                                        <div id="pt-selection-{{ $pt->goi_pt_id }}" style="display:none; margin-top:15px;">
+                                            <div class="form-group" style="margin-bottom: 15px;">
+                                                <label for="pt_id_{{ $pt->goi_pt_id }}"
+                                                    style="display:block; margin-bottom:8px; font-weight:600;">
+                                                    Chọn huấn luyện viên (PT)
+                                                </label>
+
+                                                @if ($ptList->isEmpty())
+                                                    <p style="color:#ff6b6b; font-size:13px; margin:0 0 10px;">
+                                                        Hiện không có huấn luyện viên đang hoạt động. Vui lòng thử lại sau.
+                                                    </p>
+                                                @endif
+
+                                                <select name="pt_id" id="pt_id_{{ $pt->goi_pt_id }}" required
+                                                    {{ $ptList->isEmpty() ? 'disabled' : '' }}
+                                                    style="width:100%; padding:12px; border-radius:8px; border:1px solid #444; background:#202020; color:#fff; color-scheme:dark; outline:none; text-align:center; text-align-last:center; cursor:pointer;">
+                                                    <option value="" disabled {{ old('pt_id') ? '' : 'selected' }}>
+                                                        Chọn huấn luyện viên</option>
+
+                                                    @foreach ($ptList as $hlv)
+                                                        <option value="{{ $hlv->pt_id }}"
+                                                            {{ (string) old('pt_id') === (string) $hlv->pt_id ? 'selected' : '' }}>
+                                                            {{ $hlv->ho_ten }}
+                                                            @if (!empty($hlv->chuyen_mon))
+                                                                - {{ $hlv->chuyen_mon }}
+                                                            @endif
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            <button type="submit" class="pt-btn"
+                                                {{ $ptList->isEmpty() ? 'disabled' : '' }}
+                                                style="{{ $ptList->isEmpty() ? 'opacity:.5;cursor:not-allowed;' : '' }}">
+                                                XÁC NHẬN ĐĂNG KÝ
+                                            </button>
+                                        </div>
                                     </form>
                                 @else
-                                    <a href="/login" class="pt-btn">
-
-                                        ĐĂNG KÝ NGAY
-
-                                    </a>
+                                    <a href="/login" class="pt-btn">ĐĂNG KÝ NGAY</a>
                                 @endif
 
 
@@ -939,11 +956,27 @@
 
 
     <script>
+        function showPtSelection(goiPtId) {
+            // Mỗi lần bấm ĐĂNG KÝ NGAY, đóng phần chọn PT của tất cả gói trước.
+            // Sau đó chỉ mở phần của gói vừa được bấm.
+            document.querySelectorAll('[id^="pt-selection-"]').forEach(function(item) {
+                item.style.display = 'none';
+            });
+
+            const selection = document.getElementById('pt-selection-' + goiPtId);
+            if (!selection) return;
+
+            selection.style.display = 'block';
+            const select = selection.querySelector('select');
+            if (select && !select.disabled) select.focus();
+        }
+
+
         /*
-                    |--------------------------------------------------------------------------
-                    | ĐÓNG TOAST
-                    |--------------------------------------------------------------------------
-                    */
+                        |--------------------------------------------------------------------------
+                        | ĐÓNG TOAST
+                        |--------------------------------------------------------------------------
+                        */
 
         function closeGymToast() {
 

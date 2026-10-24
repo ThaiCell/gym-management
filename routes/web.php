@@ -1044,6 +1044,7 @@ Route::get('/trainers', function () {
             'huan_luyen_vien.pt_id',
             'huan_luyen_vien.nguoi_dung_id',
             'huan_luyen_vien.chuyen_mon',
+            'huan_luyen_vien.thanh_tich',
             'huan_luyen_vien.so_dien_thoai',
             'huan_luyen_vien.anh',
 
@@ -1076,7 +1077,28 @@ Route::get('/pt-packages', function () {
         ->orderBy('gia', 'asc')
         ->get();
 
-    return view('user.pt-packages', compact('goiPt'));
+    // Danh sách PT đang hoạt động để hội viên tự lựa chọn.
+    $ptList = DB::table('huan_luyen_vien')
+        ->join(
+            'nguoi_dung',
+            'huan_luyen_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->where('nguoi_dung.vai_tro_id', 4)
+        ->whereIn('nguoi_dung.trang_thai', [
+            'hoat_dong', 'hoạt_động', 'hoạt động', 'dang_hoat_dong', 'đang hoạt động'
+        ])
+        ->select(
+            'huan_luyen_vien.pt_id',
+            'huan_luyen_vien.chuyen_mon',
+            'huan_luyen_vien.anh',
+            'nguoi_dung.ho_ten'
+        )
+        ->orderBy('nguoi_dung.ho_ten')
+        ->get();
+
+    return view('user.pt-packages', compact('goiPt', 'ptList'));
 });
 
 
@@ -1086,209 +1108,9 @@ Route::get('/pt-packages', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::post('/pt-packages/{id}/register', function ($id) {
-
-    // Chưa đăng nhập
-    if (!session()->has('user')) {
-        return redirect('/login');
-    }
-
-    // Chỉ hội viên được đăng ký
-    if (session('role_id') != 3) {
-        return redirect('/' . session('dashboard_path'));
-    }
-
-    $nguoiDungId = session('user')->nguoi_dung_id;
+// Route đăng ký gói PT được khai báo một lần ở phần xử lý đăng ký/hủy gói PT bên dưới.
 
 
-    // Tìm hội viên
-    $hoiVien = DB::table('hoi_vien')
-        ->where('nguoi_dung_id', $nguoiDungId)
-        ->first();
-
-    if (!$hoiVien) {
-        return back()->with(
-            'error',
-            'Không tìm thấy thông tin hội viên.'
-        );
-    }
-
-
-    // Tìm gói PT
-    $goiPt = DB::table('goi_pt')
-        ->where('goi_pt_id', $id)
-        ->first();
-
-    if (!$goiPt) {
-        return back()->with(
-            'error',
-            'Gói PT không tồn tại.'
-        );
-    }
-
-
-    // Kiểm tra gói đang hoạt động
-    if (
-        $goiPt->trang_thai !== 'hoat_dong' &&
-        $goiPt->trang_thai !== 'hoạt_động'
-    ) {
-        return back()->with(
-            'error',
-            'Gói PT này hiện không hoạt động.'
-        );
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | KIỂM TRA ĐĂNG KÝ TRÙNG
-    |--------------------------------------------------------------------------
-    */
-
-    $daDangKy = DB::table('dang_ky_goi_pt')
-        ->where('hoi_vien_id', $hoiVien->hoi_vien_id)
-        ->where('goi_pt_id', $goiPt->goi_pt_id)
-        ->whereIn('trang_thai', [
-            'đang hoạt động',
-            'dang_hoat_dong',
-            'hoạt_động',
-            'hoat_dong'
-        ])
-        ->exists();
-
-
-    if ($daDangKy) {
-
-        return back()
-            ->with('error', 'Bạn đã đăng ký gói PT này rồi.');
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | TÌM HUẤN LUYỆN VIÊN
-    |--------------------------------------------------------------------------
-    */
-
-    $pt = DB::table('huan_luyen_vien')
-        ->orderBy('pt_id', 'asc')
-        ->first();
-
-
-    if (!$pt) {
-
-        return back()
-            ->with(
-                'error',
-                'Hiện tại chưa có huấn luyện viên.'
-            );
-
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | NGÀY BẮT ĐẦU / KẾT THÚC
-    |--------------------------------------------------------------------------
-    */
-
-    $ngayBatDau = now()->toDateString();
-
-    $ngayKetThuc = now()
-        ->addDays($goiPt->thoi_han_ngay - 1)
-        ->toDateString();
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | TẠO ĐĂNG KÝ
-    |--------------------------------------------------------------------------
-    */
-
-    DB::beginTransaction();
-
-    try {
-
-        DB::table('dang_ky_goi_pt')->insert([
-
-            'hoi_vien_id' => $hoiVien->hoi_vien_id,
-
-            'goi_pt_id' => $goiPt->goi_pt_id,
-
-            'pt_id' => $pt->pt_id,
-
-            'ngay_bat_dau' => $ngayBatDau,
-
-            'ngay_ket_thuc' => $ngayKetThuc,
-
-            'so_buoi_con_lai' => $goiPt->so_buoi,
-
-            'trang_thai' => 'không hoạt động',
-
-        ]);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | TẠO THÔNG BÁO
-        |--------------------------------------------------------------------------
-        */
-
-        DB::table('thong_bao')->insert([
-
-            'nguoi_dung_id' => $nguoiDungId,
-
-            'tieu_de' => 'Đăng ký gói PT thành công',
-
-            'noi_dung' =>
-                'Bạn đã đăng ký thành công gói ' .
-                $goiPt->ten_goi_pt .
-                '. Có ' .
-                $goiPt->so_buoi .
-                ' buổi, thời hạn ' .
-                $goiPt->thoi_han_ngay .
-                ' ngày.',
-
-            'da_doc' => false,
-
-            'tao_luc' => now(),
-
-        ]);
-
-
-        DB::commit();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | QUAY LẠI TRANG GÓI PT + HIỆN TOAST
-        |--------------------------------------------------------------------------
-        */
-
-        return back()
-            ->with(
-                'success',
-                'Đăng ký gói ' .
-                $goiPt->ten_goi_pt .
-                ' thành công!'
-            );
-
-
-    } catch (\Exception $e) {
-
-        DB::rollBack();
-
-        return back()
-            ->with(
-                'error',
-                'Không thể đăng ký gói PT: ' .
-                $e->getMessage()
-            );
-
-    }
-
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -5680,12 +5502,34 @@ Route::post('/pt-packages/{id}/register', function ($id) {
         return redirect('/pt-packages')->with('error', $thongBao);
     }
 
+    // Lấy đúng huấn luyện viên mà hội viên đã chọn trên form.
+    $ptId = request()->input('pt_id');
+
+    if (!$ptId) {
+        return back()->withInput()->with('error', 'Vui lòng chọn huấn luyện viên.');
+    }
+
+    // Chỉ chấp nhận PT có hồ sơ hợp lệ, đúng vai trò và đang hoạt động.
     $pt = DB::table('huan_luyen_vien')
-        ->orderBy('pt_id')
+        ->join(
+            'nguoi_dung',
+            'huan_luyen_vien.nguoi_dung_id',
+            '=',
+            'nguoi_dung.nguoi_dung_id'
+        )
+        ->where('huan_luyen_vien.pt_id', $ptId)
+        ->where('nguoi_dung.vai_tro_id', 4)
+        ->whereIn('nguoi_dung.trang_thai', [
+            'hoat_dong', 'hoạt_động', 'hoạt động', 'dang_hoat_dong', 'đang hoạt động'
+        ])
+        ->select('huan_luyen_vien.*')
         ->first();
 
     if (!$pt) {
-        return back()->with('error', 'Hiện tại chưa có huấn luyện viên.');
+        return back()->withInput()->with(
+            'error',
+            'Huấn luyện viên không tồn tại hoặc đã bị khóa/ngừng hoạt động. Vui lòng chọn PT khác.'
+        );
     }
 
     $nhanVien = DB::table('nhan_vien')

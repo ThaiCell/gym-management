@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 22, 2026 lúc 08:33 AM
+-- Thời gian đã tạo: Th10 24, 2026 lúc 09:14 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -193,7 +193,14 @@ INSERT INTO `dang_ky_goi_pt` (`dang_ky_goi_pt_id`, `hoi_vien_id`, `goi_pt_id`, `
 (35, 11, 4, 1, '2026-10-22', '2026-11-05', 5, 'đã hủy'),
 (36, 11, 5, 1, '2026-10-22', '2026-12-05', 12, 'đã hủy'),
 (37, 11, 1, 1, '2026-10-22', '2026-11-20', 10, 'đang hoạt động'),
-(38, 8, 5, 1, '2026-10-22', '2026-12-05', 12, 'đang hoạt động');
+(38, 8, 5, 1, '2026-10-22', '2026-12-05', 12, 'đang hoạt động'),
+(39, 15, 4, 1, '2026-10-24', '2026-11-07', 5, 'đã hủy'),
+(40, 15, 4, 1, '2026-10-24', '2026-11-07', 5, 'đã hủy'),
+(41, 15, 1, 1, '2026-10-24', '2026-11-22', 10, 'đã hủy'),
+(42, 15, 1, 4, '2026-10-24', '2026-11-22', 10, 'đã hủy'),
+(43, 15, 5, 2, '2026-10-24', '2026-12-07', 12, 'đã hủy'),
+(44, 15, 1, 2, '2026-10-24', '2026-11-22', 10, 'đã hủy'),
+(45, 15, 4, 2, '2026-10-24', '2026-11-07', 5, 'đã hủy');
 
 -- --------------------------------------------------------
 
@@ -280,12 +287,18 @@ INSERT INTO `dang_ky_lop` (`dang_ky_lop_id`, `lop_tap_id`, `hoi_vien_id`, `ngay_
 (26, 4, 12, '2026-10-02 03:43:29', 'đang hoạt động'),
 (27, 5, 15, '2026-10-02 08:46:15', 'đang hoạt động'),
 (28, 2, 15, '2026-10-02 08:46:19', 'đã hủy'),
-(29, 3, 15, '2026-10-02 08:46:21', 'đang hoạt động'),
-(30, 1, 15, '2026-10-02 08:46:23', 'đang hoạt động'),
-(31, 4, 15, '2026-10-02 08:46:29', 'đang hoạt động'),
+(29, 3, 15, '2026-10-02 08:46:21', 'đã hủy'),
+(30, 1, 15, '2026-10-02 08:46:23', 'đã hủy'),
+(31, 4, 15, '2026-10-02 08:46:29', 'đã hủy'),
 (32, 3, 11, '2026-10-03 08:06:04', 'đã hủy'),
 (33, 2, 11, '2026-10-03 08:06:10', 'đã hủy'),
-(34, 3, 11, '2026-10-04 11:26:47', 'đã hủy');
+(34, 3, 11, '2026-10-04 11:26:47', 'đã hủy'),
+(35, 1, 11, '2026-10-24 04:44:18', 'đã hủy'),
+(36, 2, 11, '2026-10-24 04:44:20', 'đã hủy'),
+(37, 3, 11, '2026-10-24 04:44:22', 'đã hủy'),
+(38, 4, 11, '2026-10-24 04:44:27', 'đã hủy'),
+(39, 5, 11, '2026-10-24 04:44:29', 'đã hủy'),
+(40, 1, 15, '2026-10-24 06:14:50', 'đang hoạt động');
 
 -- --------------------------------------------------------
 
@@ -453,6 +466,7 @@ CREATE TABLE `huan_luyen_vien` (
   `pt_id` int(11) NOT NULL,
   `nguoi_dung_id` int(11) NOT NULL,
   `chuyen_mon` varchar(255) DEFAULT NULL,
+  `thanh_tich` text DEFAULT NULL,
   `so_dien_thoai` varchar(20) DEFAULT NULL,
   `anh` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -461,13 +475,13 @@ CREATE TABLE `huan_luyen_vien` (
 -- Đang đổ dữ liệu cho bảng `huan_luyen_vien`
 --
 
-INSERT INTO `huan_luyen_vien` (`pt_id`, `nguoi_dung_id`, `chuyen_mon`, `so_dien_thoai`, `anh`) VALUES
-(1, 11, 'Tăng cơ và phát triển cơ bắp', '0902000001', 'img/trainer1.jpg'),
-(2, 12, 'Giảm cân và Cardio', '0902000002', 'img/trainer4.jpg'),
-(3, 13, 'Boxing', '0902000003', 'img/trainer3.jpg'),
-(4, 14, 'Yoga và Fitness nâng cao', '0902000004', 'img/trainer5.jpg'),
-(5, 27, 'Thể hình chuyên nghiệp', '0903000005', 'img/trainer6.jpg'),
-(6, 28, 'Giảm cân và fitness', '0903000006', 'img/trainer2.jpg');
+INSERT INTO `huan_luyen_vien` (`pt_id`, `nguoi_dung_id`, `chuyen_mon`, `thanh_tich`, `so_dien_thoai`, `anh`) VALUES
+(1, 11, 'Tăng cơ và phát triển cơ bắp', 'Chứng chỉ Huấn luyện viên thể hình chuyên nghiệp; Giải Nhất thể hình cấp thành phố năm 2024', '0902000001', 'img/trainer1.jpg'),
+(2, 12, 'Giảm cân và Cardio', 'Chứng chỉ Huấn luyện viên giảm cân và Cardio; Chứng chỉ sơ cấp cứu thể thao', '0902000002', 'img/trainer4.jpg'),
+(3, 13, 'Boxing', 'Chứng chỉ Huấn luyện viên Boxing; Thành tích thi đấu Boxing phong trào', '0902000003', 'img/trainer3.jpg'),
+(4, 14, 'Yoga và Fitness nâng cao', 'Chứng chỉ Yoga quốc tế; Chứng chỉ Fitness nâng cao', '0902000004', 'img/trainer5.jpg'),
+(5, 27, 'Thể hình chuyên nghiệp', 'Chứng chỉ Huấn luyện viên thể hình chuyên nghiệp; Thành tích thi đấu thể hình', '0903000005', 'img/trainer6.jpg'),
+(6, 28, 'Giảm cân và fitness', 'Chứng chỉ Huấn luyện viên Fitness; Chứng chỉ tư vấn giảm cân', '0903000006', 'img/trainer2.jpg');
 
 -- --------------------------------------------------------
 
@@ -626,27 +640,27 @@ CREATE TABLE `nguoi_dung` (
 
 INSERT INTO `nguoi_dung` (`nguoi_dung_id`, `vai_tro_id`, `ho_ten`, `email`, `mat_khau`, `trang_thai`) VALUES
 (1, 1, 'Nguyễn Văn Admin', 'admin@gym.com', '$2y$12$zdYNzlsjZ98wjJRsg/vwm.BAR1Pyb3UOsaMZULjz4INNeqYvJyyW6', 'hoat_dong'),
-(2, 2, 'Trần Văn An', 'an@gym.com', '123456', 'hoạt_động'),
-(3, 2, 'Lê Thị Hoa', 'hoa@gym.com', '123456', 'hoạt_động'),
-(4, 2, 'Phạm Văn Nam', 'nam@gym.com', '123456', 'hoạt_động'),
-(5, 3, 'Nguyễn Văn Minh', 'minh@gmail.com', '123456', 'hoạt_động'),
-(6, 3, 'Trần Thị Lan', 'lan@gmail.com', '123456', 'hoạt_động'),
-(7, 3, 'Lê Văn Hùng', 'hung@gmail.com', '123456', 'hoạt_động'),
-(8, 3, 'Phạm Thị Mai', 'mai@gmail.com', '123456', 'hoạt_động'),
-(9, 3, 'Võ Thanh Tùng', 'tung@gmail.com', '123456', 'hoạt_động'),
-(10, 3, 'Đặng Thị Ngọc', 'ngoc@gmail.com', '123456', 'hoạt_động'),
-(11, 4, 'Nguyễn Hoàng Long', 'long@gym.com', '123456', 'hoạt_động'),
-(12, 4, 'Trần Minh Khoa', 'khoa@gym.com', '123456', 'hoạt_động'),
-(13, 4, 'Lê Quốc Bảo', 'bao@gym.com', '123456', 'hoạt_động'),
-(14, 4, 'Phạm Thanh Phong', 'phong@gym.com', '123456', 'hoạt_động'),
-(15, 3, 'Nguyễn Hoàng Nam', 'nam1@gmail.com', '123456', 'hoạt_động'),
-(16, 3, 'Trần Quốc Việt', 'viet@gmail.com', '123456', 'hoạt_động'),
-(17, 3, 'Lê Minh Tuấn', 'tuan@gmail.com', '123456', 'hoạt_động'),
-(18, 3, 'Phạm Ngọc Anh', 'anh@gmail.com', '123456', 'hoạt_động'),
-(19, 3, 'Trương Trí Thiện', 'truongtrithien2008@gmail.com', '$2y$12$U0Fe0KbOCPxASjRKkiYfIulPrID1F/PVoOOPJRFvV03qjUi2SGAJ2', 'hoạt_động'),
-(20, 3, 'thái', 'thai@gmail.com', '$2y$12$MTMe6TfSFGGf49Gr.H3TM.MniGrJyYxR4YsuWwXfnUbzv3JfnmqKu', 'hoạt_động'),
-(21, 3, 'ali', 'ali@gmail.com', '$2y$12$GTbbenfb650KvMdkYQRBf.AGQBnW6pZWOxihpB6kn1lH5GqnCRkke', 'hoạt_động'),
-(22, 3, 'ali', 'alo@gmail.com', '$2y$12$WVAz9hYnukGA4I65C95Nfuh31PFFPhblNoCe81/jmWbZUGcm0C4.i', 'hoạt_động'),
+(2, 2, 'Trần Văn An', 'an@gym.com', '123456', 'hoat_dong'),
+(3, 2, 'Lê Thị Hoa', 'hoa@gym.com', '123456', 'hoat_dong'),
+(4, 2, 'Phạm Văn Nam', 'nam@gym.com', '123456', 'hoat_dong'),
+(5, 3, 'Nguyễn Văn Minh', 'minh@gmail.com', '123456', 'hoat_dong'),
+(6, 3, 'Trần Thị Lan', 'lan@gmail.com', '123456', 'hoat_dong'),
+(7, 3, 'Lê Văn Hùng', 'hung@gmail.com', '123456', 'hoat_dong'),
+(8, 3, 'Phạm Thị Mai', 'mai@gmail.com', '123456', 'hoat_dong'),
+(9, 3, 'Võ Thanh Tùng', 'tung@gmail.com', '123456', 'hoat_dong'),
+(10, 3, 'Đặng Thị Ngọc', 'ngoc@gmail.com', '123456', 'hoat_dong'),
+(11, 4, 'Nguyễn Hoàng Long', 'long@gym.com', '123456', 'hoat_dong'),
+(12, 4, 'Trần Minh Khoa', 'khoa@gym.com', '123456', 'hoat_dong'),
+(13, 4, 'Lê Quốc Bảo', 'bao@gym.com', '123456', 'hoat_dong'),
+(14, 4, 'Phạm Thanh Phong', 'phong@gym.com', '123456', 'hoat_dong'),
+(15, 3, 'Nguyễn Hoàng Nam', 'nam1@gmail.com', '123456', 'hoat_dong'),
+(16, 3, 'Trần Quốc Việt', 'viet@gmail.com', '123456', 'hoat_dong'),
+(17, 3, 'Lê Minh Tuấn', 'tuan@gmail.com', '123456', 'hoat_dong'),
+(18, 3, 'Phạm Ngọc Anh', 'anh@gmail.com', '123456', 'hoat_dong'),
+(19, 3, 'Trương Trí Thiện', 'truongtrithien2008@gmail.com', '$2y$12$U0Fe0KbOCPxASjRKkiYfIulPrID1F/PVoOOPJRFvV03qjUi2SGAJ2', 'hoat_dong'),
+(20, 3, 'thái', 'thai@gmail.com', '$2y$12$MTMe6TfSFGGf49Gr.H3TM.MniGrJyYxR4YsuWwXfnUbzv3JfnmqKu', 'hoat_dong'),
+(21, 3, 'ali', 'ali@gmail.com', '$2y$12$GTbbenfb650KvMdkYQRBf.AGQBnW6pZWOxihpB6kn1lH5GqnCRkke', 'hoat_dong'),
+(22, 3, 'ali', 'alo@gmail.com', '$2y$12$WVAz9hYnukGA4I65C95Nfuh31PFFPhblNoCe81/jmWbZUGcm0C4.i', 'hoat_dong'),
 (23, 3, 'thiengay', 'gay@gmail.com', '$2y$12$o26IFfqeUrGOmKGeD8LpxecgSl3x3EDE0Iy1nmztxqxcNpA0cFcvK', 'hoat_dong'),
 (24, 3, 'Nguyễn Minh Đức', 'minhduc@gmail.com', '123456', 'hoat_dong'),
 (25, 3, 'Trần Ngọc Hà', 'ngocha@gmail.com', '123456', 'hoat_dong'),
@@ -749,7 +763,7 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('YjpSpOqfg80px27apPic9lOv6CnkMVD2UxtlWDLq', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiT2MwZGhwUW5TMlVRa3o1S0NqWmVneUdLQmxDMHNNdEVsZXV3SkxTSSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9fQ==', 1792650745);
+('ym27y0jEs4YY4dB4516RpU4EDQqFIskhgEUaoFa3', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiSTNIQW5UWnI5VG40NnRHMHJrMnVHVmYxQzd1aW9JMk9CWWJadFNvRiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi90cmFpbmVycyI7czo1OiJyb3V0ZSI7Tjt9czo0OiJ1c2VyIjtPOjg6InN0ZENsYXNzIjo2OntzOjEzOiJuZ3VvaV9kdW5nX2lkIjtpOjE7czoxMDoidmFpX3Ryb19pZCI7aToxO3M6NjoiaG9fdGVuIjtzOjE5OiJOZ3V54buFbiBWxINuIEFkbWluIjtzOjU6ImVtYWlsIjtzOjEzOiJhZG1pbkBneW0uY29tIjtzOjg6Im1hdF9raGF1IjtzOjYwOiIkMnkkMTIkemRZTnpsc2paOTh3akpSc2cvdndtLkJBUjFQeWIzVU9zYU1aVUxqejRJTk5lcVl2Snl5VzYiO3M6MTA6InRyYW5nX3RoYWkiO3M6OToiaG9hdF9kb25nIjt9czo3OiJyb2xlX2lkIjtpOjE7czoxNDoiZGFzaGJvYXJkX3BhdGgiO3M6OToiZGFzaGJvYXJkIjt9', 1792826057);
 
 -- --------------------------------------------------------
 
@@ -785,8 +799,8 @@ INSERT INTO `thong_bao` (`thong_bao_id`, `nguoi_dung_id`, `tieu_de`, `noi_dung`,
 (12, 22, 'Hủy lịch PT', 'Bạn đã hủy lịch PT vào ngày 02/10/2026 19:44.', 0, '2026-10-01 13:03:16'),
 (13, 5, 'Buổi PT đã hoàn thành', 'Buổi tập PT ngày 29/09/2026 07:00 đã được xác nhận hoàn thành. Số buổi PT còn lại đã giảm 1 buổi.', 1, '2026-10-01 13:30:43'),
 (14, 22, 'Check-in thành công', 'Bạn đã check-in Gym lúc 13:40 01/10/2026.', 0, '2026-10-01 13:40:22'),
-(15, 23, 'Đăng ký gói tập thành công', 'Bạn đã đăng ký gói \"Gói Sinh Viên\". Hóa đơn đang chờ thanh toán.', 0, '2026-10-01 13:54:55'),
-(16, 23, 'Thanh toán thành công', 'Hóa đơn #HD00012 đã được xác nhận thanh toán bằng Tiền mặt.', 0, '2026-10-01 14:05:15'),
+(15, 23, 'Đăng ký gói tập thành công', 'Bạn đã đăng ký gói \"Gói Sinh Viên\". Hóa đơn đang chờ thanh toán.', 1, '2026-10-01 13:54:55'),
+(16, 23, 'Thanh toán thành công', 'Hóa đơn #HD00012 đã được xác nhận thanh toán bằng Tiền mặt.', 1, '2026-10-01 14:05:15'),
 (17, 20, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Yoga Cơ Bản\".', 0, '2026-10-02 03:29:28'),
 (18, 20, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Gym Tăng Cơ\".', 0, '2026-10-02 03:30:36'),
 (19, 20, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Yoga Cơ Bản\" thành công.', 0, '2026-10-02 03:34:58'),
@@ -805,12 +819,12 @@ INSERT INTO `thong_bao` (`thong_bao_id`, `nguoi_dung_id`, `tieu_de`, `noi_dung`,
 (32, 20, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Strength\" thành công.', 0, '2026-10-02 03:43:24'),
 (33, 20, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Boxing\" thành công.', 0, '2026-10-02 03:43:27'),
 (34, 20, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Fitness Toàn Thân\" thành công.', 0, '2026-10-02 03:43:29'),
-(35, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Strength\" thành công.', 0, '2026-10-02 08:46:15'),
-(36, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Cardio Đốt Mỡ\" thành công.', 0, '2026-10-02 08:46:19'),
-(37, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Gym Tăng Cơ\" thành công.', 0, '2026-10-02 08:46:21'),
-(38, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Yoga Cơ Bản\" thành công.', 0, '2026-10-02 08:46:23'),
-(39, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Fitness Toàn Thân\" thành công.', 0, '2026-10-02 08:46:29'),
-(40, 23, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Cardio Đốt Mỡ\".', 0, '2026-10-02 08:46:35'),
+(35, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Strength\" thành công.', 1, '2026-10-02 08:46:15'),
+(36, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Cardio Đốt Mỡ\" thành công.', 1, '2026-10-02 08:46:19'),
+(37, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Gym Tăng Cơ\" thành công.', 1, '2026-10-02 08:46:21'),
+(38, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Yoga Cơ Bản\" thành công.', 1, '2026-10-02 08:46:23'),
+(39, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Fitness Toàn Thân\" thành công.', 1, '2026-10-02 08:46:29'),
+(40, 23, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Cardio Đốt Mỡ\".', 1, '2026-10-02 08:46:35'),
 (41, 19, 'Đăng ký gói tập thành công', 'Bạn đã đăng ký gói \"Gói Premium 6 Tháng\". Hóa đơn đang chờ thanh toán.', 1, '2026-10-03 08:05:39'),
 (42, 19, 'Đăng ký gói PT thành công', 'Bạn đã đăng ký thành công gói PT Premium 30 Buổi. Có 30 buổi, thời hạn 90 ngày.', 1, '2026-10-03 08:06:00'),
 (43, 19, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Gym Tăng Cơ\" thành công.', 1, '2026-10-03 08:06:04'),
@@ -849,7 +863,36 @@ INSERT INTO `thong_bao` (`thong_bao_id`, `nguoi_dung_id`, `tieu_de`, `noi_dung`,
 (76, 19, 'Nhắc nhở thanh toán', 'Hóa đơn #HD00021 trị giá 1.500.000 VNĐ đang chờ thanh toán. Thời gian còn lại: 71.998660575278 giờ.', 1, '2026-10-22 05:47:59'),
 (77, 19, 'Thanh toán thành công', 'Hóa đơn #HD00021 đã được xác nhận thanh toán bằng Tiền mặt.', 1, '2026-10-22 05:50:17'),
 (78, 16, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00022 cho gói PT PT Giảm Mỡ 12 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-22 06:04:07'),
-(79, 16, 'Nhắc nhở thanh toán', 'Hóa đơn #HD00022 trị giá 1.800.000 VNĐ đang chờ thanh toán. Thời gian còn lại: 71.998310445 giờ.', 1, '2026-10-22 06:04:13');
+(79, 16, 'Nhắc nhở thanh toán', 'Hóa đơn #HD00022 trị giá 1.800.000 VNĐ đang chờ thanh toán. Thời gian còn lại: 71.998310445 giờ.', 1, '2026-10-22 06:04:13'),
+(80, 19, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Yoga Cơ Bản\" thành công.', 1, '2026-10-24 04:44:18'),
+(81, 19, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Cardio Đốt Mỡ\" thành công.', 1, '2026-10-24 04:44:20'),
+(82, 19, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Gym Tăng Cơ\" thành công.', 1, '2026-10-24 04:44:22'),
+(83, 19, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Fitness Toàn Thân\" thành công.', 1, '2026-10-24 04:44:27'),
+(84, 19, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Strength\" thành công.', 1, '2026-10-24 04:44:29'),
+(85, 19, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Yoga Cơ Bản\".', 1, '2026-10-24 04:44:39'),
+(86, 19, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Strength\".', 1, '2026-10-24 04:44:47'),
+(87, 19, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Fitness Toàn Thân\".', 1, '2026-10-24 04:44:56'),
+(88, 19, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Gym Tăng Cơ\".', 1, '2026-10-24 04:45:02'),
+(89, 19, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Cardio Đốt Mỡ\".', 1, '2026-10-24 04:45:05'),
+(90, 23, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Fitness Toàn Thân\".', 1, '2026-10-24 06:14:25'),
+(91, 23, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Yoga Cơ Bản\".', 1, '2026-10-24 06:14:31'),
+(92, 23, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Gym Tăng Cơ\".', 1, '2026-10-24 06:14:44'),
+(93, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Yoga Cơ Bản\" thành công.', 1, '2026-10-24 06:14:50'),
+(94, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00023 cho gói PT PT Cá Nhân 5 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-24 06:19:01'),
+(95, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cá Nhân 5 Buổi.', 1, '2026-10-24 06:19:41'),
+(96, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00024 cho gói PT PT Cá Nhân 5 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-24 06:19:50'),
+(97, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cá Nhân 5 Buổi.', 1, '2026-10-24 06:20:19'),
+(98, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00025 cho gói PT PT Cơ Bản 10 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-24 06:20:59'),
+(99, 23, 'Nhắc nhở thanh toán', 'Hóa đơn #HD00025 trị giá 1.500.000 VNĐ đang chờ thanh toán. Thời gian còn lại: 71.853698861111 giờ.', 1, '2026-10-24 06:29:45'),
+(100, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cơ Bản 10 Buổi.', 1, '2026-10-24 06:40:18'),
+(101, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00026 cho gói PT PT Cơ Bản 10 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-24 06:40:27'),
+(102, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cơ Bản 10 Buổi.', 1, '2026-10-24 06:40:34'),
+(103, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00027 cho gói PT PT Giảm Mỡ 12 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-24 06:40:42'),
+(104, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Giảm Mỡ 12 Buổi.', 1, '2026-10-24 06:59:49'),
+(105, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00028 cho gói PT PT Cơ Bản 10 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-24 06:59:58'),
+(106, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cơ Bản 10 Buổi.', 0, '2026-10-24 07:12:40'),
+(107, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00029 cho gói PT PT Cá Nhân 5 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 0, '2026-10-24 07:12:47'),
+(108, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cá Nhân 5 Buổi.', 0, '2026-10-24 07:13:31');
 
 -- --------------------------------------------------------
 
@@ -1118,13 +1161,13 @@ ALTER TABLE `check_in`
 -- AUTO_INCREMENT cho bảng `chi_tiet_hoa_don`
 --
 ALTER TABLE `chi_tiet_hoa_don`
-  MODIFY `chi_tiet_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `chi_tiet_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT cho bảng `dang_ky_goi_pt`
 --
 ALTER TABLE `dang_ky_goi_pt`
-  MODIFY `dang_ky_goi_pt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `dang_ky_goi_pt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT cho bảng `dang_ky_goi_tap`
@@ -1136,7 +1179,7 @@ ALTER TABLE `dang_ky_goi_tap`
 -- AUTO_INCREMENT cho bảng `dang_ky_lop`
 --
 ALTER TABLE `dang_ky_lop`
-  MODIFY `dang_ky_lop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `dang_ky_lop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT cho bảng `failed_jobs`
@@ -1160,7 +1203,7 @@ ALTER TABLE `goi_tap`
 -- AUTO_INCREMENT cho bảng `hoa_don`
 --
 ALTER TABLE `hoa_don`
-  MODIFY `hoa_don_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `hoa_don_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT cho bảng `hoi_vien`
@@ -1226,7 +1269,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT cho bảng `thong_bao`
 --
 ALTER TABLE `thong_bao`
-  MODIFY `thong_bao_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `thong_bao_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
