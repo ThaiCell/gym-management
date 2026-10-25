@@ -158,6 +158,18 @@
             font-weight: bold;
         }
 
+        .auth-forgot {
+            display: block;
+
+            margin-top: 15px;
+
+            color: #e50914;
+
+            font-size: 14px;
+
+            text-align: center;
+        }
+
 
         .error-message {
             background:
@@ -257,12 +269,15 @@
 
                 </div>
 
-
                 <button type="submit" class="auth-btn">
                     ĐĂNG NHẬP
                 </button>
 
             </form>
+
+            <a href="{{ route('password.request') }}" class="auth-forgot">
+                Quên mật khẩu?
+            </a>
 
 
             <div class="auth-register">

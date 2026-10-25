@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use App\Http\Middleware\NoCache;
 use Illuminate\Http\Request;
 
@@ -1258,7 +1259,62 @@ Route::post('/contact', function () {
 
 Route::get('/login', function () {
     return view('user.login');
-});
+})->name('login');
+
+Route::get('/forgot-password', function () {
+    return view('user.forgot-password');
+})->name('password.request');
+
+Route::post('/forgot-password', function (Request $request) {
+    $request->validate([
+        'email' => ['required', 'email'],
+    ]);
+
+    $status = Password::broker('nguoi_dung')->sendResetLink(
+        $request->only('email')
+    );
+
+    return $status === Password::RESET_LINK_SENT
+        ? back()->with('status', 'Liên kết đặt lại mật khẩu đã được gửi đến email của bạn.')
+        : back()->withErrors([
+            'email' => $status === Password::RESET_THROTTLED
+                ? 'Vui lòng chờ một chút trước khi yêu cầu gửi lại liên kết.'
+                : 'Không tìm thấy tài khoản nào với địa chỉ email này.',
+        ]);
+})->name('password.email');
+
+Route::get('/reset-password/{token}', function (string $token) {
+    return view('user.reset-password', [
+        'token' => $token,
+        'email' => request('email'),
+    ]);
+})->name('password.reset');
+
+Route::post('/reset-password', function (Request $request) {
+    $request->validate([
+        'token' => ['required'],
+        'email' => ['required', 'email'],
+        'password' => ['required', 'string', 'min:8', 'confirmed'],
+    ]);
+
+    $status = Password::broker('nguoi_dung')->reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, string $password) {
+            $user->mat_khau = Hash::make($password);
+            $user->save();
+        }
+    );
+
+    return $status === Password::PASSWORD_RESET
+        ? redirect('/login')->with('success', 'Mật khẩu đã được đặt lại thành công. Bạn có thể đăng nhập.')
+        : back()->withErrors([
+            'email' => [
+                $status === Password::RESET_THROTTLED
+                    ? 'Vui lòng chờ một chút trước khi thử lại.'
+                    : 'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.',
+            ],
+        ]);
+})->name('password.update');
 
 
 /*
