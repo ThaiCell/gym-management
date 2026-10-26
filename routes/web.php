@@ -1,9 +1,8 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use App\Http\Middleware\NoCache;
 use Illuminate\Http\Request;
 
@@ -1265,57 +1264,6 @@ Route::get('/forgot-password', function () {
     return view('user.forgot-password');
 })->name('password.request');
 
-Route::post('/forgot-password', function (Request $request) {
-    $request->validate([
-        'email' => ['required', 'email'],
-    ]);
-
-    $status = Password::broker('nguoi_dung')->sendResetLink(
-        $request->only('email')
-    );
-
-    return $status === Password::RESET_LINK_SENT
-        ? back()->with('status', 'Liên kết đặt lại mật khẩu đã được gửi đến email của bạn.')
-        : back()->withErrors([
-            'email' => $status === Password::RESET_THROTTLED
-                ? 'Vui lòng chờ một chút trước khi yêu cầu gửi lại liên kết.'
-                : 'Không tìm thấy tài khoản nào với địa chỉ email này.',
-        ]);
-})->name('password.email');
-
-Route::get('/reset-password/{token}', function (string $token) {
-    return view('user.reset-password', [
-        'token' => $token,
-        'email' => request('email'),
-    ]);
-})->name('password.reset');
-
-Route::post('/reset-password', function (Request $request) {
-    $request->validate([
-        'token' => ['required'],
-        'email' => ['required', 'email'],
-        'password' => ['required', 'string', 'min:8', 'confirmed'],
-    ]);
-
-    $status = Password::broker('nguoi_dung')->reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-        function ($user, string $password) {
-            $user->mat_khau = Hash::make($password);
-            $user->save();
-        }
-    );
-
-    return $status === Password::PASSWORD_RESET
-        ? redirect('/login')->with('success', 'Mật khẩu đã được đặt lại thành công. Bạn có thể đăng nhập.')
-        : back()->withErrors([
-            'email' => [
-                $status === Password::RESET_THROTTLED
-                    ? 'Vui lòng chờ một chút trước khi thử lại.'
-                    : 'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.',
-            ],
-        ]);
-})->name('password.update');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -1910,6 +1858,78 @@ Route::post('/admin/settings/password', function (Request $request) {
         ->with('success_password', 'Đổi mật khẩu thành công.');
 });
 
+
+
+/*
+|--------------------------------------------------------------------------
+| ADMIN - CẤP LẠI MẬT KHẨU (KHÔNG DÙNG EMAIL)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/admin/password-resets', function () {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $keyword = trim((string) request('q', ''));
+
+    $users = DB::table('nguoi_dung')
+        ->select(
+            'nguoi_dung_id',
+            'ho_ten',
+            'email',
+            'vai_tro_id',
+            'trang_thai'
+        )
+        ->when($keyword !== '', function ($query) use ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('ho_ten', 'like', '%' . $keyword . '%')
+                  ->orWhere('email', 'like', '%' . $keyword . '%');
+            });
+        })
+        ->orderByDesc('nguoi_dung_id')
+        ->paginate(15)
+        ->withQueryString();
+
+    return view('admin.password-resets', compact('users', 'keyword'));
+});
+
+Route::post('/admin/password-resets/{id}', function (Request $request, $id) {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    // Không cho Admin vô tình tự cấp lại mật khẩu cho chính mình qua chức năng này.
+    if ((int) $id === (int) session('user')->nguoi_dung_id) {
+        return redirect('/admin/password-resets')
+            ->with('error', 'Mày không thể cấp lại mật khẩu cho chính tài khoản Admin đang đăng nhập.');
+    }
+
+    $user = DB::table('nguoi_dung')->where('nguoi_dung_id', $id)->first();
+    if (!$user) {
+        return redirect('/admin/password-resets')->with('error', 'Không tìm thấy tài khoản.');
+    }
+
+    // Sinh mật khẩu tạm thời ngẫu nhiên, rồi chỉ lưu bản băm vào database.
+    $temporaryPassword = \Illuminate\Support\Str::random(16);
+
+    DB::table('nguoi_dung')
+        ->where('nguoi_dung_id', $id)
+        ->update(['mat_khau' => Hash::make($temporaryPassword)]);
+
+    return redirect('/admin/password-resets')
+        ->with('success', 'Đã cấp lại mật khẩu cho tài khoản: ' . $user->email)
+        ->with('temporary_password', $temporaryPassword)
+        ->with('temporary_password_user', $user->email);
+})->name('admin.password-resets.reset');
 
 
 Route::get('/admin/members', function () {

@@ -434,7 +434,6 @@
                 flex-direction: column;
             }
         }
-        
     </style>
 </head>
 
@@ -469,11 +468,11 @@
                 <span>Gói tập</span>
             </a>
             <a href="/admin/pt-packages" class="menu-item">
-               <div class="menu-icon">🏋🏼‍♀️</div>
+                <div class="menu-icon">🏋🏼‍♀️</div>
                 <span>Gói PT</span>
             </a>
             <a href="/admin/classes" class="menu-item">
-               <div class="menu-icon">🏢</div>
+                <div class="menu-icon">🏢</div>
                 <span>Lớp tập</span>
             </a>
             <a href="/admin/trainers">
@@ -496,6 +495,11 @@
             <a href="/admin/statistics">
                 <div class="menu-icon">📊</div>
                 <span>Thống kê</span>
+            </a>
+
+            <a href="{{ url('/admin/password-resets') }}" class="sidebar-link">
+                <span>🔑</span>
+                <span>Cấp lại mật khẩu</span>
             </a>
 
             <a href="/admin/settings">

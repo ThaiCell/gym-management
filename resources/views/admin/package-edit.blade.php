@@ -4,7 +4,9 @@
 
     <style>
         .package-edit-page {
-            padding: 26px;
+            color: #f5f5f5;
+            padding: 24px;
+            max-width: 1000px;
         }
 
         .page-header {
@@ -12,6 +14,10 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 22px;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
         }
 
         .page-header h2 {

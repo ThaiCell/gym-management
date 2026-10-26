@@ -6,7 +6,7 @@
 
     <style>
         .register-page {
-            min-height: calc(100vh - 75px);
+            min-height: calc(105vh - 75px);
 
             display: flex;
 

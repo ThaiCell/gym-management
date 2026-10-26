@@ -151,7 +151,8 @@
             white-space: nowrap;
         }
 
-        .edit-btn, .delete-btn {
+        .edit-btn,
+        .delete-btn {
             display: inline-block;
             border: 0;
             border-radius: 6px;
@@ -165,6 +166,7 @@
         .edit-btn {
             background: #333;
             color: #fff;
+            padding: 15px;
         }
 
         .edit-btn:hover {
@@ -175,13 +177,15 @@
         .delete-btn {
             background: #ed1c24;
             color: #fff;
+            padding: 15px;
         }
 
         .delete-btn:hover {
             background: #c9141b;
         }
 
-        .alert-success, .alert-error {
+        .alert-success,
+        .alert-error {
             padding: 12px 16px;
             margin-bottom: 16px;
             border-radius: 7px;
@@ -355,14 +359,12 @@
 
                             <td>
                                 <div class="action-buttons">
-                                    <a href="/admin/packages/{{ $package->goi_tap_id }}/edit"
-                                       class="edit-btn">
+                                    <a href="/admin/packages/{{ $package->goi_tap_id }}/edit" class="edit-btn">
                                         Sửa
                                     </a>
 
-                                    <form action="/admin/packages/{{ $package->goi_tap_id }}/delete"
-                                          method="POST"
-                                          data-confirm-submit="Mày có chắc muốn xóa gói tập này không? Chỉ xóa được khi gói chưa có đăng ký hoặc hóa đơn liên quan.">
+                                    <form action="/admin/packages/{{ $package->goi_tap_id }}/delete" method="POST"
+                                        data-confirm-submit="Mày có chắc muốn xóa gói tập này không? Chỉ xóa được khi gói chưa có đăng ký hoặc hóa đơn liên quan.">
                                         @csrf
                                         <button type="submit" class="delete-btn">
                                             Xóa

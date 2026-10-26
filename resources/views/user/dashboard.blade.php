@@ -14,8 +14,8 @@
         }
 
         /* =========================
-                                                                                   WELCOME
-                                                                                ========================= */
+                                                                                           WELCOME
+                                                                                        ========================= */
 
         .dashboard-hero {
             position: relative;
@@ -80,8 +80,8 @@
         }
 
         /* =========================
-                                                                                   STATS
-                                                                                ========================= */
+                                                                                           STATS
+                                                                                        ========================= */
 
         .dashboard-stats {
             display: grid;
@@ -139,16 +139,21 @@
         }
 
         /* =========================
-                                                                                   CONTENT GRID
-                                                                                ========================= */
+                                                                                           CONTENT GRID
+                                                                                        ========================= */
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 22px;
+            align-items: stretch;
         }
 
         .dashboard-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-width: 0;
             background: #111;
             border: 1px solid #252525;
             border-radius: 17px;
@@ -160,8 +165,24 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
+            min-height: 100px;
             padding: 22px 24px;
             border-bottom: 1px solid #222;
+            box-sizing: border-box;
+        }
+
+        .dashboard-list {
+            flex: 1;
+            padding: 8px 24px 18px;
+        }
+
+        .dashboard-card .empty-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .card-label {
@@ -189,8 +210,8 @@
         }
 
         /* =========================
-                                                                                   LIST
-                                                                                ========================= */
+                                                                                           LIST
+                                                                                        ========================= */
 
         .dashboard-list {
             padding: 8px 24px 18px;
@@ -246,8 +267,8 @@
         }
 
         /* =========================
-                                                                                   BADGE
-                                                                                ========================= */
+                                                                                           BADGE
+                                                                                        ========================= */
 
         .status-badge {
             flex-shrink: 0;
@@ -261,8 +282,8 @@
         }
 
         /* =========================
-                                                                                   EMPTY
-                                                                                ========================= */
+                                                                                           EMPTY
+                                                                                        ========================= */
 
         .empty-box {
             text-align: center;
@@ -375,8 +396,8 @@
         }
 
         /* =========================
-                                                                                   RESPONSIVE
-                                                                                ========================= */
+                                                                                           RESPONSIVE
+                                                                                        ========================= */
 
         @media (max-width: 1000px) {
 
