@@ -33,8 +33,8 @@
         }
 
         /* =========================
-                                       SUMMARY
-                                    ========================= */
+                                           SUMMARY
+                                        ========================= */
 
         .payment-summary {
             display: grid;
@@ -86,8 +86,8 @@
         }
 
         /* =========================
-                                       INVOICE LIST
-                                    ========================= */
+                                           INVOICE LIST
+                                        ========================= */
 
         .invoice-list {
             display: flex;
@@ -108,8 +108,8 @@
         }
 
         /* =========================
-                                       INVOICE TOP
-                                    ========================= */
+                                           INVOICE TOP
+                                        ========================= */
 
         .invoice-top {
             padding: 22px 25px;
@@ -150,8 +150,8 @@
         }
 
         /* =========================
-                                       STATUS
-                                    ========================= */
+                                           STATUS
+                                        ========================= */
 
         .invoice-status {
             padding: 7px 13px;
@@ -180,8 +180,8 @@
         }
 
         /* =========================
-                                       BODY
-                                    ========================= */
+                                           BODY
+                                        ========================= */
 
         .invoice-body {
             padding: 22px 25px;
@@ -208,8 +208,8 @@
         }
 
         /* =========================
-                                       DETAILS
-                                    ========================= */
+                                           DETAILS
+                                        ========================= */
 
         .invoice-details {
             border-top: 1px solid #252525;
@@ -257,8 +257,8 @@
         }
 
         /* =========================
-                                       TOTAL
-                                    ========================= */
+                                           TOTAL
+                                        ========================= */
 
         .invoice-total {
             margin-top: 18px;
@@ -281,8 +281,8 @@
         }
 
         /* =========================
-                                       PAYMENT REMINDER
-                                    ========================= */
+                                           PAYMENT REMINDER
+                                        ========================= */
 
         .payment-alert {
             margin-bottom: 25px;
@@ -293,6 +293,7 @@
             color: #ffd36a;
             font-size: 13px;
             line-height: 1.6;
+            margin-top: 20px;
         }
 
         .payment-alert strong {
@@ -313,8 +314,8 @@
         }
 
         /* =========================
-                                       SUCCESS / ERROR
-                                    ========================= */
+                                           SUCCESS / ERROR
+                                        ========================= */
 
         .payment-success,
         .payment-error {
@@ -337,8 +338,8 @@
         }
 
         /* =========================
-                                       EMPTY
-                                    ========================= */
+                                           EMPTY
+                                        ========================= */
 
         .payment-empty {
             background: #111;
@@ -389,8 +390,8 @@
         }
 
         /* =========================
-                                       RESPONSIVE
-                                    ========================= */
+                                           RESPONSIVE
+                                        ========================= */
 
         @media (max-width: 900px) {
 
@@ -429,8 +430,26 @@
             }
         }
 
-        .pay-invoice-btn { display:inline-flex; align-items:center; justify-content:center; margin-top:12px; padding:10px 18px; border-radius:5px; background:#e50914; color:#fff; font-weight:800; text-decoration:none; font-size:12px; transition:.2s; }
-        .pay-invoice-btn:hover { background:#b80710; color:#fff; transform:translateY(-1px); }
+        .pay-invoice-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 12px;
+            padding: 10px 18px;
+            border-radius: 5px;
+            background: #e50914;
+            color: #fff;
+            font-weight: 800;
+            text-decoration: none;
+            font-size: 12px;
+            transition: .2s;
+        }
+
+        .pay-invoice-btn:hover {
+            background: #b80710;
+            color: #fff;
+            transform: translateY(-1px);
+        }
     </style>
 
 
@@ -745,9 +764,9 @@
 
 
                                 @forelse($chiTietHoaDon->get(
-                                                                    $hd->hoa_don_id,
-                                                                    collect()
-                                                                ) as $ct)
+                                                                        $hd->hoa_don_id,
+                                                                        collect()
+                                                                    ) as $ct)
                                     @php
                                         $tenSanPham = $ct->ten_goi ?: $ct->ten_goi_pt ?: 'Dịch vụ GymFit';
                                     @endphp
@@ -857,7 +876,8 @@
                                     <br>
 
                                     <br>
-                                    <a href="{{ url('/user/payments/checkout/' . $hd->hoa_don_id) }}" class="pay-invoice-btn">Thanh toán</a>
+                                    <a href="{{ url('/user/payments/checkout/' . $hd->hoa_don_id) }}"
+                                        class="pay-invoice-btn">Thanh toán</a>
                                 </div>
                             @endif
 
