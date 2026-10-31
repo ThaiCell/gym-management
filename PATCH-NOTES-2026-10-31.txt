@@ -1,0 +1,25 @@
+GYMFIT PATCH - 2026-10-31
+
+Cac thay doi:
+1. Dong bo nut quan tri tren cac trang: cung chieu cao, bo goc, font; nut chinh do, nut phu than chi, nut xoa/huy vien do.
+2. Loai mau xanh khoi input/select/textarea; focus do den.
+3. Tang do tuong phan icon sidebar va icon dashboard staff/member (do/trang).
+4. Nut HUY GOI PT tren dashboard hoi vien chi hien khi hoa don dang cho thanh toan va con trong 72 gio; nut duoc giu nho gon, khong thu nho khung dashboard.
+5. Dang ky PT chua thanh toan qua 72 gio tu dong chuyen trang thai dang ky va hoa don sang 'da huy' khi hoi vien mo dashboard, trang thanh toan hoac gui yeu cau huy.
+6. Huy thu cong dang ky PT trong 72 gio van hoat dong; khong cho hoi vien tu huy goi da thanh toan.
+7. Hoa don va chi tiet duoc giu lai de bao toan lich su; khi huy mot dong trong hoa don nhieu dong, tong tien duoc tinh lai.
+8. Trang quan ly thanh toan nhan dien ca trang thai co dau va khong dau; 'Da thanh toan' hien mau xanh la.
+9. Bo sung xu ly 72 gio cho luong PackageLifecycleService va goi tu dashboard/payment.
+10. Sua type-hint Request va Carbon trong ReportController de tranh ReflectionException khi Laravel resolve controller.
+11. Kiem tra lai validate trang thai va xu ly yeu cau lien he trong Admin.
+
+Sau khi thay source:
+- Chay: php artisan optimize:clear
+- Chay: php artisan route:list
+- Dang nhap hoi vien de kiem tra mot dang ky PT cho thanh toan duoi 72 gio va mot dang ky qua 72 gio.
+- Kiem tra trang /admin/packages, /admin/classes, /admin/payments, /admin/contacts va /admin/statistics.
+
+Luu y:
+- Da kiem tra cu phap PHP bang php -l cho cac file PHP thay doi.
+- Chua the chay kiem thu ket noi database va giao dien tren may XAMPP cua ban trong moi truong nay.
+- Xu ly qua 72 gio duoc thuc hien khi hoi vien truy cap dashboard/trang thanh toan/gui yeu cau huy; de chay nen dung gio can bat Laravel Scheduler tren may chu.

@@ -1,0 +1,164 @@
+/* GYMFIT shared design system: red / black */
+:root{--gym-bg:#0b0b0d;--gym-surface:#151518;--gym-surface-2:#1c1c21;--gym-border:#303037;--gym-text:#f5f5f5;--gym-muted:#a1a1aa;--gym-red:#e50914;--gym-red-hover:#ff2633;--gym-radius:12px;--gym-shadow:0 14px 36px rgba(0,0,0,.24)}
+html{color-scheme:dark}body{background:var(--gym-bg);color:var(--gym-text)}
+/* Primary actions: all CTA buttons share one height, weight, radius and color. */
+.register-btn,.register-btn-submit,.cta-btn,.package-btn,.pt-btn:not(.pt-secondary):not(.pt-danger),.trainer-btn,.class-btn-primary,.class-form-primary,.member-primary,.auth-btn,.save-btn,.btn-red,.btn-filter,.settings-submit,.contact-submit,.checkout-btn,.pay-invoice-btn,.booking-btn,.pt-submit,.confirm-btn,.checkin-btn,.add-package-btn,.add-trainer-btn,.trainer-create-submit,.edit-btn,.detail-btn,.btn-book,.pay-success-btn,.home-button{min-height:46px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:8px!important;padding:0 22px!important;border-radius:8px!important;font-family:system-ui,-apple-system,"Segoe UI",sans-serif!important;font-size:14px!important;font-weight:750!important;line-height:1.2!important;text-decoration:none!important;cursor:pointer!important;transition:background .18s ease,border-color .18s ease,transform .18s ease,box-shadow .18s ease!important;background:var(--gym-red)!important;border:1px solid var(--gym-red)!important;color:#fff!important}
+.register-btn:hover,.register-btn-submit:hover,.cta-btn:hover,.package-btn:hover,.pt-btn:not(.pt-secondary):not(.pt-danger):hover,.trainer-btn:hover,.class-btn-primary:hover,.class-form-primary:hover,.member-primary:hover,.auth-btn:hover,.save-btn:hover,.btn-red:hover,.btn-filter:hover,.settings-submit:hover,.contact-submit:hover,.checkout-btn:hover,.pay-invoice-btn:hover,.booking-btn:hover,.pt-submit:hover,.confirm-btn:hover,.checkin-btn:hover,.add-package-btn:hover,.add-trainer-btn:hover,.trainer-create-submit:hover,.edit-btn:hover,.detail-btn:hover,.btn-book:hover,.pay-success-btn:hover,.home-button:hover{background:var(--gym-red-hover)!important;border-color:var(--gym-red-hover)!important;color:#fff!important;transform:translateY(-1px);box-shadow:0 8px 20px rgba(229,9,20,.18)}
+.back-btn,.cancel-btn,.btn-gray,.btn-outline,.btn-reset,.class-form-secondary,.member-secondary,.pt-secondary,.btn-back,.search-btn,.registered-btn,.delete-btn,.action-delete{min-height:46px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;padding:0 20px!important;border:1px solid #44444d!important;border-radius:8px!important;background:#202025!important;color:#eee!important;font:700 14px/1.2 system-ui,-apple-system,"Segoe UI",sans-serif!important;text-decoration:none!important;cursor:pointer!important}
+.login-btn,.dashboard-btn,.logout-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center}
+input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select,textarea{border-radius:8px}
+input:not([type=checkbox]):not([type=radio]):not([type=hidden]):focus,select:focus,textarea:focus{outline:none;border-color:var(--gym-red)!important;box-shadow:0 0 0 3px rgba(229,9,20,.15)}
+.profile-card,.auth-box,.filter-box,.stat-card,.history-section{box-shadow:var(--gym-shadow)}
+.profile-card,.auth-box,.filter-box,.stat-card{border-radius:14px!important}
+.profile-page,.gym-history{background:var(--gym-bg)}
+@media(max-width:900px){.register-btn,.register-btn-submit,.cta-btn,.package-btn,.pt-btn:not(.pt-secondary):not(.pt-danger),.trainer-btn,.class-btn-primary,.class-form-primary,.member-primary,.auth-btn,.save-btn,.btn-red,.btn-filter,.settings-submit,.contact-submit,.checkout-btn,.pay-invoice-btn,.booking-btn,.pt-submit,.confirm-btn,.checkin-btn,.add-package-btn,.add-trainer-btn,.trainer-create-submit,.edit-btn,.detail-btn,.btn-book,.pay-success-btn,.home-button{min-height:44px!important;padding-inline:18px!important}}
+
+/* Compact inline actions must not inherit large form-button dimensions. */
+.action-btn, .action-group .cancel-btn, .cancel-form .action-btn { min-height:32px !important; height:32px !important; padding:0 12px !important; font-size:11px !important; border-radius:7px !important; line-height:1 !important; }
+.action-btn.cancel-btn { background:rgba(229,9,20,.12) !important; color:#ff6871 !important; border:1px solid rgba(229,9,20,.35) !important; }
+.action-btn.cancel-btn:hover { background:#e50914 !important; color:#fff !important; }
+/* Small icon tiles use visible red/white contrast instead of black glyphs. */
+.staff-stat-icon,.staff-item-icon,.staff-empty-icon,.stat-icon,.item-icon,.empty-icon { color:#ff4651 !important; }
+.staff-stat-icon svg,.staff-item-icon svg,.staff-empty-icon svg,.stat-icon svg,.item-icon svg { width:22px;height:22px;stroke:#ff4651;fill:none;stroke-width:1.9; }
+
+/* Final brand overrides: neutral charcoal controls, never blue-tinted. */
+input:not([type=checkbox]):not([type=radio]):not([type=hidden]),select,textarea{background:#171719!important;color:#f5f5f5!important;border:1px solid #36363d!important;}
+input::placeholder,textarea::placeholder{color:#85858d!important;}
+input:focus,select:focus,textarea:focus{border-color:#e50914!important;box-shadow:0 0 0 3px rgba(229,9,20,.15)!important;}
+/* Inline dashboard actions stay compact; global cancel buttons must not stretch cards. */
+.action-btn{min-height:31px!important;height:31px!important;padding:0 11px!important;font-size:11px!important;line-height:1!important;border-radius:7px!important;}
+.cancel-form .cancel-btn,.action-group .cancel-btn{min-height:31px!important;height:31px!important;padding:0 11px!important;font-size:11px!important;background:rgba(229,9,20,.12)!important;color:#ff6871!important;border:1px solid rgba(229,9,20,.35)!important;}
+.cancel-form .cancel-btn:hover,.action-group .cancel-btn:hover{background:#e50914!important;color:#fff!important;}
+
+
+/* ADMIN ACTION SYSTEM — đồng nhất nút trên toàn bộ trang quản trị */
+:root { --gym-action-height:36px; --gym-action-radius:7px; }
+.content .class-btn,.content .edit-btn,.content .delete-btn,.content .class-btn-edit,.content .class-btn-delete,
+.content .btn-detail,.content .btn-save,.content .btn-filter,.content .search-btn,.content .detail-btn,
+.content .back-btn,.content .save-btn,.content .pt-btn,.content .member-btn,.content .pr-btn,.content .btn-reset,
+.content .add-package-btn,.content .add-trainer-btn,.content button[type="submit"],.content a[class*="-btn"] {
+ box-sizing:border-box!important; min-height:var(--gym-action-height)!important; height:var(--gym-action-height)!important;
+ padding:0 13px!important; border-radius:var(--gym-action-radius)!important;
+ font:700 12px/1.1 system-ui,-apple-system,"Segoe UI",sans-serif!important;
+ display:inline-flex!important; align-items:center!important; justify-content:center!important; gap:6px!important;
+ text-decoration:none!important; white-space:nowrap; cursor:pointer;
+ transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease!important;
+}
+/* Primary */
+.content .class-btn-primary,.content .add-package-btn,.content .add-trainer-btn,.content .btn-save,
+.content .save-btn,.content .btn-filter,
+.content button[type="submit"]:not(.delete-btn):not(.class-btn-delete):not(.action-btn):not(.cancel-btn):not(.search-btn):not(.back-btn):not(.btn-reset) {
+ color:#fff!important;background:#e50914!important;border:1px solid #e50914!important;
+}
+.content .class-btn-primary:hover,.content .add-package-btn:hover,.content .add-trainer-btn:hover,
+.content .btn-save:hover,.content .save-btn:hover,.content .btn-filter:hover,
+.content button[type="submit"]:not(.delete-btn):not(.class-btn-delete):not(.action-btn):not(.cancel-btn):not(.search-btn):not(.back-btn):not(.btn-reset):hover {
+ color:#fff!important;background:#c90812!important;border-color:#c90812!important;
+}
+/* Secondary — charcoal, never blue */
+.content .edit-btn,.content .class-btn-edit,.content .btn-detail,.content .detail-btn,.content .back-btn,
+.content .btn-reset,.content .search-btn,.content .pt-btn:not(.pt-danger):not(.pt-primary),
+.content .member-btn:not(.member-primary),.content .pr-btn:not(.pr-btn-primary) {
+ color:#f2f2f2!important;background:#242428!important;border:1px solid #414149!important;
+}
+.content .edit-btn:hover,.content .class-btn-edit:hover,.content .btn-detail:hover,.content .detail-btn:hover,
+.content .back-btn:hover,.content .btn-reset:hover,.content .search-btn:hover {
+ color:#fff!important;background:#34343a!important;border-color:#666!important;
+}
+/* Destructive */
+.content .delete-btn,.content .class-btn-delete,.content .action-delete,.content .pt-danger {
+ color:#ff6871!important;background:rgba(229,9,20,.10)!important;border:1px solid rgba(229,9,20,.48)!important;
+}
+.content .delete-btn:hover,.content .class-btn-delete:hover,.content .action-delete:hover,.content .pt-danger:hover {
+ color:#fff!important;background:#e50914!important;border-color:#e50914!important;
+}
+.content .action-buttons,.content .class-actions {display:flex;align-items:center;gap:6px;white-space:nowrap}
+.content .action-buttons form,.content .class-actions form {margin:0}
+.content .action-buttons .edit-btn,.content .action-buttons .delete-btn,.content .class-actions .class-btn-edit,
+.content .class-actions .class-btn-delete,.content .payment-table .btn-detail {
+ min-width:42px!important;height:34px!important;min-height:34px!important;padding:0 11px!important;
+}
+/* Inputs */
+.content input:not([type=checkbox]):not([type=radio]):not([type=hidden]),.content select,.content textarea {
+ background:#171719!important;color:#f5f5f5!important;border:1px solid #36363d!important;
+}
+.content input:focus,.content select:focus,.content textarea:focus {
+ border-color:#e50914!important;box-shadow:0 0 0 3px rgba(229,9,20,.14)!important;
+}
+.content input::placeholder,.content textarea::placeholder {color:#85858d!important}
+/* Icons */
+.sidebar .menu-icon {color:#ff4651!important}
+.sidebar .menu-icon svg {stroke:#ff4651!important;fill:none!important}
+.stat-icon,.staff-stat-icon,.staff-item-icon,.item-icon,.empty-icon {color:#ff6871!important}
+.stat-icon svg,.staff-stat-icon svg,.staff-item-icon svg,.item-icon svg {stroke:#ff6871!important;fill:none!important}
+/* Member dashboard: keep page/card dimensions, compact only inline action buttons */
+.action-group .action-btn,.cancel-form .cancel-btn {
+ min-height:31px!important;height:31px!important;padding:0 11px!important;font-size:11px!important;border-radius:7px!important;
+}
+
+/* =========================================================
+   GYMFIT FINAL FIX: Vietnamese typography + consistent menus
+   ========================================================= */
+html, body {
+    font-family: "Segoe UI", Roboto, "Noto Sans", Arial, sans-serif !important;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+body :not(svg):not(svg *):not(i):not([class*="icon"]) {
+    font-family: "Segoe UI", Roboto, "Noto Sans", Arial, sans-serif;
+}
+button, input, select, textarea { font-family: inherit !important; }
+.user-header, .member-header {
+    height: 72px !important;
+    min-height: 72px !important;
+    padding-left: clamp(18px, 2.5vw, 42px) !important;
+    padding-right: clamp(18px, 2.5vw, 42px) !important;
+}
+.user-menu, .member-menu {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: clamp(13px, 1.65vw, 25px) !important;
+    flex: 1 1 auto !important;
+    min-width: 0;
+}
+.user-menu a, .member-menu a {
+    color: #dedee2;
+    font-size: 13px !important;
+    font-weight: 650 !important;
+    letter-spacing: .01em;
+    line-height: 1.25;
+    white-space: nowrap;
+}
+.user-menu a.active, .member-menu a.active { color: #fff !important; }
+.user-menu a.active::after, .member-menu a.active::after {
+    left: 0 !important; right: 0 !important; bottom: -26px !important;
+    height: 2px !important; background: #e50914 !important;
+}
+.user-logo, .member-logo { flex: 0 0 auto; }
+.user-login, .member-login { flex: 0 0 auto; }
+@media (max-width: 1050px) {
+    .user-header, .member-header { padding-left: 16px !important; padding-right: 16px !important; }
+    .user-menu, .member-menu { gap: 10px !important; }
+    .user-menu a, .member-menu a { font-size: 11px !important; }
+}
+@media (max-width: 760px) {
+    .user-header, .member-header { height: auto !important; min-height: 68px !important; flex-wrap: wrap; gap: 10px; padding-top: 9px !important; padding-bottom: 9px !important; }
+    .user-menu, .member-menu { order: 3; flex: 1 0 100% !important; justify-content: flex-start !important; overflow-x: auto; padding: 5px 0; }
+    .user-menu a.active::after, .member-menu a.active::after { bottom: -5px !important; }
+}
+/* Keep Admin PT controls the same dimensions as the regular package page. */
+.content .pt-head .pt-btn, .content .pt-toolbar .pt-btn, .content .pt-actions .pt-btn {
+    min-width: 76px !important;
+    min-height: 36px !important;
+    height: 36px !important;
+    padding: 0 15px !important;
+    border-radius: 7px !important;
+    font: 700 12px/1.1 "Segoe UI", Roboto, Arial, sans-serif !important;
+}
+.content .pt-head > .pt-btn { min-width: 130px !important; }
+.content .pt-actions .pt-btn { min-width: 58px !important; }
+.content .pt-btn.pt-danger { background: rgba(229,9,20,.10) !important; color: #ff6871 !important; border: 1px solid rgba(229,9,20,.48) !important; }
+.content .pt-btn.pt-danger:hover { background: #e50914 !important; color: #fff !important; }

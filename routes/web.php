@@ -8,205 +8,22 @@ use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
-| XỬ LÝ GÓI TẬP TỰ ĐỘNG
+| XỬ LÝ VÒNG ĐỜI GÓI TẬP VÀ GÓI PT
 |--------------------------------------------------------------------------
-| - Hóa đơn chưa thanh toán quá 72 giờ:
-|   xóa chi tiết hóa đơn + hóa đơn, giữ đăng ký và ghi "đã hủy".
-| - Hủy gói:
-|   xóa chi tiết hóa đơn + hóa đơn, giữ đăng ký và ghi "đã hủy".
-| - Hóa đơn đã thanh toán và đã qua ngày kết thúc:
-|   giữ đăng ký và chuyển gói thành "đã hết hạn".
+| - Hóa đơn chờ thanh toán quá 72 giờ: đăng ký chuyển sang "đã hủy".
+| - Hóa đơn được giữ lại trong lịch sử với trạng thái "đã hủy".
+| - Gói đã thanh toán và hết hạn được chuyển sang "đã hết hạn".
+| - Dùng chung PackageLifecycleService để trạng thái nhất quán trên các trang.
 |--------------------------------------------------------------------------
 */
 
 $xuLyGoiTapCuaHoiVien = function ($hoiVienId) {
-
-    $dangKyList = DB::table('dang_ky_goi_tap')
-        ->join(
-            'goi_tap',
-            'dang_ky_goi_tap.goi_tap_id',
-            '=',
-            'goi_tap.goi_tap_id'
-        )
-        ->where('dang_ky_goi_tap.hoi_vien_id', $hoiVienId)
-        ->select(
-            'dang_ky_goi_tap.*',
-            'goi_tap.ten_goi'
-        )
-        ->get();
-
-    foreach ($dangKyList as $dangKy) {
-
-        /*
-        |--------------------------------------------------------------------------
-        | Tìm hóa đơn của lần đăng ký này
-        |--------------------------------------------------------------------------
-        */
-
-        $hoaDon = DB::table('chi_tiet_hoa_don')
-            ->join(
-                'hoa_don',
-                'chi_tiet_hoa_don.hoa_don_id',
-                '=',
-                'hoa_don.hoa_don_id'
-            )
-            ->where(
-                'chi_tiet_hoa_don.goi_tap_id',
-                $dangKy->goi_tap_id
-            )
-            ->where(
-                'hoa_don.hoi_vien_id',
-                $hoiVienId
-            )
-            ->whereDate(
-                'hoa_don.ngay_lap',
-                '>=',
-                $dangKy->ngay_bat_dau
-            )
-            ->select(
-                'hoa_don.*'
-            )
-            ->orderByDesc('hoa_don.ngay_lap')
-            ->first();
-
-        if (!$hoaDon) {
-            continue;
-        }
-
-        $trangThaiHoaDon = mb_strtolower(
-            trim($hoaDon->trang_thai ?? '')
-        );
-
-        /*
-        |--------------------------------------------------------------------------
-        | 1. CHƯA THANH TOÁN QUÁ 72 GIỜ
-        |--------------------------------------------------------------------------
-        */
-
-        $choThanhToan = in_array(
-            $trangThaiHoaDon,
-            [
-                'chờ thanh toán',
-                'cho thanh toan',
-                'cho_thanh_toan',
-                'pending'
-            ],
-            true
-        );
-
-        if (
-            $choThanhToan &&
-            \Carbon\Carbon::parse($hoaDon->ngay_lap)
-                ->addHours(72)
-                ->lessThanOrEqualTo(now())
-        ) {
-
-            DB::transaction(function () use (
-                $dangKy,
-                $hoaDon
-            ) {
-
-                DB::table('chi_tiet_hoa_don')
-                    ->where(
-                        'hoa_don_id',
-                        $hoaDon->hoa_don_id
-                    )
-                    ->delete();
-
-                DB::table('hoa_don')
-                    ->where(
-                        'hoa_don_id',
-                        $hoaDon->hoa_don_id
-                    )
-                    ->delete();
-
-                DB::table('dang_ky_goi_tap')
-                    ->where(
-                        'dang_ky_goi_tap_id',
-                        $dangKy->dang_ky_goi_tap_id
-                    )
-                    ->update([
-                        'trang_thai' => 'đã hủy'
-                    ]);
-
-            });
-
-            DB::table('thong_bao')->insert([
-                'nguoi_dung_id' => DB::table('hoi_vien')
-                    ->where(
-                        'hoi_vien_id',
-                        $hoiVienId
-                    )
-                    ->value('nguoi_dung_id'),
-
-                'tieu_de' => 'Gói tập đã tự động hủy',
-
-                'noi_dung' =>
-                    'Gói "' .
-                    $dangKy->ten_goi .
-                    '" đã tự động hủy vì quá 72 giờ chưa thanh toán. ' .
-                    'Hóa đơn thanh toán đã được xóa.',
-
-                'da_doc' => 0,
-
-                'tao_luc' => now(),
-            ]);
-
-            continue;
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | 2. ĐÃ THANH TOÁN NHƯNG HẾT HẠN
-        |--------------------------------------------------------------------------
-        */
-
-        $daThanhToan = in_array(
-            $trangThaiHoaDon,
-            [
-                'đã thanh toán',
-                'da thanh toan',
-                'da_thanh_toan',
-                'paid'
-            ],
-            true
-        );
-
-        if (
-            $daThanhToan &&
-            $dangKy->ngay_ket_thuc &&
-            \Carbon\Carbon::parse(
-                $dangKy->ngay_ket_thuc
-            )->startOfDay()->lessThan(
-                now()->startOfDay()
-            ) &&
-            in_array(
-                mb_strtolower(
-                    trim($dangKy->trang_thai ?? '')
-                ),
-                [
-                    'đang hoạt động',
-                    'dang_hoat_dong',
-                    'hoạt_động',
-                    'hoat_dong'
-                ],
-                true
-            )
-        ) {
-
-            DB::table('dang_ky_goi_tap')
-                ->where(
-                    'dang_ky_goi_tap_id',
-                    $dangKy->dang_ky_goi_tap_id
-                )
-                ->update([
-                    'trang_thai' => 'đã hết hạn'
-                ]);
-
-        }
-    }
+    // Dùng chung một service cho gói tập và gói PT để mọi trang
+    // hiển thị cùng một trạng thái, không còn hai luồng xử lý khác nhau.
+    $lifecycle = app(\App\Services\PackageLifecycleService::class);
+    $lifecycle->xuLyGoiTapCuaHoiVien($hoiVienId);
+    $lifecycle->xuLyGoiPtCuaHoiVien($hoiVienId);
 };
-
 
 
 /*
@@ -1112,6 +929,64 @@ Route::get('/pt-packages', function () {
 
 
 
+
+/* --------------------------------------------------------------------------
+ | ADMIN - QUẢN LÝ / XỬ LÝ LIÊN HỆ
+ | Dùng đúng bảng lien_he và cấu trúc xử lý đang có của nhân viên.
+ |-------------------------------------------------------------------------- */
+Route::get('/admin/contacts', function () {
+    if (!session()->has('user')) return redirect('/login');
+    if ((int) session('role_id') !== 1) return redirect('/' . ltrim(session('dashboard_path', 'user/dashboard'), '/'));
+
+    $lienHe = DB::table('lien_he')
+        ->leftJoin('nhan_vien', 'lien_he.nhan_vien_id', '=', 'nhan_vien.nhan_vien_id')
+        ->leftJoin('nguoi_dung as nd_nv', 'nhan_vien.nguoi_dung_id', '=', 'nd_nv.nguoi_dung_id')
+        ->select('lien_he.*', 'nd_nv.ho_ten as ten_nhan_vien')
+        ->orderByDesc('lien_he.tao_luc')
+        ->get();
+
+    return view('admin.contacts', compact('lienHe'));
+})->middleware(NoCache::class);
+
+Route::post('/admin/contacts/{id}/update', function (Request $request, $id) {
+    if (!session()->has('user')) return redirect('/login');
+    if ((int) session('role_id') !== 1) return redirect('/' . ltrim(session('dashboard_path', 'user/dashboard'), '/'));
+
+    $request->validate([
+        'trang_thai' => 'required|in:chưa xử lý,đang xử lý,đã xử lý',
+        'phan_hoi' => 'nullable|string|max:2000',
+    ], [
+        'trang_thai.required' => 'Vui lòng chọn trạng thái xử lý.',
+        'trang_thai.in' => 'Trạng thái xử lý không hợp lệ.',
+        'phan_hoi.max' => 'Phản hồi không được vượt quá 2000 ký tự.',
+    ]);
+
+    $contactExists = DB::table('lien_he')->where('lien_he_id', $id)->exists();
+    if (!$contactExists) {
+        return redirect('/admin/contacts')->with('error', 'Không tìm thấy yêu cầu liên hệ.');
+    }
+
+    $nhanVien = DB::table('nhan_vien')
+        ->where('nguoi_dung_id', session('user')->nguoi_dung_id)
+        ->first();
+
+    $duLieu = [
+        'trang_thai' => $request->trang_thai,
+        'phan_hoi' => $request->phan_hoi,
+    ];
+    if ($request->trang_thai === 'chưa xử lý') {
+        $duLieu['xu_ly_luc'] = null;
+    } elseif ($nhanVien) {
+        $duLieu['nhan_vien_id'] = $nhanVien->nhan_vien_id;
+        $duLieu['xu_ly_luc'] = now();
+    } else {
+        $duLieu['xu_ly_luc'] = now();
+    }
+
+    DB::table('lien_he')->where('lien_he_id', $id)->update($duLieu);
+    return redirect('/admin/contacts')->with('success', 'Đã cập nhật xử lý liên hệ.');
+})->middleware(NoCache::class);
+
 /*
 |--------------------------------------------------------------------------
 | LIÊN HỆ
@@ -1267,6 +1142,91 @@ Route::get('/forgot-password', function () {
 
 /*
 |--------------------------------------------------------------------------
+| QUÊN MẬT KHẨU - GỬI LINK ĐẶT LẠI
+|--------------------------------------------------------------------------
+| Dùng bảng password_reset_tokens đã có trong schema hiện tại.
+| Token được hash trong DB, hết hạn sau 60 phút và chỉ dùng một lần.
+*/
+Route::post('/forgot-password', function (Request $request) {
+    $validated = $request->validate([
+        'email' => ['required', 'email', 'max:255'],
+    ], [
+        'email.required' => 'Vui lòng nhập email.',
+        'email.email' => 'Email không hợp lệ.',
+    ]);
+
+    $user = DB::table('nguoi_dung')->where('email', $validated['email'])->first();
+
+    // Trả cùng một thông báo để tránh tiết lộ email có đăng ký hay không.
+    $message = 'Nếu email tồn tại trong hệ thống, hướng dẫn đặt lại mật khẩu sẽ được gửi đến hộp thư của bạn.';
+    if (!$user) {
+        return redirect()->route('password.request')->with('status', $message);
+    }
+
+    $plainToken = \Illuminate\Support\Str::random(64);
+    DB::table('password_reset_tokens')->updateOrInsert(
+        ['email' => $user->email],
+        ['token' => Hash::make($plainToken), 'created_at' => now()]
+    );
+
+    $resetUrl = url('/reset-password/' . urlencode($user->email) . '/' . $plainToken);
+    try {
+        \Illuminate\Support\Facades\Mail::raw(
+            "Xin chào {$user->ho_ten},\n\nBạn vừa yêu cầu đặt lại mật khẩu GYMFIT. Mở liên kết sau trong vòng 60 phút: {$resetUrl}\n\nNếu bạn không yêu cầu, hãy bỏ qua email này.",
+            function ($mail) use ($user) {
+                $mail->to($user->email, $user->ho_ten)->subject('Đặt lại mật khẩu GYMFIT');
+            }
+        );
+    } catch (\Throwable $exception) {
+        report($exception);
+        return redirect()->route('password.request')->with('error', 'Không thể gửi email lúc này. Vui lòng thử lại sau hoặc liên hệ quản trị viên.');
+    }
+
+    return redirect()->route('password.request')->with('status', $message);
+})->middleware('throttle:5,1')->name('password.email');
+
+Route::get('/reset-password/{email}/{token}', function ($email, $token) {
+    $record = DB::table('password_reset_tokens')->where('email', $email)->first();
+    if (!$record || !$record->created_at || \Carbon\Carbon::parse($record->created_at)->addMinutes(60)->isPast() || !Hash::check($token, $record->token)) {
+        return redirect()->route('password.request')->with('error', 'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.');
+    }
+    return view('user.reset-password', ['email' => $email, 'token' => $token]);
+})->name('password.reset');
+
+Route::post('/reset-password', function (Request $request) {
+    $validated = $request->validate([
+        'email' => ['required', 'email'],
+        'token' => ['required', 'string'],
+        'password' => ['required', 'string', 'min:8', 'confirmed'],
+    ], [
+        'password.min' => 'Mật khẩu mới phải có ít nhất 8 ký tự.',
+        'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
+    ]);
+
+    $record = DB::table('password_reset_tokens')->where('email', $validated['email'])->first();
+    if (!$record || !$record->created_at || \Carbon\Carbon::parse($record->created_at)->addMinutes(60)->isPast() || !Hash::check($validated['token'], $record->token)) {
+        return redirect()->route('password.request')->with('error', 'Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.');
+    }
+
+    $updated = DB::transaction(function () use ($validated) {
+        $changed = DB::table('nguoi_dung')->where('email', $validated['email'])->update([
+            'mat_khau' => Hash::make($validated['password']),
+        ]);
+        if ($changed) {
+            DB::table('password_reset_tokens')->where('email', $validated['email'])->delete();
+        }
+        return $changed;
+    });
+
+    if (!$updated) {
+        return redirect()->route('password.request')->with('error', 'Không tìm thấy tài khoản cần cập nhật.');
+    }
+    return redirect()->route('login')->with('success', 'Đặt lại mật khẩu thành công. Bạn có thể đăng nhập bằng mật khẩu mới.');
+})->middleware('throttle:5,1')->name('password.update');
+
+
+/*
+|--------------------------------------------------------------------------
 | ĐĂNG NHẬP - XỬ LÝ
 |--------------------------------------------------------------------------
 */
@@ -1362,6 +1322,18 @@ Route::post('/login', function () {
     }
 
 
+    // Nâng cấp mật khẩu dạng chữ thường cũ sang bcrypt sau lần đăng nhập hợp lệ.
+    if ($matKhau === $user->mat_khau) {
+        DB::table('nguoi_dung')->where('nguoi_dung_id', $user->nguoi_dung_id)
+            ->update(['mat_khau' => Hash::make($matKhau)]);
+        $user->mat_khau = Hash::make($matKhau);
+    }
+
+    // Đổi session ID sau xác thực để giảm nguy cơ session fixation.
+    request()->session()->regenerate();
+    $sessionUser = clone $user;
+    unset($sessionUser->mat_khau);
+
     /*
     |--------------------------------------------------------------------------
     | Lưu session
@@ -1369,7 +1341,7 @@ Route::post('/login', function () {
     */
 
     session([
-        'user' => $user,
+        'user' => $sessionUser,
         'role_id' => $user->vai_tro_id,
     ]);
 
@@ -3423,6 +3395,47 @@ Route::get('/admin/payments/{id}', function ($id) {
 
 // ==================== ADMIN - THỐNG KÊ ====================
 
+Route::get('/admin/statistics/export', function (Request $request) {
+    if (!session()->has('user')) return redirect('/login');
+    if ((int) session('role_id') !== 1) return redirect('/' . session('dashboard_path', 'user/dashboard'));
+
+    $filters = $request->validate([
+        'from' => ['nullable', 'date'],
+        'to' => ['nullable', 'date', 'after_or_equal:from'],
+    ]);
+    $query = DB::table('hoa_don')
+        ->join('hoi_vien', 'hoa_don.hoi_vien_id', '=', 'hoi_vien.hoi_vien_id')
+        ->join('nguoi_dung', 'hoi_vien.nguoi_dung_id', '=', 'nguoi_dung.nguoi_dung_id')
+        ->select('hoa_don.hoa_don_id', 'nguoi_dung.ho_ten', 'nguoi_dung.email', 'hoa_don.ngay_lap', 'hoa_don.tong_tien', 'hoa_don.trang_thai', 'hoa_don.phuong_thuc_thanh_toan')
+        ->orderByDesc('hoa_don.ngay_lap');
+    if (!empty($filters['from'])) $query->whereDate('hoa_don.ngay_lap', '>=', $filters['from']);
+    if (!empty($filters['to'])) $query->whereDate('hoa_don.ngay_lap', '<=', $filters['to']);
+    $rows = $query->get();
+
+    return response()->streamDownload(function () use ($rows) {
+        $out = fopen('php://output', 'w');
+        // BOM để Excel đọc tiếng Việt UTF-8.
+        fwrite($out, "\xEF\xBB\xBF");
+        fputcsv($out, ['Mã hóa đơn', 'Hội viên', 'Email', 'Ngày lập', 'Tổng tiền', 'Trạng thái', 'Phương thức']);
+        foreach ($rows as $row) {
+            $safeText = static function ($value) {
+                $value = (string) ($value ?? '');
+                return preg_match('/^[=+\-@\t\r]/', $value) ? "'" . $value : $value;
+            };
+            fputcsv($out, [
+                $row->hoa_don_id,
+                $safeText($row->ho_ten),
+                $safeText($row->email),
+                $row->ngay_lap,
+                $row->tong_tien,
+                $safeText($row->trang_thai),
+                $safeText($row->phuong_thuc_thanh_toan),
+            ]);
+        }
+        fclose($out);
+    }, 'gymfit-bao-cao-doanh-thu-' . now()->format('Ymd-His') . '.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+})->name('admin.statistics.export');
+
 Route::get('/admin/statistics', function (Illuminate\Http\Request $request) {
 
     if (!session()->has('user')) {
@@ -5214,83 +5227,47 @@ Route::post('/user/pt-schedule/create', function () {
     |--------------------------------------------------------------------------
     */
 
-    DB::beginTransaction();
-
     try {
+        DB::transaction(function () use ($dangKy, $hoiVien, $validated, $nguoiDungId, $batDau, $ketThuc) {
+            // Khóa bản ghi PT và gói đăng ký để các yêu cầu đồng thời được xử lý tuần tự.
+            DB::table('huan_luyen_vien')->where('pt_id', $dangKy->pt_id)->lockForUpdate()->first();
+            $lockedRegistration = DB::table('dang_ky_goi_pt')
+                ->where('dang_ky_goi_pt_id', $dangKy->dang_ky_goi_pt_id)
+                ->lockForUpdate()->first();
+            if (!$lockedRegistration || (int) $lockedRegistration->so_buoi_con_lai <= 0 || !in_array($lockedRegistration->trang_thai, ['đang hoạt động', 'dang_hoat_dong', 'hoạt_động', 'hoat_dong'], true)) {
+                throw new \RuntimeException('Gói PT không còn hiệu lực hoặc đã hết buổi.');
+            }
 
-        DB::table('lich_pt')->insert([
+            $overlap = DB::table('lich_pt')->whereNotIn('trang_thai', ['đã hủy', 'da_huy', 'hủy', 'huy'])
+                ->where('thoi_gian_bat_dau', '<', $validated['thoi_gian_ket_thuc'])
+                ->where('thoi_gian_ket_thuc', '>', $validated['thoi_gian_bat_dau'])
+                ->where(function ($q) use ($dangKy, $hoiVien) {
+                    $q->where('pt_id', $dangKy->pt_id)->orWhere('hoi_vien_id', $hoiVien->hoi_vien_id);
+                })->exists();
+            if ($overlap) throw new \RuntimeException('PT hoặc hội viên vừa phát sinh lịch trùng. Vui lòng chọn khung giờ khác.');
 
-            'dang_ky_goi_pt_id' =>
-                $dangKy->dang_ky_goi_pt_id,
+            DB::table('lich_pt')->insert([
+                'dang_ky_goi_pt_id' => $dangKy->dang_ky_goi_pt_id,
+                'hoi_vien_id' => $hoiVien->hoi_vien_id,
+                'pt_id' => $dangKy->pt_id,
+                'thoi_gian_bat_dau' => $validated['thoi_gian_bat_dau'],
+                'thoi_gian_ket_thuc' => $validated['thoi_gian_ket_thuc'],
+                'trang_thai' => 'đã đặt lịch',
+            ]);
 
-            'hoi_vien_id' =>
-                $hoiVien->hoi_vien_id,
+            DB::table('thong_bao')->insert([
+                'nguoi_dung_id' => $nguoiDungId,
+                'tieu_de' => 'Đặt lịch PT thành công',
+                'noi_dung' => 'Bạn đã đặt lịch cho gói ' . $dangKy->ten_goi_pt . ' từ ' . $batDau->format('d/m/Y H:i') . ' đến ' . $ketThuc->format('H:i') . '.',
+                'da_doc' => false,
+                'tao_luc' => now(),
+            ]);
+        }, 3);
 
-            'pt_id' =>
-                $dangKy->pt_id,
-
-            'thoi_gian_bat_dau' =>
-                $validated['thoi_gian_bat_dau'],
-
-            'thoi_gian_ket_thuc' =>
-                $validated['thoi_gian_ket_thuc'],
-
-            'trang_thai' =>
-                'đã đặt lịch',
-
-        ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Tạo thông báo
-        |--------------------------------------------------------------------------
-        */
-
-        DB::table('thong_bao')->insert([
-
-            'nguoi_dung_id' =>
-                $nguoiDungId,
-
-            'tieu_de' =>
-                'Đặt lịch PT thành công',
-
-            'noi_dung' =>
-                'Bạn đã đặt lịch cho gói ' .
-                $dangKy->ten_goi_pt .
-                ' từ ' .
-                $batDau->format('d/m/Y H:i') .
-                ' đến ' .
-                $ketThuc->format('H:i') .
-                '.',
-
-            'da_doc' =>
-                false,
-
-            'tao_luc' =>
-                now(),
-
-        ]);
-
-        DB::commit();
-
-        return redirect('/user/pt-schedule')
-            ->with(
-                'success',
-                'Đặt lịch PT thành công!'
-            );
-
-    } catch (\Exception $e) {
-
-        DB::rollBack();
-
-        return back()
-            ->withInput()
-            ->with(
-                'error',
-                'Không thể đặt lịch: ' .
-                $e->getMessage()
-            );
-
+        return redirect('/user/pt-schedule')->with('success', 'Đặt lịch PT thành công!');
+    } catch (\Throwable $e) {
+        report($e);
+        return back()->withInput()->with('error', $e instanceof \RuntimeException ? $e->getMessage() : 'Không thể đặt lịch lúc này. Vui lòng thử lại.');
     }
 
 })->middleware(NoCache::class);
@@ -5514,6 +5491,48 @@ Route::post('/user/packages/{id}/cancel', function ($id) {
 |--------------------------------------------------------------------------
 */
 
+
+
+// =====================================================
+// HỘI VIÊN - CHỌN HUẤN LUYỆN VIÊN CHO GÓI PT
+// =====================================================
+Route::get('/pt-packages/{id}/choose', function ($id) {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+
+    if ((int) session('role_id') !== 3) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $goiPt = DB::table('goi_pt')
+        ->where('goi_pt_id', $id)
+        ->first();
+
+    if (!$goiPt || !in_array(mb_strtolower(trim($goiPt->trang_thai ?? ''), 'UTF-8'), [
+        'hoat_dong', 'hoạt_động', 'hoạt động', 'đang hoạt động', 'dang_hoat_dong'
+    ], true)) {
+        return redirect('/pt-packages')->with('error', 'Gói PT không tồn tại hoặc hiện không hoạt động.');
+    }
+
+    $ptList = DB::table('huan_luyen_vien')
+        ->join('nguoi_dung', 'huan_luyen_vien.nguoi_dung_id', '=', 'nguoi_dung.nguoi_dung_id')
+        ->where('nguoi_dung.vai_tro_id', 4)
+        ->whereIn('nguoi_dung.trang_thai', [
+            'hoat_dong', 'hoạt_động', 'hoạt động', 'dang_hoat_dong', 'đang hoạt động'
+        ])
+        ->select(
+            'huan_luyen_vien.pt_id',
+            'huan_luyen_vien.chuyen_mon',
+            'huan_luyen_vien.thanh_tich',
+            'huan_luyen_vien.anh',
+            'nguoi_dung.ho_ten'
+        )
+        ->orderBy('nguoi_dung.ho_ten')
+        ->get();
+
+    return view('user.pt-choose', compact('goiPt', 'ptList'));
+});
 
 Route::post('/pt-packages/{id}/register', function ($id) {
 
@@ -7508,6 +7527,35 @@ Route::post('/user/profile', function () {
 
 /*
 |--------------------------------------------------------------------------
+| LỊCH SỬ HOẠT ĐỘNG HỘI VIÊN
+|--------------------------------------------------------------------------
+*/
+Route::get('/user/history', function () {
+    if (!session()->has('user')) return redirect('/login');
+    if ((int) session('role_id') !== 3) return redirect('/' . session('dashboard_path', 'user/dashboard'));
+
+    $userId = session('user')->nguoi_dung_id;
+    $member = DB::table('hoi_vien')->where('nguoi_dung_id', $userId)->first();
+    if (!$member) return redirect('/user/dashboard')->with('error', 'Không tìm thấy hồ sơ hội viên.');
+
+    $invoices = DB::table('hoa_don')->where('hoi_vien_id', $member->hoi_vien_id)->orderByDesc('ngay_lap')->limit(30)->get();
+    $checkIns = DB::table('check_in')->where('hoi_vien_id', $member->hoi_vien_id)->orderByDesc('thoi_gian')->limit(30)->get();
+    $ptSchedules = DB::table('lich_pt')->leftJoin('huan_luyen_vien', 'lich_pt.pt_id', '=', 'huan_luyen_vien.pt_id')
+        ->leftJoin('nguoi_dung', 'huan_luyen_vien.nguoi_dung_id', '=', 'nguoi_dung.nguoi_dung_id')
+        ->where('lich_pt.hoi_vien_id', $member->hoi_vien_id)
+        ->select('lich_pt.*', 'nguoi_dung.ho_ten as ten_pt')->orderByDesc('lich_pt.thoi_gian_bat_dau')->limit(30)->get();
+    $gymPackages = DB::table('dang_ky_goi_tap')->join('goi_tap', 'dang_ky_goi_tap.goi_tap_id', '=', 'goi_tap.goi_tap_id')
+        ->where('dang_ky_goi_tap.hoi_vien_id', $member->hoi_vien_id)
+        ->select('dang_ky_goi_tap.*', 'goi_tap.ten_goi')->orderByDesc('dang_ky_goi_tap.dang_ky_goi_tap_id')->limit(20)->get();
+    $ptPackages = DB::table('dang_ky_goi_pt')->join('goi_pt', 'dang_ky_goi_pt.goi_pt_id', '=', 'goi_pt.goi_pt_id')
+        ->where('dang_ky_goi_pt.hoi_vien_id', $member->hoi_vien_id)
+        ->select('dang_ky_goi_pt.*', 'goi_pt.ten_goi_pt')->orderByDesc('dang_ky_goi_pt.dang_ky_goi_pt_id')->limit(20)->get();
+
+    return view('user.history', compact('invoices', 'checkIns', 'ptSchedules', 'gymPackages', 'ptPackages'));
+})->middleware(NoCache::class)->name('user.history');
+
+/*
+|--------------------------------------------------------------------------
 | ĐĂNG XUẤT
 |--------------------------------------------------------------------------
 */
@@ -7943,6 +7991,10 @@ Route::post('/user/pt-packages/{id}/cancel', function ($id) {
             ->with('error', 'Không tìm thấy hồ sơ hội viên.');
     }
 
+    // Đồng bộ các đăng ký PT đã quá hạn trước khi xử lý yêu cầu.
+    app(\App\Services\PackageLifecycleService::class)
+        ->xuLyGoiPtCuaHoiVien($hoiVien->hoi_vien_id);
+
     // Lấy đúng đăng ký của hội viên, không nối hóa đơn chỉ theo mã gói
     // vì một gói có thể được nhiều hội viên đăng ký nhiều lần.
     $dangKy = DB::table('dang_ky_goi_pt')
@@ -7955,6 +8007,12 @@ Route::post('/user/pt-packages/{id}/cancel', function ($id) {
     if (!$dangKy) {
         return redirect('/user/dashboard')
             ->with('error', 'Không tìm thấy đăng ký gói PT.');
+    }
+
+    $trangThaiGoiHienTai = mb_strtolower(trim($dangKy->trang_thai ?? ''));
+    if (in_array($trangThaiGoiHienTai, ['đã hủy', 'đã huỷ', 'da huy', 'da_huy'], true)) {
+        return redirect('/user/dashboard')
+            ->with('info', 'Gói PT này đã được hủy. Đăng ký quá 72 giờ chưa thanh toán sẽ tự động chuyển sang Đã hủy.');
     }
 
     // Tìm hóa đơn chờ thanh toán của hội viên cho gói PT này.
@@ -7999,10 +8057,6 @@ Route::post('/user/pt-packages/{id}/cancel', function ($id) {
             ->with('error', 'Không tìm thấy hóa đơn đang chờ thanh toán của gói PT này.');
     }
 
-    if (!$hoaDon->ngay_lap || now()->greaterThanOrEqualTo(\Carbon\Carbon::parse($hoaDon->ngay_lap)->addHours(72))) {
-        return redirect('/user/dashboard')
-            ->with('error', 'Hóa đơn đã quá hạn 72 giờ. Vui lòng liên hệ nhân viên.');
-    }
 
     DB::transaction(function () use ($id, $dangKy, $hoaDon, $nguoiDungId) {
         DB::table('chi_tiet_hoa_don')
@@ -8015,9 +8069,18 @@ Route::post('/user/pt-packages/{id}/cancel', function ($id) {
             ->exists();
 
         if (!$conChiTiet) {
+            // Giữ lại hóa đơn để lịch sử giao dịch không bị mất.
             DB::table('hoa_don')
                 ->where('hoa_don_id', $hoaDon->hoa_don_id)
-                ->delete();
+                ->update(['trang_thai' => 'đã hủy']);
+        } else {
+            $tongTienConLai = DB::table('chi_tiet_hoa_don')
+                ->where('hoa_don_id', $hoaDon->hoa_don_id)
+                ->sum('thanh_tien');
+
+            DB::table('hoa_don')
+                ->where('hoa_don_id', $hoaDon->hoa_don_id)
+                ->update(['tong_tien' => $tongTienConLai]);
         }
 
         DB::table('dang_ky_goi_pt')

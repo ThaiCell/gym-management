@@ -55,7 +55,28 @@ class StatusLabel
             'đã xác nhận' => 'Đã xác nhận',
             'da xac nhan' => 'Đã xác nhận',
 
-            'không hoạt động' => 'Không hoạt động'
+            'không hoạt động' => 'Không hoạt động',
+            'khong hoat dong' => 'Không hoạt động',
+            'ngưng hoạt động' => 'Ngưng hoạt động',
+            'ngung hoat dong' => 'Ngưng hoạt động',
+            'tạm ngưng' => 'Tạm ngưng',
+            'tam ngung' => 'Tạm ngưng',
+            'đang tạm ngưng' => 'Đang tạm ngưng',
+            'dang tam ngung' => 'Đang tạm ngưng',
+            'chờ duyệt' => 'Chờ duyệt',
+            'cho duyet' => 'Chờ duyệt',
+            'đang đăng ký' => 'Đang đăng ký',
+            'dang dang ky' => 'Đang đăng ký',
+            'đã đăng ký' => 'Đã đăng ký',
+            'da dang ky' => 'Đã đăng ký',
+            'đang tham gia' => 'Đang tham gia',
+            'dang tham gia' => 'Đang tham gia',
+            'đã hoàn thành' => 'Đã hoàn thành',
+            'da hoan thanh' => 'Đã hoàn thành',
+            'đã thanh lý' => 'Đã thanh lý',
+            'da thanh ly' => 'Đã thanh lý',
+            'hết hạn' => 'Hết hạn',
+            'het han' => 'Hết hạn'
         ];
 
         return $labels[$key] ?? $status;

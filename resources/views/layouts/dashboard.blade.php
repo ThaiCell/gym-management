@@ -23,6 +23,9 @@
         }
 
         body {
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
             font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: #0b0b0b;
             color: #fff;
@@ -356,9 +359,12 @@
         ========================================================= */
 
         .member-content {
+            flex: 1 0 auto;
+            width: 100%;
+            max-width: none;
             min-height: calc(100vh - 75px);
-            padding: 45px 60px 70px;
-            max-width: 1500px;
+            /* Header is fixed: reserve its full height plus breathing room. */
+            padding: 112px clamp(24px, 3.6vw, 64px) 70px;
             margin: 0 auto;
         }
 
@@ -579,6 +585,7 @@
         /* FOOTER - CÙNG MÀU VỚI user.blade.php */
 
         .member-footer {
+            flex-shrink:0;
             background: #050505;
             border-top: 1px solid #252525;
             padding: 25px;
@@ -706,8 +713,192 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #e50914;
         }
-    </style>
+    
+/* =========================================================
+   GYMFIT DESIGN SYSTEM — shared visual layer
+   Applies consistently to every page using the three layouts.
+   ========================================================= */
+:root {
+    --gym-bg: #0b0d10;
+    --gym-surface: #12161c;
+    --gym-surface-2: #181e26;
+    --gym-surface-3: #202833;
+    --gym-border: rgba(255,255,255,.085);
+    --gym-text: #f4f6f8;
+    --gym-muted: #9aa4b2;
+    --gym-red: #e11d2e;
+    --gym-red-dark: #b91424;
+    --gym-red-soft: rgba(225,29,46,.13);
+    --gym-radius: 16px;
+    --gym-shadow: 0 14px 36px rgba(0,0,0,.22);
+}
+html { scroll-behavior: smooth; }
+body { color: var(--gym-text); background: var(--gym-bg); }
+::selection { background: rgba(225,29,46,.35); color: #fff; }
 
+/* Consistent surfaces, without forcing a new structure on existing Blade views. */
+.card, .stat-card, .dashboard-card, .content-card, .form-card,
+.package-card, .trainer-card, .class-card, .payment-card,
+.member-card, .info-card, .section-card, .table-container,
+.table-wrapper, .chart-card, .profile-card, .detail-card {
+    border: 1px solid var(--gym-border);
+    border-radius: var(--gym-radius);
+    box-shadow: var(--gym-shadow);
+}
+
+/* Typography */
+h1, h2, h3, h4 { color: var(--gym-text); letter-spacing: -.025em; }
+p, .description, .text-muted, small { color: inherit; }
+.page-heading, .section-title { letter-spacing: -.03em; }
+
+/* Form controls */
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+select, textarea {
+    max-width: 100%;
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 10px;
+    background: #171719;
+    color: var(--gym-text);
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus, textarea:focus {
+    outline: none;
+    border-color: rgba(225,29,46,.8);
+    box-shadow: 0 0 0 3px rgba(225,29,46,.14);
+}
+input::placeholder, textarea::placeholder { color: #778292; }
+label { color: #d7dce3; }
+
+/* Buttons — preserve existing classes and actions. */
+button, .btn, [class*="-btn"] { transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease; }
+button:not(:disabled):hover, .btn:hover, [class*="-btn"]:hover { filter: brightness(1.07); }
+button:focus-visible, a:focus-visible { outline: 2px solid #ff6470; outline-offset: 3px; }
+
+/* Tables */
+table { border-collapse: separate; border-spacing: 0; }
+thead th { color: #cbd2dc; font-weight: 700; letter-spacing: .035em; }
+tbody tr { transition: background .16s ease; }
+tbody tr:hover { background: rgba(255,255,255,.035); }
+td, th { border-color: var(--gym-border) !important; }
+
+/* Links and badges */
+a { transition: color .18s ease, opacity .18s ease; }
+.badge, .status, [class*="badge-"] { letter-spacing: .01em; }
+
+/* Admin shell */
+.sidebar { background: linear-gradient(180deg, #101012 0%, #09090b 100%) !important; border-right-color: var(--gym-border) !important; }
+.sidebar .logo h1 { letter-spacing: .08em; }
+.sidebar .menu a { border: 1px solid transparent; border-radius: 11px !important; }
+.sidebar .menu a:hover { background: rgba(225,29,46,.10) !important; border-color: rgba(225,29,46,.2); color: #fff !important; }
+.sidebar .menu a.active { background: linear-gradient(110deg, var(--gym-red), var(--gym-red-dark)) !important; box-shadow: 0 7px 18px rgba(225,29,46,.2); }
+.topbar { background: rgba(12,12,14,.96) !important; border-bottom-color: var(--gym-border) !important; backdrop-filter: blur(14px); }
+.content { padding-top: 28px; }
+
+/* Public/member navigation */
+.user-header, .member-header { background: rgba(12,15,19,.94) !important; border-bottom: 1px solid var(--gym-border) !important; backdrop-filter: blur(16px); }
+.user-logo, .member-logo { letter-spacing: .04em; }
+.user-menu a, .member-menu a { position: relative; }
+.user-menu a.active, .member-menu a.active { color: #fff !important; }
+.user-menu a.active::after, .member-menu a.active::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: -7px; height: 2px; border-radius: 3px; background: var(--gym-red); }
+.user-content, .member-content { min-height: 65vh; }
+.user-footer { border-top: 1px solid var(--gym-border); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: #090b0e; }
+::-webkit-scrollbar-thumb { background: #343c48; border: 2px solid #090b0e; border-radius: 20px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gym-red); }
+
+@media (max-width: 900px) {
+    .content { padding: 20px 16px !important; }
+    .topbar { padding-left: 18px !important; padding-right: 18px !important; }
+}
+@media (max-width: 640px) {
+    .content { padding: 16px 12px !important; }
+    .topbar { min-height: 64px; height: auto !important; gap: 12px; }
+    .user-content, .member-content { padding-left: 12px; padding-right: 12px; }
+    table { min-width: 620px; }
+}
+
+    
+        /* Dashboard shared scale: keep the established layout, improve legibility */
+        .dashboard-main, main, .dashboard-content { font-size: 14px; }
+        .dashboard-content { padding-left: 30px; padding-right: 30px; }
+        .dashboard-page { max-width: 1560px !important; width: min(100% - 48px, 1560px) !important; }
+        .dashboard-page .dashboard-hero { padding: 46px 50px; }
+        .dashboard-page .dashboard-stats { gap: 20px; }
+        .dashboard-page .stat-card, .dashboard-page .dashboard-panel, .dashboard-page .section-card {
+            border-radius: 14px;
+        }
+        .dashboard-page .stat-icon, .dashboard-page .item-icon, .dashboard-page .empty-icon {
+            color: #ff3945 !important;
+            background: rgba(229,9,20,.12) !important;
+        }
+        .dashboard-page button, .dashboard-page a.button, .dashboard-page .btn {
+            min-height: 38px; padding: 9px 15px; border-radius: 8px;
+        }
+        @media(max-width:700px) {
+            .dashboard-page { width: min(100% - 24px, 1560px) !important; }
+            .dashboard-content { padding-left: 12px; padding-right: 12px; }
+        }
+    
+/* GYMFIT dashboard readability + fixed-header clearance */
+.member-content { width:100% !important; max-width:none !important; padding-top:112px !important; }
+.member-content > * { min-width:0; }
+.dashboard-page, .staff-dashboard, .trainer-dashboard {
+    width: min(100%, 1560px) !important;
+    max-width: 1560px !important;
+    margin-left:auto !important; margin-right:auto !important;
+}
+.dashboard-page .dashboard-hero, .staff-dashboard .staff-hero, .trainer-dashboard .trainer-hero {
+    padding: 48px 52px;
+}
+.dashboard-page .dashboard-stats, .staff-dashboard .staff-stats, .trainer-dashboard .trainer-stats {
+    gap:20px;
+}
+.dashboard-page .dashboard-card, .staff-dashboard .dashboard-card, .trainer-dashboard .dashboard-card {
+    min-height: 280px;
+}
+.dashboard-page .dashboard-card-header, .staff-dashboard .dashboard-card-header, .trainer-dashboard .dashboard-card-header {
+    padding:24px 26px; min-height:88px;
+}
+.dashboard-page .dashboard-item, .staff-dashboard .dashboard-item, .trainer-dashboard .dashboard-item {
+    padding:19px 0;
+}
+.dashboard-page .item-info h3, .staff-dashboard .item-info h3, .trainer-dashboard .item-info h3 { font-size:15px; }
+.dashboard-page .item-info p, .staff-dashboard .item-info p, .trainer-dashboard .item-info p { font-size:12px; }
+.dashboard-page .stat-info span { font-size:13px; }
+.dashboard-page .stat-info strong { font-size:30px; }
+.dashboard-page .gym-line-icon { width:28px; height:28px; }
+.dashboard-page .dashboard-alert {
+    position:relative; z-index:2; width:100%; margin:0 0 22px;
+    padding:16px 20px; border-radius:12px; font-size:14px;
+}
+.dashboard-page .action-btn, .dashboard-page .action-locked {
+    min-height:34px; padding:8px 13px; font-size:11px; white-space:nowrap;
+}
+@media(max-width:850px) {
+    .member-content { padding:145px 20px 48px !important; }
+    .dashboard-page, .staff-dashboard, .trainer-dashboard { width:100% !important; }
+    .dashboard-page .dashboard-hero, .staff-dashboard .staff-hero, .trainer-dashboard .trainer-hero { padding:32px 25px; }
+}
+\n    
+/* GYMFIT TYPOGRAPHY + NAV CONSISTENCY PATCH */
+html, body { font-family: "Segoe UI", Roboto, "Noto Sans", Arial, sans-serif !important; }
+body, body *:not(i):not([class*="icon"]):not(svg):not(svg *) { font-family: "Segoe UI", Roboto, "Noto Sans", Arial, sans-serif; }
+input, button, select, textarea { font: inherit; }
+.user-header, .member-header { min-height: 72px; height: 72px; padding-left: clamp(18px, 2.5vw, 42px); padding-right: clamp(18px, 2.5vw, 42px); }
+.user-menu, .member-menu { display:flex; align-items:center; justify-content:center; gap:clamp(14px, 1.7vw, 27px); flex:1 1 auto; min-width:0; }
+.user-menu a, .member-menu a { white-space:nowrap; font-size:13px; line-height:1.2; font-weight:650; letter-spacing:.01em; }
+.user-menu a.active::after, .member-menu a.active::after { bottom:-25px; height:2px; }
+.user-logo, .member-logo { flex:0 0 auto; font-size:26px; }
+.user-login, .member-login { flex:0 0 auto; gap:9px; }
+@media(max-width:1050px) { .user-header, .member-header { padding-left:16px; padding-right:16px; } .user-menu, .member-menu { gap:11px; } .user-menu a, .member-menu a { font-size:11px; } }
+@media(max-width:760px) { .user-header, .member-header { height:auto; min-height:68px; flex-wrap:wrap; gap:10px; padding-top:10px; padding-bottom:10px; } .user-menu, .member-menu { order:3; flex:1 0 100%; justify-content:flex-start; overflow-x:auto; padding:5px 0; } .user-menu a.active::after, .member-menu a.active::after { bottom:-5px; } }
+</style>
+
+    <link rel="stylesheet" href="{{ asset('css/gymfit-design-system.css') }}?v=2">
 </head>
 
 
@@ -857,6 +1048,10 @@
             </div>
 
 
+
+            @if ((int) session('role_id') === 3)
+                <a href="{{ route('user.history') }}" class="dashboard-btn">LỊCH SỬ</a>
+            @endif
 
             {{-- HỒ SƠ / DASHBOARD THEO TỪNG VAI TRÒ --}}
 

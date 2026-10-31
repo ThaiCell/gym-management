@@ -290,14 +290,14 @@
 
             min-height: calc(100vh - 75px);
 
-            padding: 65px 30px 90px;
+            padding: 100px clamp(20px, 4vw, 64px) 90px;
 
         }
 
 
         .profile-container {
 
-            max-width: 1180px;
+            max-width: 1500px;
 
             margin: 0 auto;
 
@@ -460,9 +460,9 @@
 
             display: grid;
 
-            grid-template-columns: 1.35fr .9fr;
+            grid-template-columns: minmax(0, 1.6fr) minmax(340px, .9fr);
 
-            gap: 24px;
+            gap: 20px;
 
         }
 
@@ -561,7 +561,7 @@
 
         .form-grid.single {
 
-            grid-template-columns: 1fr;
+            grid-template-columns: minmax(0, 1fr);
 
         }
 

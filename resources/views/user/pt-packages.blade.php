@@ -1,1019 +1,435 @@
 @extends('layouts.user')
 
 @section('content')
-
     <style>
-        .pt-page {
-            background: #080808;
-            color: #fff;
+        .pt-catalog {
+            background: #090909;
+            color: #f7f7f7;
             min-height: 100vh;
-            padding-bottom: 80px;
+            padding-bottom: 80px
         }
-
-
-        /* =========================================================
-                                                   HERO
-                                                ========================================================= */
 
         .pt-hero {
-            min-height: 330px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
+            padding: 90px 20px 75px;
             text-align: center;
-
-            position: relative;
-
-            background:
-                linear-gradient(rgba(0, 0, 0, .72),
-                    rgba(0, 0, 0, .82)),
-                url('/img/banner1.avif') center/cover;
+            background: linear-gradient(90deg, rgba(0, 0, 0, .92), rgba(0, 0, 0, .62)), url('/img/banner1.avif') center/cover
         }
 
-
-        .pt-hero-content {
-            max-width: 850px;
-            padding: 40px 20px;
-        }
-
-
-        .pt-label {
-            color: #e50914;
-
-            font-size: 14px;
-            font-weight: 800;
-
+        .pt-kicker {
+            color: #ff2633;
+            font-size: 12px;
+            font-weight: 900;
             letter-spacing: 4px;
-
-            margin-bottom: 15px;
+            text-transform: uppercase
         }
-
 
         .pt-hero h1 {
-            font-size: 48px;
-            font-weight: 900;
-
-            margin: 0 0 18px;
-
-            text-transform: uppercase;
+            font-size: clamp(32px, 5vw, 54px);
+            font-weight: 950;
+            margin: 14px 0;
+            text-transform: uppercase
         }
-
 
         .pt-hero h1 span {
-            color: #e50914;
+            color: #ed1c2e
         }
-
 
         .pt-hero p {
-            color: #bbb;
-
-            font-size: 16px;
-            line-height: 1.7;
-
-            margin: 0;
+            max-width: 680px;
+            margin: auto;
+            color: #bdbdbd;
+            line-height: 1.8
         }
 
-
-
-        /* =========================================================
-                                                   CONTENT
-                                                ========================================================= */
-
-        .pt-container {
-            width: min(1100px, 92%);
-
-            margin: 0 auto;
-
-            padding-top: 65px;
+        .pt-wrap {
+            width: min(1160px, 92%);
+            margin: auto
         }
 
-
-        .section-title {
+        .pt-intro {
             text-align: center;
-
-            margin-bottom: 45px;
+            padding: 58px 0 32px
         }
 
-
-        .section-title .small-title {
-            color: #e50914;
-
-            font-size: 13px;
-            font-weight: 800;
-
-            letter-spacing: 3px;
-
-            margin-bottom: 10px;
-        }
-
-
-        .section-title h2 {
-            font-size: 34px;
+        .pt-intro h2 {
+            font-size: 30px;
             font-weight: 900;
-
-            margin: 0 0 10px;
+            margin: 8px 0
         }
 
-
-        .section-title p {
-            color: #888;
-
-            margin: 0;
+        .pt-intro p {
+            color: #929292;
+            margin: 0
         }
-
-
-
-        /* =========================================================
-                                                   CARDS
-                                                ========================================================= */
 
         .pt-grid {
             display: grid;
-
-            grid-template-columns:
-                repeat(3, 1fr);
-
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 24px;
-            /* Mỗi thẻ tự cao theo nội dung, không kéo dài theo thẻ bên cạnh */
-            align-items: start;
+            align-items: stretch
         }
-
 
         .pt-card {
-            background: #151515;
-
-            border: 1px solid #292929;
-
-            border-radius: 12px;
-
+            background: linear-gradient(160deg, #1b1b1b, #111);
+            border: 1px solid #303030;
+            border-radius: 16px;
             overflow: hidden;
-
-            transition: .3s;
-
+            display: flex;
+            flex-direction: column;
             position: relative;
+            transition: .25s
         }
-
 
         .pt-card:hover {
-            transform: translateY(-8px);
-
-            border-color: #e50914;
-
-            box-shadow:
-                0 15px 40px rgba(229, 9, 20, .15);
+            transform: translateY(-6px);
+            border-color: #e51c2b;
+            box-shadow: 0 18px 45px #e509141c
         }
 
-
-        .pt-card.featured {
-            border-color: #292929;
+        .pt-card.is-featured {
+            border-color: #a51b25
         }
 
-        .pt-card.featured:hover {
-            transform: translateY(-8px);
-
-            border-color: #e50914;
-
-            box-shadow:
-                0 15px 40px rgba(229, 9, 20, .15);
-        }
-
-
-
-        /* =========================================================
-                                                   BADGE
-                                                ========================================================= */
-
-        .pt-badge {
+        .pt-ribbon {
             position: absolute;
-
             top: 15px;
             right: 15px;
-
             background: #e50914;
-
-            color: #fff;
-
-            padding: 7px 13px;
-
-            border-radius: 20px;
-
-            font-size: 11px;
-            font-weight: 800;
-
-            text-transform: uppercase;
-
-            z-index: 2;
+            color: white;
+            border-radius: 30px;
+            padding: 7px 12px;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            z-index: 2
         }
 
-
-
-        /* =========================================================
-                                                   IMAGE
-                                                ========================================================= */
-
-        .pt-image {
+        .pt-photo {
             height: 190px;
-
-            overflow: hidden;
-
-            background: #111;
+            background: #202020;
+            overflow: hidden
         }
 
-
-        .pt-image img {
+        .pt-photo img {
             width: 100%;
             height: 100%;
-
             object-fit: cover;
-
-            transition: .4s;
-
             display: block;
+            transition: .35s
         }
 
-
-        .pt-card:hover .pt-image img {
-            transform: scale(1.06);
+        .pt-card:hover .pt-photo img {
+            transform: scale(1.05)
         }
 
-
-
-        /* =========================================================
-                                                   BODY
-                                                ========================================================= */
-
-        .pt-body {
-            padding: 25px;
+        .pt-card-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex: 1
         }
 
-
-        .pt-body h3 {
+        .pt-card h3 {
             font-size: 21px;
-
-            margin: 0 0 18px;
-
-            font-weight: 800;
+            font-weight: 850;
+            margin: 0 0 12px
         }
-
-
-
-        /* =========================================================
-                                                   PRICE
-                                                ========================================================= */
 
         .pt-price {
-            color: #e50914;
-
-            font-size: 28px;
-            font-weight: 900;
-
-            margin-bottom: 5px;
+            font-size: 30px;
+            color: #ff3340;
+            font-weight: 950;
+            letter-spacing: -1px
         }
-
 
         .pt-price small {
-            color: #888;
-
-            font-size: 13px;
-            font-weight: 400;
+            font-size: 12px;
+            color: #999;
+            font-weight: 500;
+            letter-spacing: 0
         }
 
-
-
-        /* =========================================================
-                                                   INFO
-                                                ========================================================= */
-
-        .pt-info {
+        .pt-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             margin: 20px 0;
-
-            border-top: 1px solid #292929;
-            border-bottom: 1px solid #292929;
-
-            padding: 15px 0;
+            padding: 16px 0;
+            border-top: 1px solid #303030;
+            border-bottom: 1px solid #303030
         }
 
-
-        .pt-info-row {
-            display: flex;
-
-            justify-content: space-between;
-
-            gap: 15px;
-
-            padding: 7px 0;
-
-            font-size: 14px;
+        .pt-meta div {
+            background: #202020;
+            border-radius: 9px;
+            padding: 12px
         }
 
-
-        .pt-info-row span:first-child {
+        .pt-meta small {
+            display: block;
             color: #888;
+            font-size: 11px;
+            margin-bottom: 5px
         }
 
-
-        .pt-info-row span:last-child {
-            color: #eee;
-
-            font-weight: 600;
-
-            text-align: right;
+        .pt-meta strong {
+            font-size: 15px
         }
-
 
         .pt-status {
-            color: #e50914 !important;
+            color: #68d391;
+            font-size: 12px;
+            font-weight: 800;
+            margin: 0 0 18px
         }
 
-
-
-        /* =========================================================
-                                                   BUTTON
-                                                ========================================================= */
-
-        .pt-btn {
+        .pt-action {
             display: block;
-            width: 100%;
-            box-sizing: border-box;
-            padding: 13px;
-            border: 1px solid #555;
-            border-radius: 5px;
-            background: transparent;
-            color: #ff1e2d;
-            text-align: center;
+            margin-top: auto;
             text-decoration: none;
-            font-size: 13px;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: .3s;
-            cursor: pointer;
-        }
-
-        .pt-btn:hover {
+            text-align: center;
             background: #e50914;
-            border-color: #e50914;
             color: #fff;
+            border: 1px solid #e50914;
+            border-radius: 8px;
+            padding: 14px 16px;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            transition: .2s
         }
 
-        .pt-card.featured .pt-btn {
-            background: transparent;
-            border-color: #555;
-            color: #ff2633;
-        }
-
-        .pt-card.featured .pt-btn:hover {
-            background: #ff2633;
-            border-color: #ff2633;
+        .pt-action:hover {
+            background: #b90912;
             color: #fff;
+            transform: translateY(-1px)
         }
 
-
-        .pt-btn-form {
-            width: 100%;
-
-            padding: 0;
-
-            margin: 0;
-
-            border: 0;
-
-            background: transparent;
+        .pt-action.disabled {
+            background: #333;
+            border-color: #444;
+            color: #888;
+            pointer-events: none
         }
-
-
-
-        /* =========================================================
-                                                   EMPTY
-                                                ========================================================= */
 
         .pt-empty {
             text-align: center;
-
+            border: 1px dashed #444;
+            border-radius: 15px;
             padding: 60px 20px;
+            color: #aaa
+        }
 
-            color: #777;
+        .pt-alert {
+            width: min(1160px, 92%);
+            margin: 20px auto 0;
+            padding: 14px 18px;
+            border-radius: 9px;
+            background: #241416;
+            border: 1px solid #68232b;
+            color: #ffdadd
+        }
+
+        .pt-alert.success {
+            background: #102219;
+            border-color: #1d6a3c;
+            color: #c7f5d7
         }
 
 
-        .pt-empty-icon {
-            font-size: 50px;
-
-            margin-bottom: 15px;
-        }
-
-
-
-        /* =========================================================
-                                                   TOAST
-                                                ========================================================= */
-
+        /* Toast thông báo đồng nhất với trang Lớp tập */
         .gym-toast {
             position: fixed;
-
             top: 95px;
             right: 30px;
-
             z-index: 99999;
-
-            width: 380px;
+            width: min(380px, calc(100vw - 32px));
             min-height: 80px;
-
             display: flex;
-
             align-items: center;
-
             gap: 15px;
-
             padding: 16px 18px;
-
             background: #151515;
-
             border: 1px solid #333;
-
-            border-left: 4px solid #e50914;
-
+            border-left: 4px solid #ff1010;
             border-radius: 8px;
-
-            box-shadow:
-                0 10px 35px rgba(0, 0, 0, 0.45);
-
-            animation:
-                toastSlideIn .35s ease forwards;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, .45);
+            animation: ptToastSlideIn .35s ease forwards;
         }
-
-
-        .toast-icon {
+        .success-toast, .error-toast { border-left-color: #ff1010; }
+        .gym-toast .toast-icon {
             width: 38px;
             height: 38px;
-
-            min-width: 38px;
-
+            flex: 0 0 38px;
             display: flex;
-
             align-items: center;
             justify-content: center;
-
             border-radius: 50%;
-
-            background: #e50914;
-
+            background: #ed1111;
             color: #fff;
-
             font-size: 20px;
-
             font-weight: 700;
         }
-
-
-        .toast-content {
+        .gym-toast .toast-content {
             flex: 1;
-
+            min-width: 0;
             display: flex;
-
             flex-direction: column;
-
             gap: 4px;
         }
-
-
-        .toast-content strong {
+        .gym-toast .toast-content strong {
             color: #fff;
-
             font-size: 15px;
-
             font-weight: 700;
         }
-
-
-        .toast-content span {
+        .gym-toast .toast-content span {
             color: #aaa;
-
             font-size: 13px;
-
             line-height: 1.4;
         }
-
-
-        .toast-close {
-            background: transparent;
-
-            border: none;
-
-            color: #777;
-
-            font-size: 24px;
-
-            line-height: 1;
-
-            cursor: pointer;
-
+        .gym-toast .toast-close {
+            flex: 0 0 auto;
             padding: 2px 5px;
+            border: 0;
+            background: transparent;
+            color: #777;
+            font-size: 24px;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .gym-toast .toast-close:hover { color: #fff; }
+        @keyframes ptToastSlideIn {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes ptToastSlideOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(40px); }
+        }
+        .gym-toast.hide { animation: ptToastSlideOut .3s ease forwards; }
+        @media(max-width:560px) {
+            .gym-toast { top: 82px; right: 16px; }
         }
 
-
-        .toast-close:hover {
-            color: #fff;
-        }
-
-
-        @keyframes toastSlideIn {
-
-            from {
-                opacity: 0;
-
-                transform:
-                    translateX(40px);
-            }
-
-            to {
-                opacity: 1;
-
-                transform:
-                    translateX(0);
-            }
-
-        }
-
-
-        @keyframes toastSlideOut {
-
-            from {
-                opacity: 1;
-
-                transform:
-                    translateX(0);
-            }
-
-            to {
-                opacity: 0;
-
-                transform:
-                    translateX(40px);
-            }
-
-        }
-
-
-        .gym-toast.hide {
-            animation:
-                toastSlideOut .3s ease forwards;
-        }
-
-
-
-        /* =========================================================
-                                                   RESPONSIVE
-                                                ========================================================= */
-
-        @media (max-width: 900px) {
-
+        @media(max-width:900px) {
             .pt-grid {
-                grid-template-columns:
-                    repeat(2, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr))
             }
-
-
-            .pt-hero h1 {
-                font-size: 38px;
-            }
-
         }
 
-
-        @media (max-width: 600px) {
-
+        @media(max-width:620px) {
             .pt-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr
             }
-
 
             .pt-hero {
-                min-height: 280px;
+                padding: 65px 18px
             }
 
-
-            .pt-hero h1 {
-                font-size: 30px;
+            .pt-meta {
+                grid-template-columns: 1fr 1fr
             }
-
-
-            .section-title h2 {
-                font-size: 27px;
-            }
-
-
-            .gym-toast {
-                top: 80px;
-
-                left: 15px;
-                right: 15px;
-
-                width: auto;
-            }
-
         }
     </style>
 
-
-
-    <div class="pt-page">
-
-
-        {{-- =====================================================
-         TOAST THÔNG BÁO
-    ====================================================== --}}
-
-        @if (session('success'))
-            <div class="gym-toast" id="gymToast">
-
-                <div class="toast-icon">
-                    ✓
-                </div>
-
-
-                <div class="toast-content">
-
-                    <strong>
-                        Thành công
-                    </strong>
-
-                    <span>
-                        {{ session('success') }}
-                    </span>
-
-                </div>
-
-
-                <button type="button" class="toast-close" onclick="closeGymToast()">
-                    ×
-                </button>
-
-            </div>
-        @endif
-
-
-
-        @if (session('error'))
-            <div class="gym-toast" id="gymToast">
-
-                <div class="toast-icon">
-                    !
-                </div>
-
-
-                <div class="toast-content">
-
-                    <strong>
-                        Thông báo
-                    </strong>
-
-                    <span>
-                        {{ session('error') }}
-                    </span>
-
-                </div>
-
-
-                <button type="button" class="toast-close" onclick="closeGymToast()">
-                    ×
-                </button>
-
-            </div>
-        @endif
-
-
-
-        <!-- =====================================================
-                                                     HERO
-                                                ====================================================== -->
-
+    <div class="pt-catalog">
         <section class="pt-hero">
-
-            <div class="pt-hero-content">
-
-                <div class="pt-label">
-                    GYMFIT PERSONAL TRAINER
-                </div>
-
-
-                <h1>
-                    GÓI
-                    <span>
-                        HUẤN LUYỆN VIÊN
-                    </span>
-                </h1>
-
-
-                <p>
-                    Lựa chọn gói PT phù hợp với mục tiêu tập luyện
-                    và nhận được sự hướng dẫn chuyên nghiệp từ
-                    huấn luyện viên của GymFit.
-                </p>
-
-            </div>
-
+            <div class="pt-kicker">GYMFIT · PERSONAL TRAINING</div>
+            <h1>Đầu tư cho <span>phiên bản tốt hơn</span></h1>
+            <p>Chọn chương trình huấn luyện phù hợp với mục tiêu của bạn. Đội ngũ huấn luyện viên sẽ đồng hành và giúp bạn
+                tập luyện đúng phương pháp.</p>
         </section>
 
-
-
-        <!-- =====================================================
-                                                     DANH SÁCH GÓI
-                                                ====================================================== -->
-
-        <div class="pt-container">
-
-
-            <div class="section-title">
-
-                <div class="small-title">
-                    PERSONAL TRAINER
+        @if (session('success'))
+            <div class="gym-toast success-toast" id="ptSuccessToast" role="status" aria-live="polite">
+                <div class="toast-icon" aria-hidden="true">✓</div>
+                <div class="toast-content">
+                    <strong>Thành công</strong>
+                    <span>{{ session('success') }}</span>
                 </div>
-
-
-                <h2>
-                    CÁC GÓI PT TẠI GYMFIT
-                </h2>
-
-
-                <p>
-                    Tập luyện hiệu quả hơn với huấn luyện viên cá nhân
-                </p>
-
+                <button type="button" class="toast-close" aria-label="Đóng thông báo"
+                    onclick="closePtToast('ptSuccessToast')">×</button>
             </div>
+        @endif
+        @if (session('error'))
+            <div class="gym-toast error-toast" id="ptErrorToast" role="alert" aria-live="assertive">
+                <div class="toast-icon" aria-hidden="true">!</div>
+                <div class="toast-content">
+                    <strong>Không thể thực hiện</strong>
+                    <span>{{ session('error') }}</span>
+                </div>
+                <button type="button" class="toast-close" aria-label="Đóng thông báo"
+                    onclick="closePtToast('ptErrorToast')">×</button>
+            </div>
+        @endif
 
+        <main class="pt-wrap">
+            <header class="pt-intro">
+                <div class="pt-kicker">Chương trình huấn luyện</div>
+                <h2>CÁC GÓI PT TẠI GYMFIT</h2>
+                <p>Thông tin minh bạch · Huấn luyện cá nhân · Theo sát tiến độ</p>
+            </header>
 
-
-            @if ($goiPt->count() > 0)
+            @if ($goiPt->count())
                 <div class="pt-grid">
-
-
                     @foreach ($goiPt as $index => $pt)
-                        <div class="pt-card
-                        {{ $index == 1 ? 'featured' : '' }}">
-
-
-                            {{-- BADGE PHỔ BIẾN --}}
-
-                            @if ($index == 1)
-                                <div class="pt-badge">
-                                    Phổ biến
-                                </div>
+                        @php
+                            $image = !empty($pt->anh) ? ltrim($pt->anh, '/') : 'img/pt1.jpg';
+                            $active = in_array(
+                                mb_strtolower(trim($pt->trang_thai ?? ''), 'UTF-8'),
+                                ['hoat_dong', 'hoạt_động', 'hoạt động', 'đang hoạt động', 'dang_hoat_dong'],
+                                true,
+                            );
+                        @endphp
+                        <article class="pt-card {{ $index === 1 ? 'is-featured' : '' }}">
+                            @if ($index === 1)
+                                <div class="pt-ribbon">ĐƯỢC QUAN TÂM</div>
                             @endif
-
-
-
-                            {{-- ẢNH --}}
-
-                            <div class="pt-image">
-
-                                @php
-                                    // Ưu tiên đường dẫn ảnh lưu trong cột goi_pt.anh.
-                                    $image = !empty($pt->anh)
-                                        ? ltrim($pt->anh, '/')
-                                        : 'img/' . ($ptImages[$pt->goi_pt_id] ?? 'pt1.jpg');
-                                @endphp
-
-                                <img src="{{ asset($image) }}" alt="{{ $pt->ten_goi_pt }}">
-
-                            </div>
-
-
-
-                            {{-- BODY --}}
-
-                            <div class="pt-body">
-
-
-                                <h3>
-                                    {{ $pt->ten_goi_pt }}
-                                </h3>
-
-
-
-                                {{-- GIÁ --}}
-
-                                <div class="pt-price">
-
-                                    {{ number_format($pt->gia, 0, ',', '.') }}
-                                    ₫
-
-                                    <small>
-                                        / gói
-                                    </small>
-
+                            <div class="pt-photo"><img src="{{ asset($image) }}" alt="{{ $pt->ten_goi_pt }}"
+                                    onerror="this.src='{{ asset('img/pt1.jpg') }}'"></div>
+                            <div class="pt-card-body">
+                                <h3>{{ $pt->ten_goi_pt }}</h3>
+                                <div class="pt-price">{{ number_format($pt->gia, 0, ',', '.') }}₫ <small>/ trọn gói</small>
                                 </div>
-
-
-
-                                {{-- THÔNG TIN --}}
-
-                                <div class="pt-info">
-
-
-                                    <div class="pt-info-row">
-
-                                        <span>
-                                            Số buổi
-                                        </span>
-
-                                        <span>
-                                            {{ $pt->so_buoi }}
-                                            buổi
-                                        </span>
-
-                                    </div>
-
-
-
-                                    <div class="pt-info-row">
-
-                                        <span>
-                                            Thời hạn
-                                        </span>
-
-                                        <span>
-                                            {{ $pt->thoi_han_ngay }}
-                                            ngày
-                                        </span>
-
-                                    </div>
-
-
-
-                                    <div class="pt-info-row">
-
-                                        <span>
-                                            Trạng thái
-                                        </span>
-
-                                        <span class="pt-status">
-
-                                            {{ \App\Support\StatusLabel::format($pt->trang_thai) }}
-
-                                        </span>
-
-                                    </div>
-
-
+                                <div class="pt-meta">
+                                    <div><small>BUỔI HUẤN LUYỆN</small><strong>{{ $pt->so_buoi }} buổi</strong></div>
+                                    <div><small>THỜI HẠN</small><strong>{{ $pt->thoi_han_ngay }} ngày</strong></div>
                                 </div>
-
-
-
-                                {{-- =================================================
-                                 NÚT ĐĂNG KÝ
-                            ================================================== --}}
-
-                                @if (session('user'))
-                                    <form action="{{ url('/pt-packages/' . $pt->goi_pt_id . '/register') }}" method="POST"
-                                        class="pt-btn-form">
-                                        @csrf
-
-                                        <button type="button" class="pt-btn"
-                                            onclick="showPtSelection('{{ $pt->goi_pt_id }}')">
-                                            ĐĂNG KÝ NGAY
-                                        </button>
-
-                                        <div id="pt-selection-{{ $pt->goi_pt_id }}" style="display:none; margin-top:15px;">
-                                            <div class="form-group" style="margin-bottom: 15px;">
-                                                <label for="pt_id_{{ $pt->goi_pt_id }}"
-                                                    style="display:block; margin-bottom:8px; font-weight:600;">
-                                                    Chọn huấn luyện viên (PT)
-                                                </label>
-
-                                                @if ($ptList->isEmpty())
-                                                    <p style="color:#ff6b6b; font-size:13px; margin:0 0 10px;">
-                                                        Hiện không có huấn luyện viên đang hoạt động. Vui lòng thử lại sau.
-                                                    </p>
-                                                @endif
-
-                                                <select name="pt_id" id="pt_id_{{ $pt->goi_pt_id }}" required
-                                                    {{ $ptList->isEmpty() ? 'disabled' : '' }}
-                                                    style="width:100%; padding:12px; border-radius:8px; border:1px solid #444; background:#202020; color:#fff; color-scheme:dark; outline:none; text-align:center; text-align-last:center; cursor:pointer;">
-                                                    <option value="" disabled {{ old('pt_id') ? '' : 'selected' }}>
-                                                        Chọn huấn luyện viên</option>
-
-                                                    @foreach ($ptList as $hlv)
-                                                        <option value="{{ $hlv->pt_id }}"
-                                                            {{ (string) old('pt_id') === (string) $hlv->pt_id ? 'selected' : '' }}>
-                                                            {{ $hlv->ho_ten }}
-                                                            @if (!empty($hlv->chuyen_mon))
-                                                                - {{ $hlv->chuyen_mon }}
-                                                            @endif
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <button type="submit" class="pt-btn"
-                                                {{ $ptList->isEmpty() ? 'disabled' : '' }}
-                                                style="{{ $ptList->isEmpty() ? 'opacity:.5;cursor:not-allowed;' : '' }}">
-                                                XÁC NHẬN ĐĂNG KÝ
-                                            </button>
-                                        </div>
-                                    </form>
+                                <div class="pt-status">{{ $active ? '● ĐANG MỞ ĐĂNG KÝ' : '● TẠM NGƯNG' }}</div>
+                                @if ($active)
+                                    <a class="pt-action" href="{{ url('/pt-packages/' . $pt->goi_pt_id . '/choose') }}">XEM PT
+                                        & CHỌN GÓI</a>
                                 @else
-                                    <a href="/login" class="pt-btn">ĐĂNG KÝ NGAY</a>
+                                    <span class="pt-action disabled">HIỆN KHÔNG KHẢ DỤNG</span>
                                 @endif
-
-
                             </div>
-
-                        </div>
+                        </article>
                     @endforeach
-
-
                 </div>
             @else
-                <!-- KHÔNG CÓ GÓI -->
-
                 <div class="pt-empty">
-
-                    <div class="pt-empty-icon">
-                        💪
-                    </div>
-
-
-                    <h3>
-                        Chưa có gói PT
-                    </h3>
-
-
-                    <p>
-                        Hiện tại phòng gym chưa có gói
-                        huấn luyện viên.
-                    </p>
-
+                    <div style="font-size:42px">🏋️</div>
+                    <h3>Hiện chưa có gói PT</h3>
+                    <p>GymFit sẽ cập nhật chương trình mới trong thời gian tới.</p>
                 </div>
             @endif
-
-
-        </div>
-
+        </main>
     </div>
+<script>
+    function closePtToast(id) {
+        const toast = document.getElementById(id);
+        if (!toast) return;
+        toast.classList.add('hide');
+        window.setTimeout(() => toast.remove(), 300);
+    }
 
-
-
-    <script>
-        function showPtSelection(goiPtId) {
-            // Mỗi lần bấm ĐĂNG KÝ NGAY, đóng phần chọn PT của tất cả gói trước.
-            // Sau đó chỉ mở phần của gói vừa được bấm.
-            document.querySelectorAll('[id^="pt-selection-"]').forEach(function(item) {
-                item.style.display = 'none';
-            });
-
-            const selection = document.getElementById('pt-selection-' + goiPtId);
-            if (!selection) return;
-
-            selection.style.display = 'block';
-            const select = selection.querySelector('select');
-            if (select && !select.disabled) select.focus();
+    document.addEventListener('DOMContentLoaded', function () {
+        if (document.getElementById('ptSuccessToast')) {
+            window.setTimeout(() => closePtToast('ptSuccessToast'), 4000);
         }
-
-
-        /*
-                        |--------------------------------------------------------------------------
-                        | ĐÓNG TOAST
-                        |--------------------------------------------------------------------------
-                        */
-
-        function closeGymToast() {
-
-            const toast =
-                document.getElementById('gymToast');
-
-
-            if (!toast) {
-                return;
-            }
-
-
-            toast.classList.add('hide');
-
-
-            setTimeout(function() {
-
-                toast.remove();
-
-            }, 300);
-
+        if (document.getElementById('ptErrorToast')) {
+            window.setTimeout(() => closePtToast('ptErrorToast'), 5000);
         }
-
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | TỰ ĐỘNG ẨN TOAST SAU 4 GIÂY
-        |--------------------------------------------------------------------------
-        */
-
-        setTimeout(function() {
-
-            closeGymToast();
-
-        }, 4000);
-    </script>
-
-
+    });
+</script>
 @endsection

@@ -1,4 +1,4 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 
 @section('title', 'Dashboard Hội viên')
 @section('role_name', 'Hội viên')
@@ -435,25 +435,15 @@
             }
 
         }
+    
+        .gym-line-icon { width: 25px; height: 25px; display: block; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+        .stat-icon .gym-line-icon { width: 27px; height: 27px; }
+        .item-icon .gym-line-icon, .empty-icon .gym-line-icon { width: 23px; height: 23px; }
     </style>
 
 
     <div class="dashboard-page">
-
-        {{-- THÔNG BÁO KẾT QUẢ --}}
-        @if (session('success'))
-            <div class="dashboard-alert success">
-                <span>✓</span>
-                <div>{{ session('success') }}</div>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="dashboard-alert error">
-                <span>!</span>
-                <div>{{ session('error') }}</div>
-            </div>
-        @endif
+        {{-- Flash message được hiển thị bằng popup thống nhất trong layout dashboard. --}}
 
         {{-- HERO --}}
 
@@ -485,7 +475,7 @@
             <div href="/user/payments" class="stat-card">
 
                 <div class="stat-icon">
-                    🏋️
+                    <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6m3-9v12m12-12v12m3-9v6M6 12h12"/></svg>
                 </div>
 
                 <div class="stat-info">
@@ -499,7 +489,9 @@
             <div class="stat-card">
 
                 <div class="stat-icon">
-                    🥇
+                    <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="8" r="5"/><path d="m8.5 12-1 9 4.5-2.5 4.5 2.5-1-9M9.5 8h5M12 5.5v5"/>
+                    </svg>
                 </div>
 
                 <div class="stat-info">
@@ -513,7 +505,7 @@
             <div href="/classes" class="stat-card">
 
                 <div class="stat-icon">
-                    🏃
+                    <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="15" cy="5" r="2"/><path d="m12 22 2-6-3-3-3 3-3 1m6-4 3-4 4 2 2 4m-9-2-2-4-4 1"/></svg>
                 </div>
 
                 <div class="stat-info">
@@ -527,7 +519,7 @@
             <div href="/user/payments" class="stat-card">
 
                 <div class="stat-icon">
-                    💳
+                    <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
                 </div>
 
                 <div class="stat-info">
@@ -577,7 +569,7 @@
                                 <div class="item-left">
 
                                     <div class="item-icon">
-                                        🏋️
+                                        <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6m3-9v12m12-12v12m3-9v6M6 12h12"/></svg>
                                     </div>
 
                                     <div class="item-info">
@@ -671,7 +663,7 @@
                     <div class="empty-box">
 
                         <div class="empty-icon">
-                            🏋️
+                            <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6m3-9v12m12-12v12m3-9v6M6 12h12"/></svg>
                         </div>
 
                         <h3>
@@ -720,7 +712,7 @@
                                 <div class="item-left">
 
                                     <div class="item-icon">
-                                        💪
+                                        <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8v8m3-11v14m6-14v14m3-11v8M9 12h6M3 10v4m18-4v4"/></svg>
                                     </div>
 
                                     <div class="item-info">
@@ -748,7 +740,8 @@
                                                 ->where('nguoi_dung_id', session('user')->nguoi_dung_id)
                                                 ->limit(1);
                                         })
-                                        ->whereDate('hoa_don.ngay_lap', '>=', $pt->ngay_bat_dau);
+                                        ->whereDate('hoa_don.ngay_lap', '>=', $pt->ngay_bat_dau)
+                                        ->orderByDesc('hoa_don.ngay_lap');
 
                                     $ptHoaDonDaThanhToan = (clone $ptHoaDonCoLienQuan)
                                         ->whereIn(DB::raw('LOWER(TRIM(hoa_don.trang_thai))'), [
@@ -792,7 +785,7 @@
                                     );
 
                                     if ($ptHoaDonChoThanhToan && !$ptDaHuyHoacHetHan) {
-                                        $trangThaiPTHienThi = 'không hoạt động';
+                                        $trangThaiPTHienThi = 'chờ thanh toán';
                                     }
                                 @endphp
 
@@ -801,14 +794,7 @@
                                         {{ mb_strtoupper(mb_substr(\App\Support\StatusLabel::format($trangThaiPTHienThi), 0, 1, 'UTF-8'), 'UTF-8') . mb_substr(\App\Support\StatusLabel::format($trangThaiPTHienThi), 1, null, 'UTF-8') }}
                                     </span>
 
-                                    @if (
-                                        !$ptDaHuyHoacHetHan &&
-                                            !$ptHoaDonDaThanhToan &&
-                                            ($ptConTrong72Gio ||
-                                                in_array(
-                                                    $ptHoaDonChoThanhToan ? 'không hoạt động' : $trangThaiPTGoc,
-                                                    ['đang hoạt động', 'dang_hoat_dong', 'hoạt_động', 'hoat_dong', 'không hoạt động'],
-                                                    true)))
+                                    @if ($ptConTrong72Gio && !$ptHoaDonDaThanhToan && !$ptDaHuyHoacHetHan)
                                         <form action="/user/pt-packages/{{ $pt->dang_ky_goi_pt_id }}/cancel" method="POST"
                                             class="cancel-form"
                                             data-confirm-submit="Bạn có chắc chắn muốn hủy gói PT này không?">
@@ -826,7 +812,7 @@
                     <div class="empty-box">
 
                         <div class="empty-icon">
-                            💪
+                            <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8v8m3-11v14m6-14v14m3-11v8M9 12h6M3 10v4m18-4v4"/></svg>
                         </div>
 
                         <h3>
@@ -877,7 +863,7 @@
                                 <div class="item-left">
 
                                     <div class="item-icon">
-                                        🏃
+                                        <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="15" cy="5" r="2"/><path d="m12 22 2-6-3-3-3 3-3 1m6-4 3-4 4 2 2 4m-9-2-2-4-4 1"/></svg>
                                     </div>
 
                                     <div class="item-info">
@@ -921,7 +907,7 @@
                     <div class="empty-box">
 
                         <div class="empty-icon">
-                            🏃
+                            <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="15" cy="5" r="2"/><path d="m12 22 2-6-3-3-3 3-3 1m6-4 3-4 4 2 2 4m-9-2-2-4-4 1"/></svg>
                         </div>
 
                         <h3>
@@ -972,7 +958,7 @@
                                 <div class="item-left">
 
                                     <div class="item-icon">
-                                        💳
+                                        <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
                                     </div>
 
                                     <div class="item-info">
@@ -1003,7 +989,7 @@
                     <div class="empty-box">
 
                         <div class="empty-icon">
-                            💳
+                            <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
                         </div>
 
                         <h3>

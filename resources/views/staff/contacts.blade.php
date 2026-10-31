@@ -359,7 +359,7 @@
                                 </span>
                             @else
                                 <span class="status status-other">
-                                    {{ $lh->trang_thai }}
+                                    {{ \App\Support\StatusLabel::format($lh->trang_thai) }}
                                 </span>
                             @endif
 

@@ -82,6 +82,8 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, .3);
         }
 
+        .staff-hero svg { width:19px; height:19px; flex:0 0 19px; fill:none; stroke:#fff; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; vertical-align:middle; margin-right:7px; }
+        .staff-stat-icon svg, .staff-item-icon svg, .staff-empty-icon svg { width:23px; height:23px; fill:none; stroke:#ff4651; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
         .staff-stat-icon {
             width: 52px;
             height: 52px;
@@ -295,7 +297,7 @@
         "
                     onmouseover="this.style.background='#ff1824'" onmouseout="this.style.background='#e50914'">
 
-                    👥 QUẢN LÝ HỘI VIÊN
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5"/></svg> QUẢN LÝ HỘI VIÊN
 
                 </a>
 
@@ -357,7 +359,7 @@
             <div class="staff-stat">
 
                 <div class="staff-stat-icon">
-                    👥
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5"/></svg>
                 </div>
 
                 <div>
@@ -371,7 +373,7 @@
             <div class="staff-stat">
 
                 <div class="staff-stat-icon">
-                    🟢
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-6"/></svg>
                 </div>
 
                 <div>
@@ -385,7 +387,7 @@
             <div class="staff-stat">
 
                 <div class="staff-stat-icon">
-                    💳
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
                 </div>
 
                 <div>
@@ -399,7 +401,7 @@
             <div class="staff-stat">
 
                 <div class="staff-stat-icon">
-                    📦
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/></svg>
                 </div>
 
                 <div>
@@ -472,7 +474,7 @@
                     <div class="staff-empty">
 
                         <div class="staff-empty-icon">
-                            👥
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5"/></svg>
                         </div>
 
                         <h3>
@@ -517,7 +519,7 @@
                                 <div class="staff-item-left">
 
                                     <div class="staff-item-icon">
-                                        🟢
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-6"/></svg>
                                     </div>
 
                                     <div class="staff-item-info">
@@ -546,7 +548,7 @@
                     <div class="staff-empty">
 
                         <div class="staff-empty-icon">
-                            🟢
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-6"/></svg>
                         </div>
 
                         <h3>
@@ -591,7 +593,7 @@
                                 <div class="staff-item-left">
 
                                     <div class="staff-item-icon">
-                                        📦
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/></svg>
                                     </div>
 
                                     <div class="staff-item-info">
@@ -620,7 +622,7 @@
                     <div class="staff-empty">
 
                         <div class="staff-empty-icon">
-                            📦
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/></svg>
                         </div>
 
                         <h3>
@@ -673,7 +675,7 @@
                                 <div class="staff-item-left">
 
                                     <div class="staff-item-icon">
-                                        💳
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
                                     </div>
 
                                     <div class="staff-item-info">
@@ -704,7 +706,7 @@
                     <div class="staff-empty">
 
                         <div class="staff-empty-icon">
-                            💳
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
                         </div>
 
                         <h3>

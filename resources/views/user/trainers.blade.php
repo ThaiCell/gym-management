@@ -512,8 +512,6 @@
 
                     <dialog id="trainerModal{{ $trainer->pt_id }}" class="trainer-modal">
                         <div class="trainer-modal-header">
-                            <button type="button" class="trainer-modal-close" style="position:absolute;right:14px;top:14px"
-                                aria-label="Đóng hồ sơ" onclick="this.closest('dialog').close()">&times;</button>
 
                             <div class="trainer-modal-photo">
                                 @if ($hasImage)

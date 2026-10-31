@@ -77,9 +77,14 @@
 
         .menu-icon {
             width: 25px;
+            flex:0 0 25px;
+            display:grid;
+            place-items:center;
+            color:#ff4651;
             text-align: center;
             font-size: 18px;
         }
+        .menu-icon svg { width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round; }
 
         /* MAIN */
         .main {
@@ -434,7 +439,256 @@
                 flex-direction: column;
             }
         }
-    </style>
+    
+/* =========================================================
+   GYMFIT DESIGN SYSTEM — shared visual layer
+   Applies consistently to every page using the three layouts.
+   ========================================================= */
+:root {
+    --gym-bg: #0b0d10;
+    --gym-surface: #12161c;
+    --gym-surface-2: #181e26;
+    --gym-surface-3: #202833;
+    --gym-border: rgba(255,255,255,.085);
+    --gym-text: #f4f6f8;
+    --gym-muted: #9aa4b2;
+    --gym-red: #e11d2e;
+    --gym-red-dark: #b91424;
+    --gym-red-soft: rgba(225,29,46,.13);
+    --gym-radius: 16px;
+    --gym-shadow: 0 14px 36px rgba(0,0,0,.22);
+}
+html { scroll-behavior: smooth; }
+body { color: var(--gym-text); background: var(--gym-bg); }
+::selection { background: rgba(225,29,46,.35); color: #fff; }
+
+/* Consistent surfaces, without forcing a new structure on existing Blade views. */
+.card, .stat-card, .dashboard-card, .content-card, .form-card,
+.package-card, .trainer-card, .class-card, .payment-card,
+.member-card, .info-card, .section-card, .table-container,
+.table-wrapper, .chart-card, .profile-card, .detail-card {
+    border: 1px solid var(--gym-border);
+    border-radius: var(--gym-radius);
+    box-shadow: var(--gym-shadow);
+}
+
+/* Typography */
+h1, h2, h3, h4 { color: var(--gym-text); letter-spacing: -.025em; }
+p, .description, .text-muted, small { color: inherit; }
+.page-heading, .section-title { letter-spacing: -.03em; }
+
+/* Form controls */
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+select, textarea {
+    max-width: 100%;
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 10px;
+    background: #171719;
+    color: var(--gym-text);
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+}
+input:not([type="checkbox"]):not([type="radio"]):focus,
+select:focus, textarea:focus {
+    outline: none;
+    border-color: rgba(225,29,46,.8);
+    box-shadow: 0 0 0 3px rgba(225,29,46,.14);
+}
+input::placeholder, textarea::placeholder { color: #778292; }
+label { color: #d7dce3; }
+
+/* Buttons — preserve existing classes and actions. */
+button, .btn, [class*="-btn"] { transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease; }
+button:not(:disabled):hover, .btn:hover, [class*="-btn"]:hover { filter: brightness(1.07); }
+button:focus-visible, a:focus-visible { outline: 2px solid #ff6470; outline-offset: 3px; }
+
+/* Tables */
+table { border-collapse: separate; border-spacing: 0; }
+thead th { color: #cbd2dc; font-weight: 700; letter-spacing: .035em; }
+tbody tr { transition: background .16s ease; }
+tbody tr:hover { background: rgba(255,255,255,.035); }
+td, th { border-color: var(--gym-border) !important; }
+
+/* Links and badges */
+a { transition: color .18s ease, opacity .18s ease; }
+.badge, .status, [class*="badge-"] { letter-spacing: .01em; }
+
+/* Admin shell */
+.sidebar { background: linear-gradient(180deg, #101012 0%, #09090b 100%) !important; border-right-color: var(--gym-border) !important; }
+.sidebar .logo h1 { letter-spacing: .08em; }
+.sidebar .menu a { border: 1px solid transparent; border-radius: 11px !important; }
+.sidebar .menu a:hover { background: rgba(225,29,46,.10) !important; border-color: rgba(225,29,46,.2); color: #fff !important; }
+.sidebar .menu a.active { background: linear-gradient(110deg, var(--gym-red), var(--gym-red-dark)) !important; box-shadow: 0 7px 18px rgba(225,29,46,.2); }
+.topbar { background: rgba(12,12,14,.96) !important; border-bottom-color: var(--gym-border) !important; backdrop-filter: blur(14px); }
+.content { padding-top: 28px; }
+
+/* Public/member navigation */
+.user-header, .member-header { background: rgba(12,15,19,.94) !important; border-bottom: 1px solid var(--gym-border) !important; backdrop-filter: blur(16px); }
+.user-logo, .member-logo { letter-spacing: .04em; }
+.user-menu a, .member-menu a { position: relative; }
+.user-menu a.active, .member-menu a.active { color: #fff !important; }
+.user-menu a.active::after, .member-menu a.active::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: -7px; height: 2px; border-radius: 3px; background: var(--gym-red); }
+.user-content, .member-content { min-height: 65vh; }
+.user-footer { border-top: 1px solid var(--gym-border); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: #090b0e; }
+::-webkit-scrollbar-thumb { background: #343c48; border: 2px solid #090b0e; border-radius: 20px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gym-red); }
+
+@media (max-width: 900px) {
+    .content { padding: 20px 16px !important; }
+    .topbar { padding-left: 18px !important; padding-right: 18px !important; }
+}
+@media (max-width: 640px) {
+    .content { padding: 16px 12px !important; }
+    .topbar { min-height: 64px; height: auto !important; gap: 12px; }
+    .user-content, .member-content { padding-left: 12px; padding-right: 12px; }
+    table { min-width: 620px; }
+}
+
+    
+        /* GYMFIT ADMIN UI: consistent controls and readable scale */
+        .content { padding: 34px 38px; }
+        .content > * { max-width: none; }
+        .content button:not(.logout-btn), .content a[class*="btn"], .content a[class*="button"],
+        .content input[type="submit"], .content button[type="submit"] {
+            min-height: 40px;
+            padding: 10px 17px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .content input[type="text"], .content input[type="search"], .content input[type="email"],
+        .content input[type="number"], .content input[type="date"], .content select, .content textarea {
+            min-height: 40px;
+            background-color: #191919 !important;
+            color: #f5f5f5 !important;
+            border: 1px solid #383838 !important;
+            border-radius: 8px !important;
+            outline: none;
+        }
+        .content input:focus, .content select:focus, .content textarea:focus {
+            border-color: #e50914 !important;
+            box-shadow: 0 0 0 3px rgba(229,9,20,.12);
+        }
+        .content input::placeholder, .content textarea::placeholder { color: #888 !important; }
+        .content table th { font-size: 13px; }
+        .content table td { font-size: 14px; }
+        .content table th, .content table td { padding-top: 14px; padding-bottom: 14px; }
+        .content form[role="search"] input, .content input[type="search"] {
+            padding-left: 38px !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23e50914' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: 12px center !important;
+        }
+        .content .search-form input, .content .pt-search input, .content .search-box input {
+            background-color: #191919 !important;
+            color: #fff !important;
+            padding-left: 38px !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23e50914' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-4-4'/%3E%3C/svg%3E") !important;
+            background-repeat: no-repeat !important;
+            background-position: 12px center !important;
+        }
+        .content .actions button, .content .actions a, .content .pt-actions button,
+        .content .pt-actions a, .content .class-actions button, .content .class-actions a,
+        .content td form button {
+            min-height: 38px;
+            min-width: 66px;
+            padding: 9px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .content .search-btn, .content .pt-btn, .content .class-btn,
+        .content .btn, .content .button, .content .btn-primary,
+        .content a.btn, .content button.btn {
+            min-height: 40px;
+            padding: 10px 17px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 750;
+        }
+        .content .btn-edit, .content .class-btn-edit, .content .pt-edit,
+        .content a[class*="edit"], .content button[class*="edit"] {
+            min-width: 68px;
+        }
+        .content .btn-delete, .content .class-btn-delete, .content .pt-danger,
+        .content a[class*="delete"], .content button[class*="delete"] {
+            min-width: 68px;
+        }
+        @media (max-width: 900px) { .content { padding: 22px 18px; } }
+        @media (max-width: 600px) { .content { padding: 16px 12px; } }
+    
+/* GYMFIT ADMIN — unified action controls */
+.content button, .content input[type="submit"], .content a.btn,
+.content .search-btn, .content .pt-btn, .content .class-btn,
+.content .btn, .content .button, .content .btn-primary,
+.content .btn-edit, .content .btn-delete, .content .class-btn-edit,
+.content .class-btn-delete, .content .pt-edit, .content .pt-danger,
+.content a[class*="edit"], .content button[class*="edit"],
+.content a[class*="delete"], .content button[class*="delete"] {
+    min-height:42px !important;
+    min-width:78px;
+    padding:10px 18px !important;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border-radius:9px !important;
+    font-size:13px !important;
+    line-height:1.2;
+    font-weight:750 !important;
+    white-space:nowrap;
+    box-sizing:border-box;
+}
+.content .search-btn, .content button.search-btn,
+.content .pt-btn:not(.pt-danger), .content button[type="submit"].search-btn {
+    min-width:92px;
+}
+.content .search-btn::before, .content .pt-btn:not(.pt-danger)::before {
+    content:"";
+    width:13px; height:13px; flex:0 0 13px;
+    display:inline-block;
+    border:2px solid currentColor;
+    border-radius:50%;
+    box-sizing:border-box;
+    transform:scale(.82);
+    background:linear-gradient(currentColor,currentColor) no-repeat 9px 9px / 6px 2px;
+}
+.content .delete-btn, .content .btn-delete, .content .class-btn-delete,
+.content .pt-danger, .content button[class*="delete"], .content a[class*="delete"] {
+    min-width:78px !important;
+}
+.content .action-buttons, .content .actions, .content .table-actions {
+    display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+}
+.content table td { vertical-align:middle; }
+.content button:focus-visible, .content a:focus-visible {
+    outline:2px solid #ff6670; outline-offset:2px;
+}
+@media(max-width:700px) {
+    .content button, .content input[type="submit"], .content a.btn,
+    .content .search-btn, .content .pt-btn, .content .class-btn {
+        min-height:40px !important; min-width:72px; padding:9px 14px !important;
+    }
+}
+\n    
+/* GYMFIT TYPOGRAPHY + NAV CONSISTENCY PATCH */
+html, body { font-family: "Segoe UI", Roboto, "Noto Sans", Arial, sans-serif !important; }
+body, body *:not(i):not([class*="icon"]):not(svg):not(svg *) { font-family: "Segoe UI", Roboto, "Noto Sans", Arial, sans-serif; }
+input, button, select, textarea { font: inherit; }
+.user-header, .member-header { min-height: 72px; height: 72px; padding-left: clamp(18px, 2.5vw, 42px); padding-right: clamp(18px, 2.5vw, 42px); }
+.user-menu, .member-menu { display:flex; align-items:center; justify-content:center; gap:clamp(14px, 1.7vw, 27px); flex:1 1 auto; min-width:0; }
+.user-menu a, .member-menu a { white-space:nowrap; font-size:13px; line-height:1.2; font-weight:650; letter-spacing:.01em; }
+.user-menu a.active::after, .member-menu a.active::after { bottom:-25px; height:2px; }
+.user-logo, .member-logo { flex:0 0 auto; font-size:26px; }
+.user-login, .member-login { flex:0 0 auto; gap:9px; }
+@media(max-width:1050px) { .user-header, .member-header { padding-left:16px; padding-right:16px; } .user-menu, .member-menu { gap:11px; } .user-menu a, .member-menu a { font-size:11px; } }
+@media(max-width:760px) { .user-header, .member-header { height:auto; min-height:68px; flex-wrap:wrap; gap:10px; padding-top:10px; padding-bottom:10px; } .user-menu, .member-menu { order:3; flex:1 0 100%; justify-content:flex-start; overflow-x:auto; padding:5px 0; } .user-menu a.active::after, .member-menu a.active::after { bottom:-5px; } }
+</style>
+    <link rel="stylesheet" href="{{ asset('css/gymfit-design-system.css') }}?v=2">
 </head>
 
 <body>
@@ -451,59 +705,64 @@
 
             <div class="menu-title">Tổng quan</div>
 
-            <a href="/dashboard" class="active">
-                <div class="menu-icon">⌂</div>
+            <a href="/dashboard" class="{{ request()->is('dashboard') ? 'active' : '' }}">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg></div>
                 <span>Dashboard</span>
             </a>
 
             <div class="menu-title">Quản lý</div>
 
             <a href="/admin/members">
-                <div class="menu-icon">👤</div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div>
                 <span>Thành viên</span>
             </a>
 
             <a href="/admin/packages">
-                <div class="menu-icon">💳</div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg></div>
                 <span>Gói tập</span>
             </a>
             <a href="/admin/pt-packages" class="menu-item">
-                <div class="menu-icon">🏋🏼‍♀️</div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6m3-9v12m12-12v12m3-9v6M6 12h12"/></svg></div>
                 <span>Gói PT</span>
             </a>
             <a href="/admin/classes" class="menu-item">
-                <div class="menu-icon">🏢</div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21V5l9-3 9 3v16M8 8h2m4 0h2M8 12h2m4 0h2M10 21v-5h4v5"/></svg></div>
                 <span>Lớp tập</span>
             </a>
             <a href="/admin/trainers">
-                <div class="menu-icon">🏋</div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6m3-9v12m12-12v12m3-9v6M6 12h12"/></svg></div>
                 <span>Huấn luyện viên</span>
             </a>
 
             <a href="/admin/schedules">
-                <div class="menu-icon">📅</div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18M8 14h3"/></svg></div>
                 <span>Lịch tập</span>
             </a>
 
             <div class="menu-title">Hệ thống</div>
 
             <a href="/admin/payments">
-                <div class="menu-icon">💰</div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M5 9h1m12 6h1"/></svg></div>
                 <span>Thanh toán</span>
             </a>
 
             <a href="/admin/statistics">
-                <div class="menu-icon">📊</div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10h4v10M10 20V4h4v16M16 20v-7h4v7"/></svg></div>
                 <span>Thống kê</span>
             </a>
 
             <a href="{{ url('/admin/password-resets') }}" class="sidebar-link">
-                <span>🔑</span>
+                <span class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="5"/><path d="m12 11 9-9m-4 4 3 3m-6-1 3 3"/></svg></span>
                 <span>Cấp lại mật khẩu</span>
             </a>
 
+            <a href="/admin/contacts" class="{{ request()->is('admin/contacts*') ? 'active' : '' }}">
+                <div class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 4z"/><path d="M8 9h8M8 13h5"/></svg></div>
+                <span>Liên hệ</span>
+            </a>
+
             <a href="/admin/settings">
-                <div class="menu-icon">⚙</div>
+                <div class="menu-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.6-1.4-2.4 1.4-1.1a8 8 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.6 1.4 2.4-1.4 1.1a8 8 0 0 1 0 2z"/></svg></div>
                 <span>Cài đặt</span>
             </a>
             <form action="/logout" method="POST" style="margin-top: 20px;"
