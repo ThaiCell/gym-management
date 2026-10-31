@@ -293,7 +293,7 @@
                             <td>{{ $lop->so_dang_ky }}</td>
                             <td>
                                 <span class="class-status {{ $active ? '' : 'class-status-off' }}">
-                                    {{ $active ? 'Hoạt động' : \App\Support\StatusLabel::format($lop->trang_thai) }}
+                                    {{ $active ? 'Hoạt động' : ucfirst(str_replace('_', ' ', $lop->trang_thai)) }}
                                 </span>
                             </td>
                             <td>

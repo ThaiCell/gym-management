@@ -1044,11 +1044,11 @@ input, button, select, textarea { font: inherit; }
 
             <div class="footer-bottom-links">
 
-                <a href="#">
+                <a href="/privacy-policy">
                     Chính sách bảo mật
                 </a>
 
-                <a href="#">
+                <a href="/terms-of-use">
                     Điều khoản sử dụng
                 </a>
 

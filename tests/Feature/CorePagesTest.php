@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class CorePagesTest extends TestCase
@@ -26,6 +28,23 @@ class CorePagesTest extends TestCase
             $response->getStatusCode(),
             [200, 500]
         );
+    }
+
+    public function test_legal_pages_respond_with_their_content(): void
+    {
+        Schema::create('cai_dat', function (Blueprint $table): void {
+            $table->string('khoa')->primary();
+            $table->text('gia_tri')->nullable();
+        });
+
+        foreach ([
+            '/privacy-policy' => 'Chính sách bảo mật',
+            '/terms-of-use' => 'Điều khoản sử dụng',
+        ] as $uri => $title) {
+            $this->get($uri)
+                ->assertOk()
+                ->assertSee($title);
+        }
     }
 
     // Khách chưa đăng nhập bị chuyển về trang đăng nhập

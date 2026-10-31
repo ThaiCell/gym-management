@@ -47,6 +47,20 @@ Route::get('/about', function () {
     return view('user.about');
 });
 
+/*
+|--------------------------------------------------------------------------
+| CHÍNH SÁCH VÀ ĐIỀU KHOẢN
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/privacy-policy', function () {
+    return view('user.privacy-policy');
+});
+
+Route::get('/terms-of-use', function () {
+    return view('user.terms-of-use');
+});
+
 
 /*
 |--------------------------------------------------------------------------

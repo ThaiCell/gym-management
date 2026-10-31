@@ -1035,7 +1035,7 @@
                             <img src="{{ asset($image) }}" alt="{{ $lop->ten_lop }}">
 
                             <span class="class-status">
-                                {{ \App\Support\StatusLabel::format($lop->trang_thai) }}
+                                {{ ucfirst(str_replace('_', ' ', $lop->trang_thai)) }}
                             </span>
 
                         </div>
@@ -1108,7 +1108,7 @@
                                     </span>
 
                                     <strong>
-                                        {{ \App\Support\StatusLabel::format($lop->trang_thai) }}
+                                        {{ ucfirst(str_replace('_', ' ', $lop->trang_thai)) }}
                                     </strong>
 
                                 </div>
