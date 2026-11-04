@@ -157,6 +157,15 @@
             margin-bottom: 5px;
         }
 
+        .class-name-link {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .class-name-link:hover {
+            color: #ff6871;
+        }
+
         .class-desc {
             color: #aaa;
             max-width: 300px;
@@ -281,7 +290,10 @@
                                 @endif
                             </td>
                             <td>
-                                <div class="class-name">{{ $lop->ten_lop }}</div>
+                                <div class="class-name">
+                                    <a class="class-name-link" href="{{ url('/admin/classes/' . $lop->lop_tap_id) }}"
+                                        title="Xem hội viên tham gia lớp">{{ $lop->ten_lop }}</a>
+                                </div>
                                 @if ($lop->mo_ta)
                                     <div class="class-desc">
                                         {{ \Illuminate\Support\Str::limit($lop->mo_ta, 90) }}

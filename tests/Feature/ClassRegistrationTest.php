@@ -18,6 +18,13 @@ class ClassRegistrationTest extends TestCase
         Schema::create('hoi_vien', function (Blueprint $table) {
             $table->increments('hoi_vien_id');
             $table->integer('nguoi_dung_id');
+            $table->string('so_dien_thoai')->nullable();
+        });
+
+        Schema::create('nguoi_dung', function (Blueprint $table) {
+            $table->increments('nguoi_dung_id');
+            $table->string('ho_ten');
+            $table->string('email');
         });
 
         Schema::create('lop_tap', function (Blueprint $table) {
@@ -49,6 +56,13 @@ class ClassRegistrationTest extends TestCase
         DB::table('hoi_vien')->insert([
             'hoi_vien_id' => 1,
             'nguoi_dung_id' => 100,
+            'so_dien_thoai' => '0900000000',
+        ]);
+
+        DB::table('nguoi_dung')->insert([
+            'nguoi_dung_id' => 100,
+            'ho_ten' => 'Hoi vien test',
+            'email' => 'member@example.com',
         ]);
 
         DB::table('lop_tap')->insert([
@@ -81,6 +95,43 @@ class ClassRegistrationTest extends TestCase
             'nguoi_dung_id' => 100,
             'tieu_de' => 'Đăng ký lớp thành công',
         ]);
+    }
+
+    public function test_admin_can_view_active_members_of_a_class(): void
+    {
+        DB::table('dang_ky_lop')->insert([
+            'lop_tap_id' => 1,
+            'hoi_vien_id' => 1,
+            'ngay_dang_ky' => now(),
+            'trang_thai' => 'đang hoạt động',
+        ]);
+
+        DB::table('hoi_vien')->insert([
+            'hoi_vien_id' => 2,
+            'nguoi_dung_id' => 200,
+        ]);
+        DB::table('nguoi_dung')->insert([
+            'nguoi_dung_id' => 200,
+            'ho_ten' => 'Hoi vien da huy',
+            'email' => 'cancelled@example.com',
+        ]);
+        DB::table('dang_ky_lop')->insert([
+            'lop_tap_id' => 1,
+            'hoi_vien_id' => 2,
+            'ngay_dang_ky' => now(),
+            'trang_thai' => 'đã hủy',
+        ]);
+
+        $this->withSession([
+            'user' => (object) ['nguoi_dung_id' => 1],
+            'role_id' => 1,
+        ])->get('/admin/classes/1')
+            ->assertOk()
+            ->assertSee('Lop test')
+            ->assertSee('Hoi vien test')
+            ->assertSee('member@example.com')
+            ->assertDontSee('Hoi vien da huy')
+            ->assertDontSee('cancelled@example.com');
     }
 
     // Không được đăng ký trùng lớp đang hoạt động

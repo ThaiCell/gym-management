@@ -2198,16 +2198,8 @@ Route::post('/admin/members/{id}/edit', function ($id) {
 
 });
 
+
 Route::post('/admin/members/{id}/toggle-status', function ($id) {
-
-    if (!session()->has('user')) {
-        return redirect('/login');
-    }
-
-    if (session('role_id') != 1) {
-        return redirect('/' . session('dashboard_path', 'user/dashboard'));
-    }
-
     $member = DB::table('hoi_vien')
         ->where('hoi_vien_id', $id)
         ->first();
@@ -2217,7 +2209,18 @@ Route::post('/admin/members/{id}/toggle-status', function ($id) {
             ->with('error', 'Không tìm thấy hội viên.');
     }
 
-    $newStatus = $member->trang_thai === 'hoat_dong'
+    // Lấy trạng thái từ bảng nguoi_dung
+    $user = DB::table('nguoi_dung')
+        ->where('nguoi_dung_id', $member->nguoi_dung_id)
+        ->first();
+
+    if (!$user) {
+        return redirect('/admin/members')
+            ->with('error', 'Không tìm thấy tài khoản hội viên.');
+    }
+
+    // Đảo trạng thái tài khoản
+    $newStatus = $user->trang_thai === 'hoat_dong'
         ? 'bi_khoa'
         : 'hoat_dong';
 
@@ -2233,8 +2236,8 @@ Route::post('/admin/members/{id}/toggle-status', function ($id) {
 
     return redirect('/admin/members/' . $id)
         ->with('success', $message);
-
 });
+
 
 
 /* ================================
@@ -7894,6 +7897,37 @@ Route::get('/admin/classes', function () {
         ->get();
 
     return view('admin.classes', compact('lopTap'));
+});
+
+Route::get('/admin/classes/{id}', function ($id) {
+    if (!session()->has('user')) {
+        return redirect('/login');
+    }
+    if (session('role_id') != 1) {
+        return redirect('/' . session('dashboard_path', 'user/dashboard'));
+    }
+
+    $lop = DB::table('lop_tap')->where('lop_tap_id', $id)->first();
+    if (!$lop) {
+        return redirect('/admin/classes')->with('error', 'Không tìm thấy lớp tập.');
+    }
+
+    $hoiVien = DB::table('dang_ky_lop')
+        ->join('hoi_vien', 'dang_ky_lop.hoi_vien_id', '=', 'hoi_vien.hoi_vien_id')
+        ->join('nguoi_dung', 'hoi_vien.nguoi_dung_id', '=', 'nguoi_dung.nguoi_dung_id')
+        ->where('dang_ky_lop.lop_tap_id', $id)
+        ->whereIn('dang_ky_lop.trang_thai', ['hoạt_động', 'hoat_dong', 'đang hoạt động', 'dang_hoat_dong'])
+        ->select(
+            'hoi_vien.hoi_vien_id',
+            'nguoi_dung.ho_ten',
+            'nguoi_dung.email',
+            'hoi_vien.so_dien_thoai',
+            'dang_ky_lop.ngay_dang_ky'
+        )
+        ->orderByDesc('dang_ky_lop.ngay_dang_ky')
+        ->get();
+
+    return view('admin.class-members', compact('lop', 'hoiVien'));
 });
 
 Route::get('/admin/classes/create', function () {
