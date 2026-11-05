@@ -215,7 +215,168 @@
             color: #bbb;
         }
 
+        .gym-toast {
+            position: fixed;
+
+            top: 95px;
+            right: 30px;
+
+            z-index: 9999;
+
+            width: 380px;
+            min-height: 80px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            padding: 16px 18px;
+
+            background: #151515;
+
+            border: 1px solid #333;
+
+            border-left: 4px solid #ff1010;
+
+            border-radius: 8px;
+
+            box-shadow:
+                0 10px 35px rgba(0, 0, 0, 0.45);
+
+            animation: toastSlideIn .35s ease forwards;
+        }
+
+        .success-toast,
+        .error-toast {
+            border-left-color: #ff1010;
+        }
+
+        .toast-icon {
+            width: 38px;
+            height: 38px;
+
+            flex-shrink: 0;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #ed1111;
+
+            color: #fff;
+
+            font-size: 20px;
+
+            font-weight: 700;
+        }
+
+        .toast-content {
+            flex: 1;
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 4px;
+        }
+
+        .toast-content strong {
+            color: #fff;
+
+            font-size: 15px;
+
+            font-weight: 700;
+        }
+
+        .toast-content span {
+            color: #aaa;
+
+            font-size: 13px;
+
+            line-height: 1.4;
+        }
+
+        .toast-close {
+            background: transparent;
+
+            border: none;
+
+            color: #777;
+
+            font-size: 24px;
+
+            line-height: 1;
+
+            cursor: pointer;
+
+            padding: 2px 5px;
+        }
+
+        .toast-close:hover {
+            color: #fff;
+        }
+
+
+        @keyframes toastSlideIn {
+
+            from {
+                opacity: 0;
+
+                transform: translateX(40px);
+            }
+
+            to {
+                opacity: 1;
+
+                transform: translateX(0);
+            }
+
+        }
+
+
+        @keyframes toastSlideOut {
+
+            from {
+                opacity: 1;
+
+                transform: translateX(0);
+            }
+
+            to {
+                opacity: 0;
+
+                transform: translateX(40px);
+            }
+
+        }
+
+
+        .gym-toast.hide {
+            animation: toastSlideOut .3s ease forwards;
+        }
+
+
+
         @media (max-width: 800px) {
+            .gym-toast {
+                top: 80px;
+                left: 15px;
+                right: 15px;
+                width: auto;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .contact-toast {
+                top: 120px !important;
+                right: 16px !important;
+            }
+
             .contact-grid {
                 grid-template-columns: 1fr;
             }
@@ -234,36 +395,36 @@
     <div class="contact-page">
 
         @if (session('success'))
-            <div
-                style="
-        max-width:1200px;
-        margin:20px auto 0;
-        padding:14px 20px;
-        background:#123d1d;
-        border:1px solid #28a745;
-        color:#fff;
-        border-radius:6px;
-            ">
-                {{ session('success') }}
+            <div class="gym-toast success-toast" id="successToast">
+                <div class="toast-icon">✓</div>
+                <div class="toast-content">
+                    <strong>Thành công</strong>
+                    <span>{{ session('success') }}</span>
+                </div>
+                <button type="button" class="toast-close" onclick="closeToast('successToast')"
+                    aria-label="Đóng thông báo">×</button>
             </div>
         @endif
 
-        @if ($errors->any())
-            <div
-                style="
-                max-width:1200px;
-                margin:20px auto 0;
-                padding:14px 20px;
-                background:#3d1212;
-                border:1px solid #e50914;
-                color:#fff;
-                border-radius:6px;
-            ">
-                <ul style="margin:0;padding-left:20px;">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+        @if (session('error') || $errors->any())
+            <div class="gym-toast error-toast" id="errorToast">
+                <div class="toast-icon">!</div>
+                <div class="toast-content">
+                    <strong>Không thể thực hiện</strong>
+                    <span>
+                        @if (session('error'))
+                            {{ session('error') }}
+                        @else
+                            @foreach ($errors->all() as $error)
+                                {{ $error }}@if (!$loop->last)
+                                    ·
+                                @endif
+                            @endforeach
+                        @endif
+                    </span>
+                </div>
+                <button type="button" class="toast-close" onclick="closeToast('errorToast')"
+                    aria-label="Đóng thông báo">×</button>
             </div>
         @endif
 
@@ -465,4 +626,59 @@
 
     </div>
 
+    <script>
+        function closeToast(id) {
+
+            const toast = document.getElementById(id);
+
+            if (toast) {
+
+                toast.classList.add('hide');
+
+                setTimeout(() => {
+
+                    toast.remove();
+
+                }, 300);
+
+            }
+
+        }
+
+
+        document.addEventListener(
+            'DOMContentLoaded',
+            function() {
+
+                const successToast =
+                    document.getElementById('successToast');
+
+                const errorToast =
+                    document.getElementById('errorToast');
+
+
+                if (successToast) {
+
+                    setTimeout(() => {
+
+                        closeToast('successToast');
+
+                    }, 3000);
+
+                }
+
+
+                if (errorToast) {
+
+                    setTimeout(() => {
+
+                        closeToast('errorToast');
+
+                    }, 4000);
+
+                }
+
+            }
+        );
+    </script>
 @endsection

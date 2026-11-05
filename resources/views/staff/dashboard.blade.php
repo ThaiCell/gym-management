@@ -7,7 +7,148 @@
 
 @section('content')
 
+
+    {{-- POPUP THONG BAO FLASH: dung chung cho dashboard --}}
+    @if (session()->has('success') || session()->has('error'))
+        @php
+            $flashMessage = session('success') ?? session('error');
+            $flashType = session()->has('success') ? 'success' : 'error';
+        @endphp
+        <div id="gymDashboardFlash" class="gym-dashboard-flash {{ $flashType }}" role="alert" aria-live="assertive">
+            <span class="gym-dashboard-flash-icon">{{ $flashType === 'success' ? '✓' : '!' }}</span>
+            <div class="gym-dashboard-flash-content">
+                <strong>{{ $flashType === 'success' ? 'Thành công' : 'Có lỗi xảy ra' }}</strong>
+                <span>{{ $flashMessage }}</span>
+            </div>
+            <button type="button" onclick="document.getElementById('gymDashboardFlash')?.remove()"
+                aria-label="Đóng">&times;</button>
+        </div>
+        <style>
+            .gym-dashboard-flash {
+                position: fixed;
+                z-index: 999999;
+                top: 92px;
+                right: 24px;
+                width: min(420px, calc(100vw - 32px));
+                display: flex;
+                align-items: center;
+                gap: 13px;
+                padding: 16px 18px;
+                border-radius: 12px;
+                background: #171717;
+                border: 1px solid #3b3b3b;
+                box-shadow: 0 14px 40px #0009;
+                color: #fff;
+                font: 500 14px/1.45 system-ui, sans-serif;
+                animation: gymFlashIn .25s ease-out
+            }
+
+            .gym-dashboard-flash.success {
+                border-left: 4px solid #22c55e
+            }
+
+            .gym-dashboard-flash.error {
+                border-left: 4px solid #ef4444
+            }
+
+            .gym-dashboard-flash-icon {
+                width: 30px;
+                height: 30px;
+                flex: 0 0 30px;
+                display: grid;
+                place-items: center;
+                border-radius: 50%;
+                font-weight: 900;
+                background: #252525;
+                color: #4ade80
+            }
+
+            .gym-dashboard-flash.error .gym-dashboard-flash-icon {
+                color: #f87171
+            }
+
+            .gym-dashboard-flash-content {
+                display: flex;
+                flex: 1;
+                min-width: 0;
+                flex-direction: column;
+                gap: 3px
+            }
+
+            .gym-dashboard-flash-content strong {
+                font-size: 13px
+            }
+
+            .gym-dashboard-flash-content span {
+                overflow-wrap: anywhere;
+                color: #ddd
+            }
+
+            .gym-dashboard-flash button {
+                border: 0;
+                background: transparent;
+                color: #aaa;
+                font-size: 24px;
+                cursor: pointer;
+                padding: 0 2px
+            }
+
+            .gym-dashboard-flash button:hover {
+                color: #fff
+            }
+
+            @keyframes gymFlashIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px)
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0)
+                }
+            }
+
+            @media(max-width:600px) {
+                .gym-dashboard-flash {
+                    top: 82px;
+                    right: 12px
+                }
+            }
+
+            .staff-role-dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: #ff2633;
+                box-shadow: 0 0 8px rgba(255, 38, 51, .75);
+            }
+        </style>
+        <script>
+            (function() {
+                const el = document.getElementById('gymDashboardFlash');
+                if (!el) return;
+                setTimeout(() => {
+                    if (el.isConnected) {
+                        el.style.transition = 'opacity .3s,transform .3s';
+                        el.style.opacity = '0';
+                        el.style.transform = 'translateY(-8px)';
+                        setTimeout(() => el.remove(), 320)
+                    }
+                }, 5000)
+            })();
+        </script>
+    @endif
+
     <style>
+        .staff-role-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ff2633;
+            box-shadow: 0 0 8px rgba(255, 38, 51, .75);
+        }
+
         .staff-dashboard {
             max-width: 1400px;
             margin: auto;
@@ -47,14 +188,18 @@
         }
 
         .staff-role {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
             padding: 7px 13px;
             border-radius: 20px;
-            background: rgba(229, 9, 20, .1);
-            border: 1px solid rgba(229, 9, 20, .25);
-            color: #ff4a52;
-            font-size: 10px;
+            background: rgba(229, 9, 20, .10);
+            border: 1px solid rgba(229, 9, 20, .45);
+            color: #ff4651;
+            font-size: 11px;
             font-weight: 800;
+            letter-spacing: .5px;
         }
 
         .staff-stats {
@@ -82,8 +227,31 @@
             box-shadow: 0 12px 30px rgba(0, 0, 0, .3);
         }
 
-        .staff-hero svg { width:19px; height:19px; flex:0 0 19px; fill:none; stroke:#fff; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; vertical-align:middle; margin-right:7px; }
-        .staff-stat-icon svg, .staff-item-icon svg, .staff-empty-icon svg { width:23px; height:23px; fill:none; stroke:#ff4651; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; }
+        .staff-hero svg {
+            width: 19px;
+            height: 19px;
+            flex: 0 0 19px;
+            fill: none;
+            stroke: #fff;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vertical-align: middle;
+            margin-right: 7px;
+        }
+
+        .staff-stat-icon svg,
+        .staff-item-icon svg,
+        .staff-empty-icon svg {
+            width: 23px;
+            height: 23px;
+            fill: none;
+            stroke: #ff4651;
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
         .staff-stat-icon {
             width: 52px;
             height: 52px;
@@ -186,15 +354,18 @@
             font-size: 11px;
         }
 
-        .staff-badge {
-            padding: 6px 10px;
+        .hero-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 13px;
             border-radius: 20px;
-            background: rgba(229, 9, 20, .1);
-            border: 1px solid rgba(229, 9, 20, .2);
+            background: rgba(229, 9, 20, .12);
+            border: 1px solid rgba(229, 9, 20, .3);
             color: #ff4a52;
-            font-size: 10px;
-            font-weight: 700;
-            white-space: nowrap;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .5px;
         }
 
         .staff-empty {
@@ -274,6 +445,10 @@
                 Quản lý hội viên, check-in và các hoạt động của phòng Gym.
             </p>
 
+            <div class="staff-role">
+                <span class="staff-role-dot"></span> NHÂN VIÊN
+            </div>
+
             <div style="
     display:flex;
     flex-wrap:wrap;
@@ -297,7 +472,10 @@
         "
                     onmouseover="this.style.background='#ff1824'" onmouseout="this.style.background='#e50914'">
 
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5"/></svg> QUẢN LÝ HỘI VIÊN
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="9" cy="8" r="3" />
+                        <path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5" />
+                    </svg> QUẢN LÝ HỘI VIÊN
 
                 </a>
 
@@ -359,7 +537,10 @@
             <div class="staff-stat">
 
                 <div class="staff-stat-icon">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5"/></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="9" cy="8" r="3" />
+                        <path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5" />
+                    </svg>
                 </div>
 
                 <div>
@@ -373,7 +554,10 @@
             <div class="staff-stat">
 
                 <div class="staff-stat-icon">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-6"/></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="8" />
+                        <path d="m8 12 3 3 5-6" />
+                    </svg>
                 </div>
 
                 <div>
@@ -387,7 +571,10 @@
             <div class="staff-stat">
 
                 <div class="staff-stat-icon">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="2" y="5" width="20" height="14" rx="2" />
+                        <path d="M2 10h20M6 15h4" />
+                    </svg>
                 </div>
 
                 <div>
@@ -401,7 +588,9 @@
             <div class="staff-stat">
 
                 <div class="staff-stat-icon">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/></svg>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10" />
+                    </svg>
                 </div>
 
                 <div>
@@ -462,9 +651,9 @@
 
                                 </div>
 
-                                <span class="staff-badge">
-                                    HỘI VIÊN
-                                </span>
+                                <div class="hero-role">
+                                    ● HỘI VIÊN
+                                </div>
 
                             </div>
                         @endforeach
@@ -474,7 +663,10 @@
                     <div class="staff-empty">
 
                         <div class="staff-empty-icon">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5"/></svg>
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="9" cy="8" r="3" />
+                                <path d="M3 20a6 6 0 0 1 12 0M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 5" />
+                            </svg>
                         </div>
 
                         <h3>
@@ -519,7 +711,10 @@
                                 <div class="staff-item-left">
 
                                     <div class="staff-item-icon">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-6"/></svg>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <circle cx="12" cy="12" r="8" />
+                                            <path d="m8 12 3 3 5-6" />
+                                        </svg>
                                     </div>
 
                                     <div class="staff-item-info">
@@ -548,7 +743,10 @@
                     <div class="staff-empty">
 
                         <div class="staff-empty-icon">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-6"/></svg>
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="8" />
+                                <path d="m8 12 3 3 5-6" />
+                            </svg>
                         </div>
 
                         <h3>
@@ -593,7 +791,9 @@
                                 <div class="staff-item-left">
 
                                     <div class="staff-item-icon">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/></svg>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10" />
+                                        </svg>
                                     </div>
 
                                     <div class="staff-item-info">
@@ -622,7 +822,9 @@
                     <div class="staff-empty">
 
                         <div class="staff-empty-icon">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/></svg>
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="m3 7 9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10" />
+                            </svg>
                         </div>
 
                         <h3>
@@ -675,7 +877,10 @@
                                 <div class="staff-item-left">
 
                                     <div class="staff-item-icon">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
+                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                            <rect x="2" y="5" width="20" height="14" rx="2" />
+                                            <path d="M2 10h20M6 15h4" />
+                                        </svg>
                                     </div>
 
                                     <div class="staff-item-info">
@@ -706,7 +911,10 @@
                     <div class="staff-empty">
 
                         <div class="staff-empty-icon">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="2" y="5" width="20" height="14" rx="2" />
+                                <path d="M2 10h20M6 15h4" />
+                            </svg>
                         </div>
 
                         <h3>

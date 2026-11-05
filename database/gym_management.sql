@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 24, 2026 lúc 09:14 AM
+-- Thời gian đã tạo: Th10 05, 2026 lúc 06:11 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -20,6 +20,111 @@ SET time_zone = "+00:00";
 --
 -- Cơ sở dữ liệu: `gym_management`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `bai_tap_giao_an_pt`
+--
+
+CREATE TABLE `bai_tap_giao_an_pt` (
+  `exercise_id` int(10) UNSIGNED NOT NULL,
+  `plan_id` int(10) UNSIGNED NOT NULL,
+  `ten_bai_tap` varchar(255) NOT NULL,
+  `so_hiep` int(11) NOT NULL DEFAULT 3,
+  `so_lan` varchar(50) NOT NULL DEFAULT '12',
+  `ghi_chu` text DEFAULT NULL,
+  `thu_tu` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `bai_tap_giao_an_pt`
+--
+
+INSERT INTO `bai_tap_giao_an_pt` (`exercise_id`, `plan_id`, `ten_bai_tap`, `so_hiep`, `so_lan`, `ghi_chu`, `thu_tu`) VALUES
+(1, 1, 'Di bo tren may', 1, '10 phut', 'Khoi dong nhe.', 1),
+(2, 1, 'Squat', 3, '12', 'Giu lung thang, ha nguoi co kiem soat.', 2),
+(3, 1, 'Push-up', 3, '10', 'Co the chong goi neu chua du suc.', 3),
+(4, 1, 'Plank', 3, '30 giay', 'Giu than nguoi thanh mot duong thang.', 4),
+(5, 1, 'Đẩy ngực với tạ', 3, '12 lần', 'Tập trung phát triển cơ ngực.', 1),
+(6, 2, 'Đẩy ngực với tạ', 3, '12 lần', 'Tập trung phát triển cơ ngực.', 1),
+(7, 3, 'Đẩy ngực với tạ', 3, '12 lần', 'Tập trung phát triển cơ ngực.', 1),
+(8, 4, 'Đẩy ngực với tạ', 3, '12 lần', 'Tập trung phát triển cơ ngực.', 1),
+(9, 5, 'Đẩy ngực với tạ', 3, '12 lần', 'Tập trung phát triển cơ ngực.', 1),
+(10, 2, 'Squat', 3, '12 lần', 'Phát triển cơ chân.', 2),
+(11, 3, 'Squat', 3, '12 lần', 'Phát triển cơ chân.', 2),
+(12, 4, 'Squat', 3, '12 lần', 'Phát triển cơ chân.', 2),
+(13, 5, 'Squat', 3, '12 lần', 'Phát triển cơ chân.', 2),
+(14, 2, 'Plank', 3, '30 giây', 'Tăng sức mạnh cơ bụng.', 3),
+(15, 3, 'Plank', 3, '30 giây', 'Tăng sức mạnh cơ bụng.', 3),
+(16, 4, 'Plank', 3, '30 giây', 'Tăng sức mạnh cơ bụng.', 3),
+(17, 5, 'Plank', 3, '30 giây', 'Tăng sức mạnh cơ bụng.', 3),
+(18, 6, 'Chạy bộ trên máy', 1, '15 phút', 'Khởi động và đốt mỡ.', 1),
+(19, 7, 'Chạy bộ trên máy', 1, '15 phút', 'Khởi động và đốt mỡ.', 1),
+(20, 8, 'Chạy bộ trên máy', 1, '15 phút', 'Khởi động và đốt mỡ.', 1),
+(21, 9, 'Chạy bộ trên máy', 1, '15 phút', 'Khởi động và đốt mỡ.', 1),
+(22, 10, 'Chạy bộ trên máy', 1, '15 phút', 'Khởi động và đốt mỡ.', 1),
+(23, 6, 'Đạp xe', 1, '20 phút', 'Tăng sức bền.', 2),
+(24, 7, 'Đạp xe', 1, '20 phút', 'Tăng sức bền.', 2),
+(25, 8, 'Đạp xe', 1, '20 phút', 'Tăng sức bền.', 2),
+(26, 9, 'Đạp xe', 1, '20 phút', 'Tăng sức bền.', 2),
+(27, 10, 'Đạp xe', 1, '20 phút', 'Tăng sức bền.', 2),
+(28, 6, 'Jumping Jacks', 3, '20 lần', 'Đốt cháy năng lượng.', 3),
+(29, 7, 'Jumping Jacks', 3, '20 lần', 'Đốt cháy năng lượng.', 3),
+(30, 8, 'Jumping Jacks', 3, '20 lần', 'Đốt cháy năng lượng.', 3),
+(31, 9, 'Jumping Jacks', 3, '20 lần', 'Đốt cháy năng lượng.', 3),
+(32, 10, 'Jumping Jacks', 3, '20 lần', 'Đốt cháy năng lượng.', 3),
+(33, 11, 'Đấm thẳng', 3, '15 lần', 'Luyện kỹ thuật đấm.', 1),
+(34, 12, 'Đấm thẳng', 3, '15 lần', 'Luyện kỹ thuật đấm.', 1),
+(35, 13, 'Đấm thẳng', 3, '15 lần', 'Luyện kỹ thuật đấm.', 1),
+(36, 14, 'Đấm thẳng', 3, '15 lần', 'Luyện kỹ thuật đấm.', 1),
+(37, 15, 'Đấm thẳng', 3, '15 lần', 'Luyện kỹ thuật đấm.', 1),
+(38, 11, 'Đấm móc', 3, '12 lần', 'Cải thiện phản xạ.', 2),
+(39, 12, 'Đấm móc', 3, '12 lần', 'Cải thiện phản xạ.', 2),
+(40, 13, 'Đấm móc', 3, '12 lần', 'Cải thiện phản xạ.', 2),
+(41, 14, 'Đấm móc', 3, '12 lần', 'Cải thiện phản xạ.', 2),
+(42, 15, 'Đấm móc', 3, '12 lần', 'Cải thiện phản xạ.', 2),
+(43, 11, 'Nhảy dây', 3, '2 phút', 'Tăng sức bền.', 3),
+(44, 12, 'Nhảy dây', 3, '2 phút', 'Tăng sức bền.', 3),
+(45, 13, 'Nhảy dây', 3, '2 phút', 'Tăng sức bền.', 3),
+(46, 14, 'Nhảy dây', 3, '2 phút', 'Tăng sức bền.', 3),
+(47, 15, 'Nhảy dây', 3, '2 phút', 'Tăng sức bền.', 3),
+(48, 16, 'Tư thế cái cây', 3, '30 giây', 'Cải thiện thăng bằng.', 1),
+(49, 17, 'Tư thế cái cây', 3, '30 giây', 'Cải thiện thăng bằng.', 1),
+(50, 18, 'Tư thế cái cây', 3, '30 giây', 'Cải thiện thăng bằng.', 1),
+(51, 19, 'Tư thế cái cây', 3, '30 giây', 'Cải thiện thăng bằng.', 1),
+(52, 16, 'Tư thế chiến binh', 3, '12 lần', 'Tăng độ dẻo dai.', 2),
+(53, 17, 'Tư thế chiến binh', 3, '12 lần', 'Tăng độ dẻo dai.', 2),
+(54, 18, 'Tư thế chiến binh', 3, '12 lần', 'Tăng độ dẻo dai.', 2),
+(55, 19, 'Tư thế chiến binh', 3, '12 lần', 'Tăng độ dẻo dai.', 2),
+(56, 16, 'Plank', 3, '30 giây', 'Tăng sức mạnh cơ bụng.', 3),
+(57, 17, 'Plank', 3, '30 giây', 'Tăng sức mạnh cơ bụng.', 3),
+(58, 18, 'Plank', 3, '30 giây', 'Tăng sức mạnh cơ bụng.', 3),
+(59, 19, 'Plank', 3, '30 giây', 'Tăng sức mạnh cơ bụng.', 3),
+(60, 20, 'Deadlift', 3, '10 lần', 'Phát triển cơ lưng.', 1),
+(61, 21, 'Deadlift', 3, '10 lần', 'Phát triển cơ lưng.', 1),
+(62, 22, 'Deadlift', 3, '10 lần', 'Phát triển cơ lưng.', 1),
+(63, 23, 'Deadlift', 3, '10 lần', 'Phát triển cơ lưng.', 1),
+(64, 20, 'Shoulder Press', 3, '12 lần', 'Phát triển cơ vai.', 2),
+(65, 21, 'Shoulder Press', 3, '12 lần', 'Phát triển cơ vai.', 2),
+(66, 22, 'Shoulder Press', 3, '12 lần', 'Phát triển cơ vai.', 2),
+(67, 23, 'Shoulder Press', 3, '12 lần', 'Phát triển cơ vai.', 2),
+(68, 20, 'Bench Press', 3, '10 lần', 'Phát triển cơ ngực.', 3),
+(69, 21, 'Bench Press', 3, '10 lần', 'Phát triển cơ ngực.', 3),
+(70, 22, 'Bench Press', 3, '10 lần', 'Phát triển cơ ngực.', 3),
+(71, 23, 'Bench Press', 3, '10 lần', 'Phát triển cơ ngực.', 3),
+(72, 24, 'Burpees', 3, '12 lần', 'Đốt mỡ toàn thân.', 1),
+(73, 25, 'Burpees', 3, '12 lần', 'Đốt mỡ toàn thân.', 1),
+(74, 26, 'Burpees', 3, '12 lần', 'Đốt mỡ toàn thân.', 1),
+(75, 27, 'Burpees', 3, '12 lần', 'Đốt mỡ toàn thân.', 1),
+(76, 24, 'Jumping Jacks', 3, '20 lần', 'Tăng nhịp tim.', 2),
+(77, 25, 'Jumping Jacks', 3, '20 lần', 'Tăng nhịp tim.', 2),
+(78, 26, 'Jumping Jacks', 3, '20 lần', 'Tăng nhịp tim.', 2),
+(79, 27, 'Jumping Jacks', 3, '20 lần', 'Tăng nhịp tim.', 2),
+(80, 24, 'Chạy bộ', 1, '15 phút', 'Cải thiện thể lực.', 3),
+(81, 25, 'Chạy bộ', 1, '15 phút', 'Cải thiện thể lực.', 3),
+(82, 26, 'Chạy bộ', 1, '15 phút', 'Cải thiện thể lực.', 3),
+(83, 27, 'Chạy bộ', 1, '15 phút', 'Cải thiện thể lực.', 3);
 
 -- --------------------------------------------------------
 
@@ -135,7 +240,10 @@ INSERT INTO `chi_tiet_hoa_don` (`chi_tiet_id`, `hoa_don_id`, `goi_tap_id`, `goi_
 (14, 14, 5, NULL, 1, 200000.00, 200000.00),
 (15, 15, 6, NULL, 1, 100000.00, 100000.00),
 (21, 21, NULL, 1, 1, 1500000.00, 1500000.00),
-(22, 22, NULL, 5, 1, 1800000.00, 1800000.00);
+(22, 22, NULL, 5, 1, 1800000.00, 1800000.00),
+(30, 30, NULL, 1, 1, 1500000.00, 1500000.00),
+(34, 34, 6, NULL, 1, 100000.00, 100000.00),
+(37, 37, 6, NULL, 1, 100000.00, 100000.00);
 
 -- --------------------------------------------------------
 
@@ -200,7 +308,14 @@ INSERT INTO `dang_ky_goi_pt` (`dang_ky_goi_pt_id`, `hoi_vien_id`, `goi_pt_id`, `
 (42, 15, 1, 4, '2026-10-24', '2026-11-22', 10, 'đã hủy'),
 (43, 15, 5, 2, '2026-10-24', '2026-12-07', 12, 'đã hủy'),
 (44, 15, 1, 2, '2026-10-24', '2026-11-22', 10, 'đã hủy'),
-(45, 15, 4, 2, '2026-10-24', '2026-11-07', 5, 'đã hủy');
+(45, 15, 4, 2, '2026-10-24', '2026-11-07', 5, 'đã hủy'),
+(46, 15, 1, 1, '2026-10-26', '2026-11-24', 10, 'đã hủy'),
+(47, 15, 4, 1, '2026-10-31', '2026-11-14', 5, 'đã hủy'),
+(48, 15, 5, 6, '2026-10-31', '2026-12-14', 12, 'đã hủy'),
+(49, 15, 1, 5, '2026-10-31', '2026-11-29', 10, 'đã hủy'),
+(50, 15, 1, 1, '2026-11-05', '2026-12-04', 10, 'đã hủy'),
+(51, 15, 4, 1, '2026-11-05', '2026-11-19', 5, 'đã hủy'),
+(52, 15, 1, 2, '2026-11-05', '2026-12-04', 10, 'đã hủy');
 
 -- --------------------------------------------------------
 
@@ -236,9 +351,11 @@ INSERT INTO `dang_ky_goi_tap` (`dang_ky_goi_tap_id`, `hoi_vien_id`, `goi_tap_id`
 (12, 13, 4, '2026-09-30', '2027-09-30', 365, 'đang hoạt động'),
 (16, 12, 6, '2026-09-30', '2026-10-07', 7, 'đang hoạt động'),
 (17, 14, 5, '2026-10-01', '2026-10-31', 30, 'đang hoạt động'),
-(19, 15, 5, '2026-10-01', '2026-10-31', 30, 'đang hoạt động'),
-(21, 11, 5, '2026-10-03', '2026-11-02', 30, 'đang hoạt động'),
-(22, 1, 6, '2026-10-04', '2026-10-11', 7, 'đang hoạt động');
+(19, 15, 5, '2026-10-01', '2026-10-31', 30, 'đã hết hạn'),
+(21, 11, 5, '2026-10-03', '2026-11-02', 30, 'đã hết hạn'),
+(22, 1, 6, '2026-10-04', '2026-10-11', 7, 'đang hoạt động'),
+(23, 11, 6, '2026-11-05', '2026-11-12', 7, 'đã hủy'),
+(24, 15, 6, '2026-11-05', '2026-11-12', 7, 'đã hủy');
 
 -- --------------------------------------------------------
 
@@ -285,7 +402,7 @@ INSERT INTO `dang_ky_lop` (`dang_ky_lop_id`, `lop_tap_id`, `hoi_vien_id`, `ngay_
 (24, 5, 12, '2026-10-02 03:43:24', 'đang hoạt động'),
 (25, 6, 12, '2026-10-02 03:43:27', 'đang hoạt động'),
 (26, 4, 12, '2026-10-02 03:43:29', 'đang hoạt động'),
-(27, 5, 15, '2026-10-02 08:46:15', 'đang hoạt động'),
+(27, 5, 15, '2026-10-02 08:46:15', 'đã hủy'),
 (28, 2, 15, '2026-10-02 08:46:19', 'đã hủy'),
 (29, 3, 15, '2026-10-02 08:46:21', 'đã hủy'),
 (30, 1, 15, '2026-10-02 08:46:23', 'đã hủy'),
@@ -298,7 +415,12 @@ INSERT INTO `dang_ky_lop` (`dang_ky_lop_id`, `lop_tap_id`, `hoi_vien_id`, `ngay_
 (37, 3, 11, '2026-10-24 04:44:22', 'đã hủy'),
 (38, 4, 11, '2026-10-24 04:44:27', 'đã hủy'),
 (39, 5, 11, '2026-10-24 04:44:29', 'đã hủy'),
-(40, 1, 15, '2026-10-24 06:14:50', 'đang hoạt động');
+(40, 1, 15, '2026-10-24 06:14:50', 'đã hủy'),
+(41, 1, 15, '2026-10-31 05:49:02', 'đã hủy'),
+(42, 2, 15, '2026-10-31 06:09:10', 'đã hủy'),
+(43, 3, 15, '2026-10-31 06:40:57', 'đã hủy'),
+(44, 1, 15, '2026-11-05 03:47:27', 'đang hoạt động'),
+(45, 2, 15, '2026-11-05 03:47:37', 'đang hoạt động');
 
 -- --------------------------------------------------------
 
@@ -315,6 +437,56 @@ CREATE TABLE `failed_jobs` (
   `exception` longtext NOT NULL,
   `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `giao_an_pt`
+--
+
+CREATE TABLE `giao_an_pt` (
+  `plan_id` int(10) UNSIGNED NOT NULL,
+  `pt_id` int(11) NOT NULL,
+  `hoi_vien_id` int(11) NOT NULL,
+  `ten_giao_an` varchar(255) NOT NULL,
+  `muc_tieu` text DEFAULT NULL,
+  `ghi_chu` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `giao_an_pt`
+--
+
+INSERT INTO `giao_an_pt` (`plan_id`, `pt_id`, `hoi_vien_id`, `ten_giao_an`, `muc_tieu`, `ghi_chu`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, 'Giao an giam mo 4 tuan', 'Giam mo, cai thien suc ben va duy tri khoi co.', 'Tap 4 buoi moi tuan; khoi dong ky va dieu chinh cuong do theo the luc.', '2026-11-05 04:08:55', '2026-11-05 04:08:55'),
+(2, 1, 2, 'Giáo án tăng cơ 4 tuần', 'Tăng khối lượng cơ bắp và sức mạnh.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(3, 1, 3, 'Giáo án tăng cơ 4 tuần', 'Tăng khối lượng cơ bắp và sức mạnh.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(4, 1, 4, 'Giáo án tăng cơ 4 tuần', 'Tăng khối lượng cơ bắp và sức mạnh.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(5, 1, 5, 'Giáo án tăng cơ 4 tuần', 'Tăng khối lượng cơ bắp và sức mạnh.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(6, 2, 6, 'Giáo án giảm cân Cardio', 'Giảm cân, đốt mỡ và tăng sức bền.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(7, 2, 7, 'Giáo án giảm cân Cardio', 'Giảm cân, đốt mỡ và tăng sức bền.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(8, 2, 8, 'Giáo án giảm cân Cardio', 'Giảm cân, đốt mỡ và tăng sức bền.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(9, 2, 9, 'Giáo án giảm cân Cardio', 'Giảm cân, đốt mỡ và tăng sức bền.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(10, 2, 10, 'Giáo án giảm cân Cardio', 'Giảm cân, đốt mỡ và tăng sức bền.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(11, 3, 11, 'Giáo án Boxing cơ bản', 'Cải thiện kỹ thuật Boxing và phản xạ.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(12, 3, 12, 'Giáo án Boxing cơ bản', 'Cải thiện kỹ thuật Boxing và phản xạ.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(13, 3, 13, 'Giáo án Boxing cơ bản', 'Cải thiện kỹ thuật Boxing và phản xạ.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(14, 3, 14, 'Giáo án Boxing cơ bản', 'Cải thiện kỹ thuật Boxing và phản xạ.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(15, 3, 15, 'Giáo án Boxing cơ bản', 'Cải thiện kỹ thuật Boxing và phản xạ.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(16, 4, 16, 'Giáo án Yoga và Fitness', 'Tăng độ dẻo dai và cân bằng cơ thể.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(17, 4, 17, 'Giáo án Yoga và Fitness', 'Tăng độ dẻo dai và cân bằng cơ thể.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(18, 4, 18, 'Giáo án Yoga và Fitness', 'Tăng độ dẻo dai và cân bằng cơ thể.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(19, 4, 19, 'Giáo án Yoga và Fitness', 'Tăng độ dẻo dai và cân bằng cơ thể.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(20, 5, 20, 'Giáo án thể hình chuyên nghiệp', 'Phát triển hình thể và khối lượng cơ.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(21, 5, 21, 'Giáo án thể hình chuyên nghiệp', 'Phát triển hình thể và khối lượng cơ.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(22, 5, 22, 'Giáo án thể hình chuyên nghiệp', 'Phát triển hình thể và khối lượng cơ.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(23, 5, 23, 'Giáo án thể hình chuyên nghiệp', 'Phát triển hình thể và khối lượng cơ.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(24, 6, 24, 'Giáo án giảm mỡ toàn thân', 'Giảm mỡ và cải thiện thể lực.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(25, 6, 25, 'Giáo án giảm mỡ toàn thân', 'Giảm mỡ và cải thiện thể lực.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(26, 6, 26, 'Giáo án giảm mỡ toàn thân', 'Giảm mỡ và cải thiện thể lực.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16'),
+(27, 6, 27, 'Giáo án giảm mỡ toàn thân', 'Giảm mỡ và cải thiện thể lực.', 'Giáo án được xây dựng riêng cho từng hội viên.', '2026-11-05 04:52:16', '2026-11-05 04:52:16');
 
 -- --------------------------------------------------------
 
@@ -342,7 +514,7 @@ INSERT INTO `goi_pt` (`goi_pt_id`, `ten_goi_pt`, `gia`, `so_buoi`, `thoi_han_nga
 (3, 'PT Premium 30 Buổi', 3900000.00, 30, 90, 'img/pt3.jpg', 'hoat_dong'),
 (4, 'PT Cá Nhân 5 Buổi', 800000.00, 5, 15, 'img/pt4.jpg', 'hoat_dong'),
 (5, 'PT Giảm Mỡ 12 Buổi', 1800000.00, 12, 45, 'img/pt5.jpg', 'hoat_dong'),
-(6, 'PT Tăng Cơ 24 Buổi', 3200000.00, 24, 75, 'img/pt6.jpg', 'tam_ngung');
+(6, 'PT Tăng Cơ 24 Buổi', 3200000.00, 24, 75, 'img/pt6.jpg', 'hoat_dong');
 
 -- --------------------------------------------------------
 
@@ -406,7 +578,16 @@ INSERT INTO `hoa_don` (`hoa_don_id`, `hoi_vien_id`, `nhan_vien_id`, `ngay_lap`, 
 (14, 11, 2, '2026-10-03 08:33:52', 200000.00, 'đã thanh toán', 'Tiền mặt'),
 (15, 1, 2, '2026-10-04 12:07:23', 100000.00, 'đã thanh toán', 'Tiền mặt'),
 (21, 11, 2, '2026-10-22 05:47:55', 1500000.00, 'đã thanh toán', 'Tiền mặt'),
-(22, 8, 1, '2026-10-22 06:04:07', 1800000.00, 'đã thanh toán', 'Chuyển khoản');
+(22, 8, 1, '2026-10-22 06:04:07', 1800000.00, 'đã thanh toán', 'Chuyển khoản'),
+(30, 15, 1, '2026-10-26 05:38:44', 1500000.00, 'đã hủy', NULL),
+(31, 15, 1, '2026-10-31 05:51:28', 800000.00, 'đã hủy', NULL),
+(32, 15, 1, '2026-10-31 06:08:53', 1800000.00, 'đã hủy', NULL),
+(33, 15, 1, '2026-10-31 06:18:38', 1500000.00, 'đã hủy', NULL),
+(34, 11, 1, '2026-11-05 03:22:16', 100000.00, 'đã hủy', NULL),
+(35, 15, 1, '2026-11-05 03:36:47', 1500000.00, 'đã hủy', NULL),
+(36, 15, 1, '2026-11-05 03:38:01', 800000.00, 'đã hủy', NULL),
+(37, 15, 1, '2026-11-05 03:46:09', 100000.00, 'đã hủy', NULL),
+(38, 15, 1, '2026-11-05 03:46:39', 1500000.00, 'đã hủy', NULL);
 
 -- --------------------------------------------------------
 
@@ -566,6 +747,14 @@ CREATE TABLE `lien_he` (
   `xu_ly_luc` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
+-- Đang đổ dữ liệu cho bảng `lien_he`
+--
+
+INSERT INTO `lien_he` (`lien_he_id`, `ho_ten`, `email`, `so_dien_thoai`, `noi_dung`, `trang_thai`, `nhan_vien_id`, `phan_hoi`, `tao_luc`, `xu_ly_luc`) VALUES
+(1, 'Trương Trí Thiện', 'truongtrithien2008@gmail.com', '0377124762', 'mmb', 'đã xử lý', 1, 'bmb', '2026-11-05 03:19:11', '2026-11-05 03:21:17'),
+(2, 'Trương Trí Thiện', 'truongtrithien2008@gmail.com', '0377124762', '123', 'chưa xử lý', NULL, NULL, '2026-11-05 03:23:44', NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -591,7 +780,7 @@ INSERT INTO `lop_tap` (`lop_tap_id`, `ten_lop`, `mo_ta`, `lich_tap`, `suc_chua`,
 (2, 'Cardio Đốt Mỡ', 'Lớp cardio giúp tăng sức bền và đốt cháy năng lượng', 'Thứ 3 - 5 - 7, 17:00', 25, 'img/cardio.jpg', 'hoạt_động'),
 (3, 'Gym Tăng Cơ', 'Lớp hướng dẫn tập luyện tăng cơ', 'Thứ 2 - 4 - 6, 18:00', 20, 'img/gym-tang-co.jpg', 'hoạt_động'),
 (4, 'Fitness Toàn Thân', 'Bài tập fitness toàn thân', 'Chủ Nhật, 08:00', 30, 'img/fitness-toan-than.jpg', 'hoạt_động'),
-(5, 'Strength', 'Tập trung phát triển sức mạnh, cơ bắp và khả năng vận động.', 'Thứ 2 - 4 - 6, 20:00', 15, 'img/strength.jpg', 'hoat_dong'),
+(5, 'Strength', 'Tập trung phát triển sức mạnh, cơ bắp và khả năng vận động.', 'Thứ 2 - 4 - 6, 20:00', 15, 'img/strength.jpg', 'hoạt_động'),
 (6, 'Boxing', 'Rèn luyện sức mạnh, phản xạ và khả năng phối hợp thông qua các bài tập Boxing.', 'Thứ 3 - 5 - 7, 19:30', 12, 'img/boxing.jpg', 'ngừng_hoạt_động');
 
 -- --------------------------------------------------------
@@ -640,7 +829,7 @@ CREATE TABLE `nguoi_dung` (
 
 INSERT INTO `nguoi_dung` (`nguoi_dung_id`, `vai_tro_id`, `ho_ten`, `email`, `mat_khau`, `trang_thai`) VALUES
 (1, 1, 'Nguyễn Văn Admin', 'admin@gym.com', '$2y$12$zdYNzlsjZ98wjJRsg/vwm.BAR1Pyb3UOsaMZULjz4INNeqYvJyyW6', 'hoat_dong'),
-(2, 2, 'Trần Văn An', 'an@gym.com', '123456', 'hoat_dong'),
+(2, 2, 'Trần Văn An', 'an@gym.com', '$2y$12$J97/pjJSVBwdj6Q6nqDm0.BvMG5ySkGl35J1czKOc4ATb0aaNQR7u', 'hoat_dong'),
 (3, 2, 'Lê Thị Hoa', 'hoa@gym.com', '123456', 'hoat_dong'),
 (4, 2, 'Phạm Văn Nam', 'nam@gym.com', '123456', 'hoat_dong'),
 (5, 3, 'Nguyễn Văn Minh', 'minh@gmail.com', '123456', 'hoat_dong'),
@@ -651,13 +840,13 @@ INSERT INTO `nguoi_dung` (`nguoi_dung_id`, `vai_tro_id`, `ho_ten`, `email`, `mat
 (10, 3, 'Đặng Thị Ngọc', 'ngoc@gmail.com', '123456', 'hoat_dong'),
 (11, 4, 'Nguyễn Hoàng Long', 'long@gym.com', '123456', 'hoat_dong'),
 (12, 4, 'Trần Minh Khoa', 'khoa@gym.com', '123456', 'hoat_dong'),
-(13, 4, 'Lê Quốc Bảo', 'bao@gym.com', '123456', 'hoat_dong'),
+(13, 4, 'Lê Quốc Bảo', 'bao@gym.com', '$2y$12$H47JAMChTZBOWLY4RfBtcu95f9ZcHQ6tnoQuH/k9EupUmI.oFHUxW', 'hoat_dong'),
 (14, 4, 'Phạm Thanh Phong', 'phong@gym.com', '123456', 'hoat_dong'),
 (15, 3, 'Nguyễn Hoàng Nam', 'nam1@gmail.com', '123456', 'hoat_dong'),
 (16, 3, 'Trần Quốc Việt', 'viet@gmail.com', '123456', 'hoat_dong'),
 (17, 3, 'Lê Minh Tuấn', 'tuan@gmail.com', '123456', 'hoat_dong'),
 (18, 3, 'Phạm Ngọc Anh', 'anh@gmail.com', '123456', 'hoat_dong'),
-(19, 3, 'Trương Trí Thiện', 'truongtrithien2008@gmail.com', '$2y$12$U0Fe0KbOCPxASjRKkiYfIulPrID1F/PVoOOPJRFvV03qjUi2SGAJ2', 'hoat_dong'),
+(19, 3, 'Trương Trí Thiện', 'truongtrithien2008@gmail.com', '$2y$12$vooz56DW.YnawpY5fJYOAedbhfw.td3s8ZQEvqLe7sXpcvhXA2vki', 'hoat_dong'),
 (20, 3, 'thái', 'thai@gmail.com', '$2y$12$MTMe6TfSFGGf49Gr.H3TM.MniGrJyYxR4YsuWwXfnUbzv3JfnmqKu', 'hoat_dong'),
 (21, 3, 'ali', 'ali@gmail.com', '$2y$12$GTbbenfb650KvMdkYQRBf.AGQBnW6pZWOxihpB6kn1lH5GqnCRkke', 'hoat_dong'),
 (22, 3, 'ali', 'alo@gmail.com', '$2y$12$WVAz9hYnukGA4I65C95Nfuh31PFFPhblNoCe81/jmWbZUGcm0C4.i', 'hoat_dong'),
@@ -705,6 +894,58 @@ INSERT INTO `nhan_vien` (`nhan_vien_id`, `nguoi_dung_id`, `chuc_vu`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `nhat_ky_buoi_tap_pt`
+--
+
+CREATE TABLE `nhat_ky_buoi_tap_pt` (
+  `log_id` int(10) UNSIGNED NOT NULL,
+  `pt_id` int(11) NOT NULL,
+  `hoi_vien_id` int(11) NOT NULL,
+  `lich_pt_id` int(11) DEFAULT NULL,
+  `ngay_tap` date NOT NULL,
+  `noi_dung` text NOT NULL,
+  `ket_qua` varchar(255) DEFAULT NULL,
+  `ghi_chu` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `nhat_ky_buoi_tap_pt`
+--
+
+INSERT INTO `nhat_ky_buoi_tap_pt` (`log_id`, `pt_id`, `hoi_vien_id`, `lich_pt_id`, `ngay_tap`, `noi_dung`, `ket_qua`, `ghi_chu`, `created_at`) VALUES
+(1, 1, 1, NULL, '2026-11-01', 'Khoi dong 10 phut; squat 3 x 12; push-up 3 x 10; plank 3 x 30 giay.', 'Hoan thanh buoi tap', 'Hoc vien thuc hien dung ky thuat, can cai thien suc ben.', '2026-11-05 04:08:55'),
+(2, 1, 1, NULL, '2026-11-05', 'Tập đẩy ngực, Squat và Plank.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(3, 1, 2, NULL, '2026-11-05', 'Tập đẩy ngực, Squat và Plank.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(4, 1, 3, NULL, '2026-11-05', 'Tập đẩy ngực, Squat và Plank.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(5, 1, 4, NULL, '2026-11-05', 'Tập đẩy ngực, Squat và Plank.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(6, 1, 5, NULL, '2026-11-05', 'Tập đẩy ngực, Squat và Plank.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(7, 2, 6, NULL, '2026-11-05', 'Chạy bộ, đạp xe và tập Cardio.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(8, 2, 7, NULL, '2026-11-05', 'Chạy bộ, đạp xe và tập Cardio.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(9, 2, 8, NULL, '2026-11-05', 'Chạy bộ, đạp xe và tập Cardio.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(10, 2, 9, NULL, '2026-11-05', 'Chạy bộ, đạp xe và tập Cardio.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(11, 2, 10, NULL, '2026-11-05', 'Chạy bộ, đạp xe và tập Cardio.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(12, 3, 11, NULL, '2026-11-05', 'Luyện đấm thẳng, đấm móc và nhảy dây.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(13, 3, 12, NULL, '2026-11-05', 'Luyện đấm thẳng, đấm móc và nhảy dây.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(14, 3, 13, NULL, '2026-11-05', 'Luyện đấm thẳng, đấm móc và nhảy dây.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(15, 3, 14, NULL, '2026-11-05', 'Luyện đấm thẳng, đấm móc và nhảy dây.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(16, 3, 15, NULL, '2026-11-05', 'Luyện đấm thẳng, đấm móc và nhảy dây.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(17, 4, 16, NULL, '2026-11-05', 'Tập Yoga, tư thế cái cây và Plank.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(18, 4, 17, NULL, '2026-11-05', 'Tập Yoga, tư thế cái cây và Plank.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(19, 4, 18, NULL, '2026-11-05', 'Tập Yoga, tư thế cái cây và Plank.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(20, 4, 19, NULL, '2026-11-05', 'Tập Yoga, tư thế cái cây và Plank.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(21, 5, 20, NULL, '2026-11-05', 'Tập Deadlift, Shoulder Press và Bench Press.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(22, 5, 21, NULL, '2026-11-05', 'Tập Deadlift, Shoulder Press và Bench Press.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(23, 5, 22, NULL, '2026-11-05', 'Tập Deadlift, Shoulder Press và Bench Press.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(24, 5, 23, NULL, '2026-11-05', 'Tập Deadlift, Shoulder Press và Bench Press.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(25, 6, 24, NULL, '2026-11-05', 'Tập Burpees, Jumping Jacks và chạy bộ.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(26, 6, 25, NULL, '2026-11-05', 'Tập Burpees, Jumping Jacks và chạy bộ.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(27, 6, 26, NULL, '2026-11-05', 'Tập Burpees, Jumping Jacks và chạy bộ.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16'),
+(28, 6, 27, NULL, '2026-11-05', 'Tập Burpees, Jumping Jacks và chạy bộ.', 'Hoàn thành buổi tập', 'Hội viên hoàn thành buổi tập theo hướng dẫn của huấn luyện viên.', '2026-11-05 04:52:16');
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `password_reset_tokens`
 --
 
@@ -713,6 +954,13 @@ CREATE TABLE `password_reset_tokens` (
   `token` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `password_reset_tokens`
+--
+
+INSERT INTO `password_reset_tokens` (`email`, `token`, `created_at`) VALUES
+('truongtrithien2008@gmail.com', '$2y$12$xgdfGVc9yIwbJFb/hDeWzevs9fxQ2k7fYJgS42KwCd5lCjpOTX1dC', '2026-10-25 20:51:26');
 
 -- --------------------------------------------------------
 
@@ -763,7 +1011,29 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('ym27y0jEs4YY4dB4516RpU4EDQqFIskhgEUaoFa3', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiSTNIQW5UWnI5VG40NnRHMHJrMnVHVmYxQzd1aW9JMk9CWWJadFNvRiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi90cmFpbmVycyI7czo1OiJyb3V0ZSI7Tjt9czo0OiJ1c2VyIjtPOjg6InN0ZENsYXNzIjo2OntzOjEzOiJuZ3VvaV9kdW5nX2lkIjtpOjE7czoxMDoidmFpX3Ryb19pZCI7aToxO3M6NjoiaG9fdGVuIjtzOjE5OiJOZ3V54buFbiBWxINuIEFkbWluIjtzOjU6ImVtYWlsIjtzOjEzOiJhZG1pbkBneW0uY29tIjtzOjg6Im1hdF9raGF1IjtzOjYwOiIkMnkkMTIkemRZTnpsc2paOTh3akpSc2cvdndtLkJBUjFQeWIzVU9zYU1aVUxqejRJTk5lcVl2Snl5VzYiO3M6MTA6InRyYW5nX3RoYWkiO3M6OToiaG9hdF9kb25nIjt9czo3OiJyb2xlX2lkIjtpOjE7czoxNDoiZGFzaGJvYXJkX3BhdGgiO3M6OToiZGFzaGJvYXJkIjt9', 1792826057);
+('2RWXr3ap1B9qbkKKMMlK7nYQAWDgpTCSbtqR9mTY', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTo2OntzOjY6Il90b2tlbiI7czo0MDoiRVFmTnhTc09jVEowRDBLbTJGUXpUTGRycU1oaTMzdDU2Qm84dURqMCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC90cmFpbmVyL3BsYW5zIjtzOjU6InJvdXRlIjtOO31zOjQ6InVzZXIiO086ODoic3RkQ2xhc3MiOjU6e3M6MTM6Im5ndW9pX2R1bmdfaWQiO2k6MTM7czoxMDoidmFpX3Ryb19pZCI7aTo0O3M6NjoiaG9fdGVuIjtzOjE2OiJMw6ogUXXhu5FjIELhuqNvIjtzOjU6ImVtYWlsIjtzOjExOiJiYW9AZ3ltLmNvbSI7czoxMDoidHJhbmdfdGhhaSI7czo5OiJob2F0X2RvbmciO31zOjc6InJvbGVfaWQiO2k6NDtzOjE0OiJkYXNoYm9hcmRfcGF0aCI7czoxNzoidHJhaW5lci9kYXNoYm9hcmQiO30=', 1793855471),
+('5xrBnJ5eD06AilStjeQ0XCAW2ecGeXlzENcojmEO', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWWVMUnR4ZklvaUdFRjVZb2hoOFBqVVo4VWRoNm1TMk55Zk4xOWV6UyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1793848672),
+('6gPykSiY2dn7HTfKq8eDNV4qicRrWJC9EjxGrlhj', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVnNEaGpGT3NUN1pMVFREUkR3NlFSbDZ6YlNrU3I5UncyVFpHTG1XRSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793848851),
+('Gb2nPgWv87CyMAwmhBDhgH3Equv2eaeTQbprLtA8', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiT1VGOWJxM1ZDWkZMcW5OV1l6YTBxTkxmNXpSVWtoQUg5dnVJcjBSZyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793854591),
+('HxkDCvrXwIQMZiapMlMqQRscZWYzo5t9JCMDNbCl', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUkx6aVppeWszMGZIcEJZcHlNRUNNZkMwdDFxYzVWbFljV1BNalJ6YyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793854418),
+('HXky8qlYbCA8eOksYK1mT6rxHwYMTGoqjcySucSz', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVFpXNEEyV0I0N1RRakRtZmxvQTEyQXRxandoUUlqOVY0ZExuc3BaTiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793854514),
+('IKq0yBHxeTaEKrL50fhWZOXWrQhHYqJk9MSlGmFD', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVHk2VVFaSDU5ZmpnNW8zdFM1dUx3cFROVTU0d0cybGhXNnFvU3JxSiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793848888),
+('mg4cxpyNQutbIEPtGryhyvScWfivTgghk5lnHCkD', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiYUpKS3hVTGhtYTZzUHZvWkRrdERNV3ZIcFpnVW5lVW9RWEg0b2hGNiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793854344),
+('mQYAA0v2xD9VHcfDoCHPgmf7NmwUAYRTlzQkfyqt', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiNTZhVU9hY2taa2c3SzVIVmF2U2laNFBBZjBpMmJNNzd5Zm43T0MxYiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793849793),
+('Ot2jqBxAnRjyNRaSgJAHgvVd5J1hnTTIczWM7qdv', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiYUhlejZvRzdpMk1XODhqUk1TS1NSNGxmMTNIOG00amdPbnNoa0RpRSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793854968),
+('pLNpIFKAjTcUm1tgg5KHoFqbUM3B8ZQejO3D7fGi', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidWtuT3BkdTlZQWpsTlpFSUlETnR5SDk3NVlzaUV2dWpvRTZRVm9ZYyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793855139),
+('Qu2eKtbgkHTWHynKGuEXXTYtsnr3XRzsug9WAswI', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVmtMeUI1OWhUc3ZoUjU2TzM3cnFVcFhvUjc4emFHaUJ4OVg0cnFsMCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793855091),
+('rOPwdnDffIxioKaKwodIaBG7XEYiOKPrqUop8GXK', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTTB3NTJIUWpCVThnS1AzWW15NlRvenVlaE1VTzRmdFI4OEhLM3o3RSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793854727),
+('tbivXrC5S3SgycZLpkIUU0KiVVRFsNuJDLWiLgJa', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiSWJWcUZZbE9LNnNpZlV5bnlGeEMyTXUwWVVKMEcyWWRpQ0gwY3l5cCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793849041),
+('uU3VPN4pdOLHVmAN4pbCdoKAWC9g2CSDP2N1YfpF', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidnNnQmFhWUdaSkt3alRrYnp2WjNQNXhSQmljNzZ4ZmF1Y3NOeVY5NiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793850722),
+('ViVxw4RM0xcGBf0ZWxG3IdEMt2h1GUgBdH6aQ2uv', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTWVDYVN3cmZKc1BVVzMyc2loZG4wcFlaZDhFMzF1VTVzWk1DRktZTSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793854372),
+('wKNnql3BimNlx2KsMjv9sdKC2KzoHEwoMOM6TDW4', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiRmlnZnFVU2tsckxITUdubGFZcERoNXJvOXp4aTFnZ29BdHNmR1p6RCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793855225),
+('WOahtUnahC7xLkmqwttKN0QRMmz3ctWo7dbiiH4l', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiM2dOakRuZG1ORzllZ3BQQWpFblYybG5PMzY2aVJuSzBPWnZmQ3JYbSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793855046),
+('wojQTcRnlHvA53B5sXHS53xB6n1jIvNl2K5byIvb', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiQm55ZDU0dDNLa2VVUHdydk8ybDU5MGYwNFZwTXdxY2kxV055bWVuRiI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793854956),
+('wOUNLRJyopscFb4TQHTqjgHRffS8kG0UHznkWg6z', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTUhkdmpJd0NoSkNySFpkTUhLZnhhS1dnWVcybzhXUlZSODFDVDgzayI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793848913),
+('Xgw9QKfn8UeMcD62Eg56B1JRiOEYx6ERm1TZGbte', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiUVdrVmpacVZIV3pPdkZjeGl4VFJTbUdzZDdIcUR5dDhGWHFiTVM4dyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793848976),
+('zaVaL9RCZpy2Ck5pwKJrAXcjSXIIcMtdHuHLR31x', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiVERYTU5nZE5NSVo3VW9TbEE4Snp4SE9VYUNFNWVLOXg0TGI1djAzcyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793855285),
+('zJrgbSlwqjMgZFuPlQ5DKWmN3vbrZR3OiQdNWfYB', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiV01yVGJKWDcxVWlEOFZJNGREWUVXbmNJZlVZRkU5cVhvNmRKZ1dyeSI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fX0=', 1793854504);
 
 -- --------------------------------------------------------
 
@@ -890,9 +1160,94 @@ INSERT INTO `thong_bao` (`thong_bao_id`, `nguoi_dung_id`, `tieu_de`, `noi_dung`,
 (103, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00027 cho gói PT PT Giảm Mỡ 12 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-24 06:40:42'),
 (104, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Giảm Mỡ 12 Buổi.', 1, '2026-10-24 06:59:49'),
 (105, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00028 cho gói PT PT Cơ Bản 10 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-24 06:59:58'),
-(106, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cơ Bản 10 Buổi.', 0, '2026-10-24 07:12:40'),
-(107, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00029 cho gói PT PT Cá Nhân 5 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 0, '2026-10-24 07:12:47'),
-(108, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cá Nhân 5 Buổi.', 0, '2026-10-24 07:13:31');
+(106, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cơ Bản 10 Buổi.', 1, '2026-10-24 07:12:40'),
+(107, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00029 cho gói PT PT Cá Nhân 5 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-24 07:12:47'),
+(108, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cá Nhân 5 Buổi.', 1, '2026-10-24 07:13:31'),
+(109, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00030 cho gói PT PT Cơ Bản 10 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-26 05:38:44'),
+(110, 23, 'Nhắc nhở thanh toán', 'Hóa đơn #HD00030 trị giá 1.500.000 VNĐ đang chờ thanh toán. Thời gian còn lại: 71.998703874167 giờ.', 1, '2026-10-26 05:38:48'),
+(111, 23, 'Nhắc nhở thanh toán', 'Hóa đơn #HD00030 trị giá 1.500.000 VNĐ đang chờ thanh toán. Thời gian còn lại: đã quá hạn 72 giờ.', 1, '2026-10-31 05:15:10'),
+(112, 23, 'Gói PT đã tự động hủy', 'Gói \"PT Cơ Bản 10 Buổi\" đã được tự động hủy vì quá 72 giờ chưa thanh toán.', 1, '2026-10-31 05:46:39'),
+(113, 23, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Yoga Cơ Bản\".', 1, '2026-10-31 05:49:00'),
+(114, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Yoga Cơ Bản\" thành công.', 1, '2026-10-31 05:49:02'),
+(115, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00031 cho gói PT PT Cá Nhân 5 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-31 05:51:28'),
+(116, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cá Nhân 5 Buổi.', 1, '2026-10-31 06:00:53'),
+(117, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00032 cho gói PT PT Giảm Mỡ 12 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-31 06:08:53'),
+(118, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Cardio Đốt Mỡ\" thành công.', 1, '2026-10-31 06:09:10'),
+(119, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Giảm Mỡ 12 Buổi.', 1, '2026-10-31 06:09:25'),
+(120, 23, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Cardio Đốt Mỡ\".', 1, '2026-10-31 06:09:34'),
+(121, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00033 cho gói PT PT Cơ Bản 10 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-10-31 06:18:38'),
+(122, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cơ Bản 10 Buổi.', 1, '2026-10-31 06:18:47'),
+(123, 23, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Strength\".', 1, '2026-10-31 06:40:46'),
+(124, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Gym Tăng Cơ\" thành công.', 1, '2026-10-31 06:40:57'),
+(125, 19, 'Đăng ký gói tập thành công', 'Bạn đã đăng ký gói \"Gói Tập Thử\". Hóa đơn đang chờ thanh toán.', 1, '2026-11-05 03:22:16'),
+(126, 19, 'Hủy gói tập thành công', 'Bạn đã hủy gói \"Gói Tập Thử\". Hóa đơn được lưu lại với trạng thái đã hủy.', 1, '2026-11-05 03:36:04'),
+(127, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00035 cho gói PT PT Cơ Bản 10 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-11-05 03:36:47'),
+(128, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cơ Bản 10 Buổi.', 1, '2026-11-05 03:36:51'),
+(129, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00036 cho gói PT PT Cá Nhân 5 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-11-05 03:38:01'),
+(130, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cá Nhân 5 Buổi.', 1, '2026-11-05 03:42:45'),
+(131, 23, 'Đăng ký gói tập thành công', 'Bạn đã đăng ký gói \"Gói Tập Thử\". Hóa đơn đang chờ thanh toán.', 1, '2026-11-05 03:46:09'),
+(132, 23, 'Hủy gói tập thành công', 'Bạn đã hủy gói \"Gói Tập Thử\". Hóa đơn được lưu lại với trạng thái đã hủy.', 1, '2026-11-05 03:46:15'),
+(133, 23, 'Đăng ký gói PT thành công', 'Đã tạo hóa đơn #HD00038 cho gói PT PT Cơ Bản 10 Buổi. Vui lòng liên hệ nhân viên để thanh toán trong 72 giờ.', 1, '2026-11-05 03:46:39'),
+(134, 23, 'Hủy gói PT thành công', 'Bạn đã hủy đăng ký gói PT PT Cơ Bản 10 Buổi.', 1, '2026-11-05 03:47:07'),
+(135, 23, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Gym Tăng Cơ\".', 1, '2026-11-05 03:47:15'),
+(136, 23, 'Hủy đăng ký lớp', 'Bạn đã hủy đăng ký lớp \"Yoga Cơ Bản\".', 1, '2026-11-05 03:47:24'),
+(137, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Yoga Cơ Bản\" thành công.', 1, '2026-11-05 03:47:27'),
+(138, 23, 'Đăng ký lớp thành công', 'Bạn đã đăng ký lớp \"Cardio Đốt Mỡ\" thành công.', 0, '2026-11-05 03:47:37');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `tien_do_hoc_vien_pt`
+--
+
+CREATE TABLE `tien_do_hoc_vien_pt` (
+  `progress_id` int(10) UNSIGNED NOT NULL,
+  `pt_id` int(11) NOT NULL,
+  `hoi_vien_id` int(11) NOT NULL,
+  `ngay_ghi_nhan` date NOT NULL,
+  `can_nang` decimal(5,2) DEFAULT NULL,
+  `chieu_cao` decimal(5,2) DEFAULT NULL,
+  `vong_nguc` decimal(5,2) DEFAULT NULL,
+  `vong_eo` decimal(5,2) DEFAULT NULL,
+  `vong_mong` decimal(5,2) DEFAULT NULL,
+  `ghi_chu` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `tien_do_hoc_vien_pt`
+--
+
+INSERT INTO `tien_do_hoc_vien_pt` (`progress_id`, `pt_id`, `hoi_vien_id`, `ngay_ghi_nhan`, `can_nang`, `chieu_cao`, `vong_nguc`, `vong_eo`, `vong_mong`, `ghi_chu`, `created_at`) VALUES
+(1, 1, 1, '2026-10-01', 72.00, 170.00, 96.00, 88.00, 100.00, 'So lieu do dau chuong trinh.', '2026-11-05 04:08:55'),
+(2, 1, 1, '2026-11-01', 70.50, 170.00, 96.00, 84.00, 99.00, 'Sau 4 tuan: can nang va vong eo giam, suc ben cai thien.', '2026-11-05 04:08:55'),
+(3, 1, 1, '2026-11-05', 56.00, 161.00, 86.00, 66.00, 91.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(4, 1, 2, '2026-11-05', 57.00, 162.00, 87.00, 67.00, 92.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(5, 1, 3, '2026-11-05', 58.00, 163.00, 88.00, 68.00, 93.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(6, 1, 4, '2026-11-05', 59.00, 164.00, 89.00, 69.00, 94.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(7, 1, 5, '2026-11-05', 60.00, 165.00, 90.00, 70.00, 95.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(8, 2, 6, '2026-11-05', 61.00, 166.00, 91.00, 71.00, 96.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(9, 2, 7, '2026-11-05', 62.00, 167.00, 92.00, 72.00, 97.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(10, 2, 8, '2026-11-05', 63.00, 168.00, 93.00, 73.00, 98.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(11, 2, 9, '2026-11-05', 64.00, 169.00, 94.00, 74.00, 99.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(12, 2, 10, '2026-11-05', 65.00, 170.00, 95.00, 75.00, 100.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(13, 3, 11, '2026-11-05', 66.00, 171.00, 96.00, 76.00, 101.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(14, 3, 12, '2026-11-05', 67.00, 172.00, 97.00, 77.00, 102.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(15, 3, 13, '2026-11-05', 68.00, 173.00, 98.00, 78.00, 103.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(16, 3, 14, '2026-11-05', 69.00, 174.00, 99.00, 79.00, 104.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(17, 3, 15, '2026-11-05', 55.00, 160.00, 85.00, 65.00, 90.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(18, 4, 16, '2026-11-05', 56.00, 161.00, 86.00, 66.00, 91.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(19, 4, 17, '2026-11-05', 57.00, 162.00, 87.00, 67.00, 92.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(20, 4, 18, '2026-11-05', 58.00, 163.00, 88.00, 68.00, 93.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(21, 4, 19, '2026-11-05', 59.00, 164.00, 89.00, 69.00, 94.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(22, 5, 20, '2026-11-05', 60.00, 165.00, 90.00, 70.00, 95.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(23, 5, 21, '2026-11-05', 61.00, 166.00, 91.00, 71.00, 96.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(24, 5, 22, '2026-11-05', 62.00, 167.00, 92.00, 72.00, 97.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(25, 5, 23, '2026-11-05', 63.00, 168.00, 93.00, 73.00, 98.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(26, 6, 24, '2026-11-05', 64.00, 169.00, 94.00, 74.00, 99.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(27, 6, 25, '2026-11-05', 65.00, 170.00, 95.00, 75.00, 100.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(28, 6, 26, '2026-11-05', 66.00, 171.00, 96.00, 76.00, 101.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16'),
+(29, 6, 27, '2026-11-05', 67.00, 172.00, 97.00, 77.00, 102.00, 'Số liệu mẫu theo dõi thể trạng hội viên.', '2026-11-05 04:52:16');
 
 -- --------------------------------------------------------
 
@@ -935,6 +1290,13 @@ INSERT INTO `vai_tro` (`vai_tro_id`, `ten_vai_tro`) VALUES
 --
 -- Chỉ mục cho các bảng đã đổ
 --
+
+--
+-- Chỉ mục cho bảng `bai_tap_giao_an_pt`
+--
+ALTER TABLE `bai_tap_giao_an_pt`
+  ADD PRIMARY KEY (`exercise_id`),
+  ADD KEY `idx_bai_tap_giao_an_plan` (`plan_id`);
 
 --
 -- Chỉ mục cho bảng `cache`
@@ -1006,6 +1368,14 @@ ALTER TABLE `dang_ky_lop`
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
+
+--
+-- Chỉ mục cho bảng `giao_an_pt`
+--
+ALTER TABLE `giao_an_pt`
+  ADD PRIMARY KEY (`plan_id`),
+  ADD KEY `idx_giao_an_pt_pt` (`pt_id`),
+  ADD KEY `idx_giao_an_pt_hoi_vien` (`hoi_vien_id`);
 
 --
 -- Chỉ mục cho bảng `goi_pt`
@@ -1098,6 +1468,15 @@ ALTER TABLE `nhan_vien`
   ADD UNIQUE KEY `nhan_vien_nguoi_dung_id_unique` (`nguoi_dung_id`);
 
 --
+-- Chỉ mục cho bảng `nhat_ky_buoi_tap_pt`
+--
+ALTER TABLE `nhat_ky_buoi_tap_pt`
+  ADD PRIMARY KEY (`log_id`),
+  ADD KEY `idx_nhat_ky_pt` (`pt_id`),
+  ADD KEY `idx_nhat_ky_hoi_vien` (`hoi_vien_id`),
+  ADD KEY `idx_nhat_ky_lich_pt` (`lich_pt_id`);
+
+--
 -- Chỉ mục cho bảng `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
@@ -1128,6 +1507,15 @@ ALTER TABLE `thong_bao`
   ADD KEY `thong_bao_nguoi_dung_id_foreign` (`nguoi_dung_id`);
 
 --
+-- Chỉ mục cho bảng `tien_do_hoc_vien_pt`
+--
+ALTER TABLE `tien_do_hoc_vien_pt`
+  ADD PRIMARY KEY (`progress_id`),
+  ADD KEY `idx_tien_do_pt` (`pt_id`),
+  ADD KEY `idx_tien_do_hoi_vien` (`hoi_vien_id`),
+  ADD KEY `idx_tien_do_ngay` (`ngay_ghi_nhan`);
+
+--
 -- Chỉ mục cho bảng `users`
 --
 ALTER TABLE `users`
@@ -1146,6 +1534,12 @@ ALTER TABLE `vai_tro`
 --
 
 --
+-- AUTO_INCREMENT cho bảng `bai_tap_giao_an_pt`
+--
+ALTER TABLE `bai_tap_giao_an_pt`
+  MODIFY `exercise_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=132;
+
+--
 -- AUTO_INCREMENT cho bảng `cai_dat`
 --
 ALTER TABLE `cai_dat`
@@ -1161,31 +1555,37 @@ ALTER TABLE `check_in`
 -- AUTO_INCREMENT cho bảng `chi_tiet_hoa_don`
 --
 ALTER TABLE `chi_tiet_hoa_don`
-  MODIFY `chi_tiet_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `chi_tiet_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT cho bảng `dang_ky_goi_pt`
 --
 ALTER TABLE `dang_ky_goi_pt`
-  MODIFY `dang_ky_goi_pt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `dang_ky_goi_pt_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT cho bảng `dang_ky_goi_tap`
 --
 ALTER TABLE `dang_ky_goi_tap`
-  MODIFY `dang_ky_goi_tap_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `dang_ky_goi_tap_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT cho bảng `dang_ky_lop`
 --
 ALTER TABLE `dang_ky_lop`
-  MODIFY `dang_ky_lop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `dang_ky_lop_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT cho bảng `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT cho bảng `giao_an_pt`
+--
+ALTER TABLE `giao_an_pt`
+  MODIFY `plan_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT cho bảng `goi_pt`
@@ -1203,7 +1603,7 @@ ALTER TABLE `goi_tap`
 -- AUTO_INCREMENT cho bảng `hoa_don`
 --
 ALTER TABLE `hoa_don`
-  MODIFY `hoa_don_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `hoa_don_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT cho bảng `hoi_vien`
@@ -1233,7 +1633,7 @@ ALTER TABLE `lich_pt`
 -- AUTO_INCREMENT cho bảng `lien_he`
 --
 ALTER TABLE `lien_he`
-  MODIFY `lien_he_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `lien_he_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `lop_tap`
@@ -1260,6 +1660,12 @@ ALTER TABLE `nhan_vien`
   MODIFY `nhan_vien_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT cho bảng `nhat_ky_buoi_tap_pt`
+--
+ALTER TABLE `nhat_ky_buoi_tap_pt`
+  MODIFY `log_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+
+--
 -- AUTO_INCREMENT cho bảng `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
@@ -1269,7 +1675,13 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT cho bảng `thong_bao`
 --
 ALTER TABLE `thong_bao`
-  MODIFY `thong_bao_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
+  MODIFY `thong_bao_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=139;
+
+--
+-- AUTO_INCREMENT cho bảng `tien_do_hoc_vien_pt`
+--
+ALTER TABLE `tien_do_hoc_vien_pt`
+  MODIFY `progress_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT cho bảng `users`

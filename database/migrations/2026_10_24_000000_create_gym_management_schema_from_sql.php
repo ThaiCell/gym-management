@@ -399,11 +399,72 @@ return new class extends Migration
   ADD CONSTRAINT `nhan_vien_nguoi_dung_id_foreign` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`nguoi_dung_id`);');
         DB::unprepared('ALTER TABLE `thong_bao`
   ADD CONSTRAINT `thong_bao_nguoi_dung_id_foreign` FOREIGN KEY (`nguoi_dung_id`) REFERENCES `nguoi_dung` (`nguoi_dung_id`);');
+
+        // Cac bang bo sung cho khu vuc Trainer (PT)
+        DB::unprepared('CREATE TABLE `giao_an_pt` (
+  `plan_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `pt_id` int(10) UNSIGNED NOT NULL,
+  `hoi_vien_id` int(10) UNSIGNED NOT NULL,
+  `ten_giao_an` varchar(150) NOT NULL,
+  `muc_tieu` text DEFAULT NULL,
+  `ghi_chu` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`plan_id`),
+  KEY `giao_an_pt_pt_hoi_vien_index` (`pt_id`,`hoi_vien_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;');
+
+        DB::unprepared('CREATE TABLE `bai_tap_giao_an_pt` (
+  `exercise_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `plan_id` int(10) UNSIGNED NOT NULL,
+  `ten_bai_tap` varchar(150) NOT NULL,
+  `so_hiep` int(10) UNSIGNED DEFAULT NULL,
+  `so_lan` varchar(50) DEFAULT NULL,
+  `ghi_chu` varchar(500) DEFAULT NULL,
+  `thu_tu` int(10) UNSIGNED NOT NULL DEFAULT 1,
+  PRIMARY KEY (`exercise_id`),
+  KEY `bai_tap_giao_an_pt_plan_index` (`plan_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;');
+
+        DB::unprepared('CREATE TABLE `nhat_ky_buoi_tap_pt` (
+  `log_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `pt_id` int(10) UNSIGNED NOT NULL,
+  `hoi_vien_id` int(10) UNSIGNED NOT NULL,
+  `lich_pt_id` int(10) UNSIGNED DEFAULT NULL,
+  `ngay_tap` datetime NOT NULL,
+  `noi_dung` text NOT NULL,
+  `ket_qua` text DEFAULT NULL,
+  `ghi_chu` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`log_id`),
+  KEY `nhat_ky_buoi_tap_pt_pt_hoi_vien_index` (`pt_id`,`hoi_vien_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;');
+
+        DB::unprepared('CREATE TABLE `tien_do_hoc_vien_pt` (
+  `progress_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `pt_id` int(10) UNSIGNED NOT NULL,
+  `hoi_vien_id` int(10) UNSIGNED NOT NULL,
+  `ngay_ghi_nhan` date NOT NULL,
+  `can_nang` decimal(5,2) DEFAULT NULL,
+  `chieu_cao` decimal(5,2) DEFAULT NULL,
+  `vong_nguc` decimal(5,2) DEFAULT NULL,
+  `vong_eo` decimal(5,2) DEFAULT NULL,
+  `vong_mong` decimal(5,2) DEFAULT NULL,
+  `ghi_chu` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`progress_id`),
+  KEY `tien_do_hoc_vien_pt_pt_hoi_vien_ngay_index` (`pt_id`,`hoi_vien_id`,`ngay_ghi_nhan`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;');
+
     }
 
     public function down(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        DB::statement("DROP TABLE IF EXISTS `tien_do_hoc_vien_pt`");
+        DB::statement("DROP TABLE IF EXISTS `nhat_ky_buoi_tap_pt`");
+        DB::statement("DROP TABLE IF EXISTS `bai_tap_giao_an_pt`");
+        DB::statement("DROP TABLE IF EXISTS `giao_an_pt`");
         DB::statement("DROP TABLE IF EXISTS `vai_tro`");
         DB::statement("DROP TABLE IF EXISTS `users`");
         DB::statement("DROP TABLE IF EXISTS `thong_bao`");

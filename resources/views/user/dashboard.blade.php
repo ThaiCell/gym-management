@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+﻿@extends('layouts.dashboard')
 
 @section('title', 'Dashboard Hội viên')
 @section('role_name', 'Hội viên')
@@ -7,6 +7,131 @@
 
 @section('content')
 
+
+    {{-- POPUP THONG BAO FLASH: dung chung cho dashboard --}}
+    @if (session()->has('success') || session()->has('error'))
+        @php
+            $flashMessage = session('success') ?? session('error');
+            $flashType = session()->has('success') ? 'success' : 'error';
+        @endphp
+        <div id="gymDashboardFlash" class="gym-dashboard-flash {{ $flashType }}" role="alert" aria-live="assertive">
+            <span class="gym-dashboard-flash-icon">{{ $flashType === 'success' ? '✓' : '!' }}</span>
+            <div class="gym-dashboard-flash-content">
+                <strong>{{ $flashType === 'success' ? 'Thành công' : 'Có lỗi xảy ra' }}</strong>
+                <span>{{ $flashMessage }}</span>
+            </div>
+            <button type="button" onclick="document.getElementById('gymDashboardFlash')?.remove()"
+                aria-label="Đóng">&times;</button>
+        </div>
+        <style>
+            .gym-dashboard-flash {
+                position: fixed;
+                z-index: 999999;
+                top: 92px;
+                right: 24px;
+                width: min(420px, calc(100vw - 32px));
+                display: flex;
+                align-items: center;
+                gap: 13px;
+                padding: 16px 18px;
+                border-radius: 12px;
+                background: #171717;
+                border: 1px solid #3b3b3b;
+                box-shadow: 0 14px 40px #0009;
+                color: #fff;
+                font: 500 14px/1.45 system-ui, sans-serif;
+                animation: gymFlashIn .25s ease-out
+            }
+
+            .gym-dashboard-flash.success {
+                border-left: 4px solid #22c55e
+            }
+
+            .gym-dashboard-flash.error {
+                border-left: 4px solid #ef4444
+            }
+
+            .gym-dashboard-flash-icon {
+                width: 30px;
+                height: 30px;
+                flex: 0 0 30px;
+                display: grid;
+                place-items: center;
+                border-radius: 50%;
+                font-weight: 900;
+                background: #252525;
+                color: #4ade80
+            }
+
+            .gym-dashboard-flash.error .gym-dashboard-flash-icon {
+                color: #f87171
+            }
+
+            .gym-dashboard-flash-content {
+                display: flex;
+                flex: 1;
+                min-width: 0;
+                flex-direction: column;
+                gap: 3px
+            }
+
+            .gym-dashboard-flash-content strong {
+                font-size: 13px
+            }
+
+            .gym-dashboard-flash-content span {
+                overflow-wrap: anywhere;
+                color: #ddd
+            }
+
+            .gym-dashboard-flash button {
+                border: 0;
+                background: transparent;
+                color: #aaa;
+                font-size: 24px;
+                cursor: pointer;
+                padding: 0 2px
+            }
+
+            .gym-dashboard-flash button:hover {
+                color: #fff
+            }
+
+            @keyframes gymFlashIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px)
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0)
+                }
+            }
+
+            @media(max-width:600px) {
+                .gym-dashboard-flash {
+                    top: 82px;
+                    right: 12px
+                }
+            }
+        </style>
+        <script>
+            (function() {
+                const el = document.getElementById('gymDashboardFlash');
+                if (!el) return;
+                setTimeout(() => {
+                    if (el.isConnected) {
+                        el.style.transition = 'opacity .3s,transform .3s';
+                        el.style.opacity = '0';
+                        el.style.transform = 'translateY(-8px)';
+                        setTimeout(() => el.remove(), 320)
+                    }
+                }, 5000)
+            })();
+        </script>
+    @endif
+
     <style>
         .dashboard-page {
             max-width: 1400px;
@@ -14,8 +139,8 @@
         }
 
         /* =========================
-                                                                                           WELCOME
-                                                                                        ========================= */
+                                                                                               WELCOME
+                                                                                            ========================= */
 
         .dashboard-hero {
             position: relative;
@@ -80,8 +205,8 @@
         }
 
         /* =========================
-                                                                                           STATS
-                                                                                        ========================= */
+                                                                                               STATS
+                                                                                            ========================= */
 
         .dashboard-stats {
             display: grid;
@@ -139,8 +264,8 @@
         }
 
         /* =========================
-                                                                                           CONTENT GRID
-                                                                                        ========================= */
+                                                                                               CONTENT GRID
+                                                                                            ========================= */
 
         .dashboard-grid {
             display: grid;
@@ -210,8 +335,8 @@
         }
 
         /* =========================
-                                                                                           LIST
-                                                                                        ========================= */
+                                                                                               LIST
+                                                                                            ========================= */
 
         .dashboard-list {
             padding: 8px 24px 18px;
@@ -267,8 +392,8 @@
         }
 
         /* =========================
-                                                                                           BADGE
-                                                                                        ========================= */
+                                                                                               BADGE
+                                                                                            ========================= */
 
         .status-badge {
             flex-shrink: 0;
@@ -282,8 +407,8 @@
         }
 
         /* =========================
-                                                                                           EMPTY
-                                                                                        ========================= */
+                                                                                               EMPTY
+                                                                                            ========================= */
 
         .empty-box {
             text-align: center;
@@ -396,8 +521,8 @@
         }
 
         /* =========================
-                                                                                           RESPONSIVE
-                                                                                        ========================= */
+                                                                                               RESPONSIVE
+                                                                                            ========================= */
 
         @media (max-width: 1000px) {
 
@@ -435,10 +560,28 @@
             }
 
         }
-    
-        .gym-line-icon { width: 25px; height: 25px; display: block; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-        .stat-icon .gym-line-icon { width: 27px; height: 27px; }
-        .item-icon .gym-line-icon, .empty-icon .gym-line-icon { width: 23px; height: 23px; }
+
+        .gym-line-icon {
+            width: 25px;
+            height: 25px;
+            display: block;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .stat-icon .gym-line-icon {
+            width: 27px;
+            height: 27px;
+        }
+
+        .item-icon .gym-line-icon,
+        .empty-icon .gym-line-icon {
+            width: 23px;
+            height: 23px;
+        }
     </style>
 
 
@@ -475,7 +618,9 @@
             <div href="/user/payments" class="stat-card">
 
                 <div class="stat-icon">
-                    <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6m3-9v12m12-12v12m3-9v6M6 12h12"/></svg>
+                    <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M3 9v6m3-9v12m12-12v12m3-9v6M6 12h12" />
+                    </svg>
                 </div>
 
                 <div class="stat-info">
@@ -490,7 +635,8 @@
 
                 <div class="stat-icon">
                     <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <circle cx="12" cy="8" r="5"/><path d="m8.5 12-1 9 4.5-2.5 4.5 2.5-1-9M9.5 8h5M12 5.5v5"/>
+                        <circle cx="12" cy="8" r="5" />
+                        <path d="m8.5 12-1 9 4.5-2.5 4.5 2.5-1-9M9.5 8h5M12 5.5v5" />
                     </svg>
                 </div>
 
@@ -505,7 +651,10 @@
             <div href="/classes" class="stat-card">
 
                 <div class="stat-icon">
-                    <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="15" cy="5" r="2"/><path d="m12 22 2-6-3-3-3 3-3 1m6-4 3-4 4 2 2 4m-9-2-2-4-4 1"/></svg>
+                    <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="15" cy="5" r="2" />
+                        <path d="m12 22 2-6-3-3-3 3-3 1m6-4 3-4 4 2 2 4m-9-2-2-4-4 1" />
+                    </svg>
                 </div>
 
                 <div class="stat-info">
@@ -519,7 +668,10 @@
             <div href="/user/payments" class="stat-card">
 
                 <div class="stat-icon">
-                    <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
+                    <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="2" y="5" width="20" height="14" rx="2" />
+                        <path d="M2 10h20M6 15h4" />
+                    </svg>
                 </div>
 
                 <div class="stat-info">
@@ -569,7 +721,9 @@
                                 <div class="item-left">
 
                                     <div class="item-icon">
-                                        <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6m3-9v12m12-12v12m3-9v6M6 12h12"/></svg>
+                                        <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M3 9v6m3-9v12m12-12v12m3-9v6M6 12h12" />
+                                        </svg>
                                     </div>
 
                                     <div class="item-info">
@@ -663,7 +817,9 @@
                     <div class="empty-box">
 
                         <div class="empty-icon">
-                            <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6m3-9v12m12-12v12m3-9v6M6 12h12"/></svg>
+                            <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M3 9v6m3-9v12m12-12v12m3-9v6M6 12h12" />
+                            </svg>
                         </div>
 
                         <h3>
@@ -712,7 +868,9 @@
                                 <div class="item-left">
 
                                     <div class="item-icon">
-                                        <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8v8m3-11v14m6-14v14m3-11v8M9 12h6M3 10v4m18-4v4"/></svg>
+                                        <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path d="M6 8v8m3-11v14m6-14v14m3-11v8M9 12h6M3 10v4m18-4v4" />
+                                        </svg>
                                     </div>
 
                                     <div class="item-info">
@@ -812,7 +970,9 @@
                     <div class="empty-box">
 
                         <div class="empty-icon">
-                            <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8v8m3-11v14m6-14v14m3-11v8M9 12h6M3 10v4m18-4v4"/></svg>
+                            <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M6 8v8m3-11v14m6-14v14m3-11v8M9 12h6M3 10v4m18-4v4" />
+                            </svg>
                         </div>
 
                         <h3>
@@ -863,7 +1023,10 @@
                                 <div class="item-left">
 
                                     <div class="item-icon">
-                                        <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="15" cy="5" r="2"/><path d="m12 22 2-6-3-3-3 3-3 1m6-4 3-4 4 2 2 4m-9-2-2-4-4 1"/></svg>
+                                        <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                            <circle cx="15" cy="5" r="2" />
+                                            <path d="m12 22 2-6-3-3-3 3-3 1m6-4 3-4 4 2 2 4m-9-2-2-4-4 1" />
+                                        </svg>
                                     </div>
 
                                     <div class="item-info">
@@ -907,7 +1070,10 @@
                     <div class="empty-box">
 
                         <div class="empty-icon">
-                            <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="15" cy="5" r="2"/><path d="m12 22 2-6-3-3-3 3-3 1m6-4 3-4 4 2 2 4m-9-2-2-4-4 1"/></svg>
+                            <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="15" cy="5" r="2" />
+                                <path d="m12 22 2-6-3-3-3 3-3 1m6-4 3-4 4 2 2 4m-9-2-2-4-4 1" />
+                            </svg>
                         </div>
 
                         <h3>
@@ -958,7 +1124,10 @@
                                 <div class="item-left">
 
                                     <div class="item-icon">
-                                        <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
+                                        <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                            <rect x="2" y="5" width="20" height="14" rx="2" />
+                                            <path d="M2 10h20M6 15h4" />
+                                        </svg>
                                     </div>
 
                                     <div class="item-info">
@@ -989,7 +1158,10 @@
                     <div class="empty-box">
 
                         <div class="empty-icon">
-                            <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/></svg>
+                            <svg class="gym-line-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="2" y="5" width="20" height="14" rx="2" />
+                                <path d="M2 10h20M6 15h4" />
+                            </svg>
                         </div>
 
                         <h3>

@@ -7,23 +7,474 @@
 
 @section('content')
 
+
+
+
     <style>
+        .tw-page {
+            color: #eee
+        }
+
+        .tw-head {
+            margin: 12px 0 24px
+        }
+
+        .tw-head small {
+            color: #ef233c;
+            font-weight: 800;
+            letter-spacing: 2px
+        }
+
+        .tw-head h1 {
+            font-size: 28px;
+            margin: 7px 0;
+            color: #fff
+        }
+
+        .tw-panel {
+            background: linear-gradient(145deg, #151515, #101010);
+            border: 1px solid #292929;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 24px #0003
+        }
+
+        .tw-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px
+        }
+
+        .tw-field label {
+            display: block;
+            color: #aaa;
+            font-size: 12px;
+            margin-bottom: 6px
+        }
+
+        .tw-field input,
+        .tw-field select,
+        .tw-field textarea {
+            width: 100%;
+            box-sizing: border-box;
+            background: #090909;
+            border: 1px solid #353535;
+            color: #fff;
+            border-radius: 8px;
+            padding: 11px 12px;
+            outline: none;
+            transition: border-color .2s, box-shadow .2s
+        }
+
+        .tw-field input:focus,
+        .tw-field select:focus,
+        .tw-field textarea:focus {
+            border-color: #e50914;
+            box-shadow: 0 0 0 3px #e5091420
+        }
+
+        .tw-field textarea {
+            min-height: 85px
+        }
+
+        .tw-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            background: #e50914;
+            color: #fff;
+            border: 0;
+            border-radius: 8px;
+            padding: 11px 17px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            transition: .2s
+        }
+
+        .tw-btn:hover {
+            background: #c9000b;
+            color: #fff;
+            transform: translateY(-1px)
+        }
+
+        .tw-table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        .tw-table th,
+        .tw-table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #292929;
+            font-size: 13px
+        }
+
+        .tw-table th {
+            color: #ff3548;
+            font-weight: 800
+        }
+
+        .tw-table tr:hover td {
+            background: #ffffff05
+        }
+
+        .tw-muted {
+            color: #888
+        }
+
+        .tw-alert {
+            padding: 12px 15px;
+            border: 1px solid #333;
+            border-left: 4px solid #e50914;
+            border-radius: 8px;
+            margin: 0 0 16px;
+            background: #171717;
+            color: #eee
+        }
+
+        .tw-nav-wrap {
+            margin: 4px 0 22px;
+            padding: 8px;
+            background: linear-gradient(135deg, #141414, #0e0e0e);
+            border: 1px solid #292929;
+            border-radius: 13px;
+            box-shadow: 0 8px 24px #0003
+        }
+
+        .tw-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center
+        }
+
+        .tw-nav a {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border: 1px solid #333;
+            border-radius: 9px;
+            background: #191919;
+            color: #cfcfcf;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .15px;
+            transition: all .2s ease
+        }
+
+        .tw-nav a .tw-nav-icon {
+            font-size: 14px;
+            line-height: 1
+        }
+
+        .tw-nav a:hover {
+            background: #241315;
+            border-color: #a91b28;
+            color: #fff;
+            transform: translateY(-1px)
+        }
+
+        .tw-nav a.active {
+            background: linear-gradient(135deg, #e50914, #a90812);
+            border-color: #f02b3a;
+            color: #fff;
+            box-shadow: 0 4px 14px #e5091433
+        }
+
+        .tw-nav a.active:after {
+            content: "";
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            bottom: 4px;
+            height: 2px;
+            border-radius: 3px;
+            background: #ffffff80
+        }
+
+        .tw-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            border: 1px solid #454545;
+            background: #1c1c1c;
+            color: #eee;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap
+        }
+
+        .tw-status:before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #aaa
+        }
+
+        .tw-status.is-active {
+            border-color: #236b42;
+            background: #10251a;
+            color: #8ce0a9
+        }
+
+        .tw-status.is-active:before {
+            background: #35c46a
+        }
+
+        .tw-status.is-cancelled {
+            border-color: #79303a;
+            background: #2a1115;
+            color: #ff9aa3
+        }
+
+        .tw-status.is-cancelled:before {
+            background: #f05260
+        }
+
+        @media(max-width:700px) {
+            .tw-grid {
+                grid-template-columns: 1fr
+            }
+
+            .tw-panel {
+                overflow-x: auto
+            }
+
+            .tw-nav {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr))
+            }
+
+            .tw-nav a {
+                justify-content: center;
+                padding: 11px 8px
+            }
+        }
+    </style>
+    <div class="tw-page">
+        @if (session('success'))
+            <div class="tw-alert">✓ {{ session('success') }}</div>
+        @endif
+        @if (session('error'))
+            <div class="tw-alert">! {{ session('error') }}</div>
+        @endif
+        @if ($errors->any())
+            <div class="tw-alert">{{ $errors->first() }}</div>
+        @endif
+    </div>
+
+    {{-- POPUP THONG BAO FLASH: dung chung cho dashboard --}}
+    @if (session()->has('success') || session()->has('error'))
+        @php
+            $flashMessage = session('success') ?? session('error');
+            $flashType = session()->has('success') ? 'success' : 'error';
+        @endphp
+        <div id="gymDashboardFlash" class="gym-dashboard-flash {{ $flashType }}" role="alert" aria-live="assertive">
+            <span class="gym-dashboard-flash-icon">{{ $flashType === 'success' ? '✓' : '!' }}</span>
+            <div class="gym-dashboard-flash-content">
+                <strong>{{ $flashType === 'success' ? 'Thành công' : 'Có lỗi xảy ra' }}</strong>
+                <span>{{ $flashMessage }}</span>
+            </div>
+            <button type="button" onclick="document.getElementById('gymDashboardFlash')?.remove()"
+                aria-label="Đóng">&times;</button>
+        </div>
+        <style>
+            .gym-dashboard-flash {
+                position: fixed;
+                z-index: 999999;
+                top: 92px;
+                right: 24px;
+                width: min(420px, calc(100vw - 32px));
+                display: flex;
+                align-items: center;
+                gap: 13px;
+                padding: 16px 18px;
+                border-radius: 12px;
+                background: #171717;
+                border: 1px solid #3b3b3b;
+                box-shadow: 0 14px 40px #0009;
+                color: #fff;
+                font: 500 14px/1.45 system-ui, sans-serif;
+                animation: gymFlashIn .25s ease-out
+            }
+
+            .gym-dashboard-flash.success {
+                border-left: 4px solid #22c55e
+            }
+
+            .gym-dashboard-flash.error {
+                border-left: 4px solid #ef4444
+            }
+
+            .gym-dashboard-flash-icon {
+                width: 30px;
+                height: 30px;
+                flex: 0 0 30px;
+                display: grid;
+                place-items: center;
+                border-radius: 50%;
+                font-weight: 900;
+                background: #252525;
+                color: #4ade80
+            }
+
+            .gym-dashboard-flash.error .gym-dashboard-flash-icon {
+                color: #f87171
+            }
+
+            .gym-dashboard-flash-content {
+                display: flex;
+                flex: 1;
+                min-width: 0;
+                flex-direction: column;
+                gap: 3px
+            }
+
+            .gym-dashboard-flash-content strong {
+                font-size: 13px
+            }
+
+            .gym-dashboard-flash-content span {
+                overflow-wrap: anywhere;
+                color: #ddd
+            }
+
+            .gym-dashboard-flash button {
+                border: 0;
+                background: transparent;
+                color: #aaa;
+                font-size: 24px;
+                cursor: pointer;
+                padding: 0 2px
+            }
+
+            .gym-dashboard-flash button:hover {
+                color: #fff
+            }
+
+            @keyframes gymFlashIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px)
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0)
+                }
+            }
+
+            @media(max-width:600px) {
+                .gym-dashboard-flash {
+                    top: 82px;
+                    right: 12px
+                }
+            }
+        </style>
+        <script>
+            (function() {
+                const el = document.getElementById('gymDashboardFlash');
+                if (!el) return;
+                setTimeout(() => {
+                    if (el.isConnected) {
+                        el.style.transition = 'opacity .3s,transform .3s';
+                        el.style.opacity = '0';
+                        el.style.transform = 'translateY(-8px)';
+                        setTimeout(() => el.remove(), 320)
+                    }
+                }, 5000)
+            })();
+        </script>
+    @endif
+
+    <style>
+        .trainer-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+            padding: 7px 13px;
+            border-radius: 20px;
+            background: rgba(229, 9, 20, .10);
+            border: 1px solid rgba(229, 9, 20, .45);
+            color: #ff4651;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .trainer-role-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ff2633;
+            box-shadow: 0 0 8px rgba(255, 38, 51, .75);
+        }
+
         .trainer-dashboard {
             max-width: 1400px;
             margin: auto;
         }
 
         .trainer-hero {
-            padding: 42px 45px;
+            padding: 30px 32px;
             margin-bottom: 28px;
-            border-radius: 18px;
-            background:
-                linear-gradient(110deg,
-                    #111,
-                    #171717,
-                    #090909);
+            border-radius: 14px;
+            background: linear-gradient(110deg, #111, #171717, #090909);
             border: 1px solid #252525;
             box-shadow: 0 15px 40px rgba(0, 0, 0, .25);
+        }
+
+        .trainer-hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .trainer-hero-btn {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 0 18px;
+            border-radius: 8px;
+            background: #202020;
+            border: 1px solid #383838;
+            color: #f5f5f5;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 800;
+            transition: .2s ease;
+        }
+
+        .trainer-hero-btn:hover {
+            background: #2a2a2a;
+            border-color: #e50914;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .trainer-hero-btn.primary {
+            background: #e50914;
+            border-color: #e50914;
+            color: #fff;
+        }
+
+        .trainer-hero-btn.primary:hover {
+            background: #c9000b;
+            border-color: #c9000b;
         }
 
         .trainer-label {
@@ -46,16 +497,6 @@
             font-size: 14px;
         }
 
-        .trainer-role {
-            display: inline-block;
-            padding: 7px 13px;
-            border-radius: 20px;
-            background: rgba(229, 9, 20, .1);
-            border: 1px solid rgba(229, 9, 20, .25);
-            color: #ff4a52;
-            font-size: 10px;
-            font-weight: 800;
-        }
 
         .trainer-stats {
             display: grid;
@@ -239,7 +680,16 @@
         @media (max-width: 600px) {
 
             .trainer-hero {
-                padding: 30px 25px;
+                padding: 26px 20px;
+            }
+
+            .trainer-hero-actions {
+                gap: 8px;
+            }
+
+            .trainer-hero-btn {
+                width: 100%;
+                justify-content: flex-start;
             }
 
             .trainer-hero h1 {
@@ -273,7 +723,15 @@
             </p>
 
             <div class="trainer-role">
-                ● HUẤN LUYỆN VIÊN
+                <span class="trainer-role-dot"></span> HUẤN LUYỆN VIÊN
+            </div>
+
+            <div class="trainer-hero-actions">
+                <a href="/trainer/students" class="trainer-hero-btn primary">♧ &nbsp; HỌC VIÊN CỦA TÔI</a>
+                <a href="/trainer/schedules" class="trainer-hero-btn">✉ &nbsp; QUẢN LÝ LỊCH PT</a>
+                <a href="/trainer/plans" class="trainer-hero-btn">✓ &nbsp; GIÁO ÁN TẬP LUYỆN</a>
+                <a href="/trainer/logs" class="trainer-hero-btn">▤ &nbsp; NHẬT KÝ BUỔI TẬP</a>
+                <a href="/trainer/progress" class="trainer-hero-btn">↗ &nbsp; TIẾN ĐỘ HỌC VIÊN</a>
             </div>
 
         </div>
@@ -437,41 +895,6 @@
 
 
                 {{-- THÔNG BÁO --}}
-
-                @if (session('success'))
-                    <div
-                        style="
-            margin: 18px 24px 0;
-            padding: 12px 15px;
-            border-radius: 8px;
-            background: rgba(34,197,94,.08);
-            border: 1px solid rgba(34,197,94,.25);
-            color: #4ade80;
-            font-size: 12px;
-            font-weight: 700;
-        ">
-                        ✓ {{ session('success') }}
-                    </div>
-                @endif
-
-
-                @if (session('error'))
-                    <div
-                        style="
-            margin: 18px 24px 0;
-            padding: 12px 15px;
-            border-radius: 8px;
-            background: rgba(229,9,20,.08);
-            border: 1px solid rgba(229,9,20,.25);
-            color: #ff4a52;
-            font-size: 12px;
-            font-weight: 700;
-        ">
-                        ⚠ {{ session('error') }}
-                    </div>
-                @endif
-
-
                 @if ($lichPT->count() > 0)
 
                     <div class="trainer-list">

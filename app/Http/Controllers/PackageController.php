@@ -670,206 +670,161 @@ class PackageController extends Controller
     /** Route: POST /user/packages/{id}/cancel */
     public function postUserPackagesIdCancel($id)
     {
-            if (!session()->has('user')) {
-                return redirect('/login');
-            }
+        if (!session()->has('user')) {
+            return redirect('/login');
+        }
 
-            if (session('role_id') != 3) {
-                return redirect('/' . session('dashboard_path'));
-            }
+        if ((int) session('role_id') !== 3) {
+            return redirect('/' . ltrim(session('dashboard_path', 'user/dashboard'), '/'));
+        }
 
-            $nguoiDungId = session('user')->nguoi_dung_id;
+        $nguoiDungId = session('user')->nguoi_dung_id;
 
-            $hoiVien = DB::table('hoi_vien')
-                ->where('nguoi_dung_id', $nguoiDungId)
-                ->first();
+        $hoiVien = DB::table('hoi_vien')
+            ->where('nguoi_dung_id', $nguoiDungId)
+            ->first();
 
-            if (!$hoiVien) {
-                return redirect('/user/dashboard')
-                    ->with('error', 'Không tìm thấy hồ sơ hội viên.');
-            }
+        if (!$hoiVien) {
+            return redirect('/user/dashboard')
+                ->with('error', 'Không tìm thấy hồ sơ hội viên.');
+        }
 
-            // Dọn dữ liệu quá hạn trước khi kiểm tra hủy.
+        // Lấy đúng lần đăng ký của chính hội viên.
+        $dangKy = DB::table('dang_ky_goi_tap')
+            ->join('goi_tap', 'dang_ky_goi_tap.goi_tap_id', '=', 'goi_tap.goi_tap_id')
+            ->where('dang_ky_goi_tap.dang_ky_goi_tap_id', $id)
+            ->where('dang_ky_goi_tap.hoi_vien_id', $hoiVien->hoi_vien_id)
+            ->select(
+                'dang_ky_goi_tap.*',
+                'goi_tap.ten_goi'
+            )
+            ->first();
 
-            $dangKy = DB::table('dang_ky_goi_tap')
-                ->join(
-                    'goi_tap',
-                    'dang_ky_goi_tap.goi_tap_id',
-                    '=',
-                    'goi_tap.goi_tap_id'
-                )
-                ->leftJoin(
-                    'chi_tiet_hoa_don',
-                    'dang_ky_goi_tap.goi_tap_id',
-                    '=',
-                    'chi_tiet_hoa_don.goi_tap_id'
-                )
-                ->leftJoin(
-                    'hoa_don',
-                    'chi_tiet_hoa_don.hoa_don_id',
-                    '=',
-                    'hoa_don.hoa_don_id'
-                )
-                ->where(
-                    'dang_ky_goi_tap.dang_ky_goi_tap_id',
-                    $id
-                )
-                ->where(
-                    'dang_ky_goi_tap.hoi_vien_id',
-                    $hoiVien->hoi_vien_id
-                )
-                ->select(
-                    'dang_ky_goi_tap.*',
-                    'goi_tap.ten_goi',
-                    'hoa_don.hoa_don_id',
-                    'hoa_don.ngay_lap',
-                    'hoa_don.trang_thai as hoa_don_trang_thai'
-                )
-                ->orderByDesc('hoa_don.ngay_lap')
-                ->first();
+        if (!$dangKy) {
+            return redirect('/user/dashboard')
+                ->with('error', 'Không tìm thấy đăng ký gói tập của bạn.');
+        }
 
-            if (!$dangKy) {
-                return redirect('/user/dashboard')
-                    ->with('error', 'Gói tập này không còn tồn tại hoặc đã hết hạn.');
-            }
+        $trangThaiGoi = mb_strtolower(trim($dangKy->trang_thai ?? ''), 'UTF-8');
 
-            $trangThaiGoi = mb_strtolower(
-                trim($dangKy->trang_thai ?? '')
-            );
+        if (in_array($trangThaiGoi, [
+            'đã hủy', 'đã huỷ', 'da huy', 'da_huy',
+            'đã hết hạn', 'da het han', 'hết hạn', 'het han'
+        ], true)) {
+            return redirect('/user/dashboard')
+                ->with('error', 'Gói tập này đã hủy hoặc hết hạn.');
+        }
 
-            if (!in_array($trangThaiGoi, [
-                'đang hoạt động',
-                'dang_hoat_dong',
-                'hoạt_động',
-                'hoat_dong'
-            ], true)) {
+        // Tìm hóa đơn đúng của hội viên + đúng gói, không lấy hóa đơn
+        // của người khác chỉ vì họ mua cùng một gói.
+        $hoaDon = DB::table('chi_tiet_hoa_don')
+            ->join('hoa_don', 'chi_tiet_hoa_don.hoa_don_id', '=', 'hoa_don.hoa_don_id')
+            ->where('chi_tiet_hoa_don.goi_tap_id', $dangKy->goi_tap_id)
+            ->where('hoa_don.hoi_vien_id', $hoiVien->hoi_vien_id)
+            ->whereDate('hoa_don.ngay_lap', '>=', $dangKy->ngay_bat_dau)
+            ->select(
+                'hoa_don.hoa_don_id',
+                'hoa_don.ngay_lap',
+                'hoa_don.trang_thai'
+            )
+            ->orderByDesc('hoa_don.ngay_lap')
+            ->first();
 
-                return redirect('/user/dashboard')
-                    ->with('error', 'Gói tập này không còn hoạt động.');
-            }
+        if (!$hoaDon) {
+            return redirect('/user/dashboard')
+                ->with('error', 'Không tìm thấy hóa đơn liên quan đến gói tập này.');
+        }
 
-            $trangThaiHoaDon = mb_strtolower(
-                trim($dangKy->hoa_don_trang_thai ?? '')
-            );
+        $trangThaiHoaDon = mb_strtolower(trim($hoaDon->trang_thai ?? ''), 'UTF-8');
 
-            // Đã thanh toán => tuyệt đối không cho hủy.
-            if (in_array($trangThaiHoaDon, [
-                'đã thanh toán',
-                'da thanh toan',
-                'da_thanh_toan',
-                'paid'
-            ], true)) {
+        $choThanhToan = in_array($trangThaiHoaDon, [
+            'chờ thanh toán', 'cho thanh toan', 'cho_thanh_toan', 'pending'
+        ], true);
 
-                return redirect('/user/dashboard')
-                    ->with(
-                        'error',
-                        'Gói tập đã thanh toán nên không thể hủy.'
-                    );
-            }
+        $daThanhToan = in_array($trangThaiHoaDon, [
+            'đã thanh toán', 'da thanh toan', 'da_thanh_toan', 'paid'
+        ], true);
 
-            // Chỉ cho hủy hóa đơn đang chờ thanh toán.
-            if (!in_array($trangThaiHoaDon, [
-                'chờ thanh toán',
-                'cho thanh toan',
-                'cho_thanh_toan',
-                'pending'
-            ], true)) {
+        if ($daThanhToan) {
+            return redirect('/user/dashboard')
+                ->with('error', 'Gói tập đã thanh toán nên không thể hủy. Vui lòng liên hệ nhân viên.');
+        }
 
-                return redirect('/user/dashboard')
-                    ->with(
-                        'error',
-                        'Gói tập này không thể hủy ở trạng thái hiện tại.'
-                    );
-            }
+        if (!$choThanhToan) {
+            return redirect('/user/dashboard')
+                ->with('error', 'Chỉ có thể hủy gói tập khi hóa đơn đang chờ thanh toán.');
+        }
 
-            // Kiểm tra 72 giờ.
-            if (
-                !$dangKy->ngay_lap ||
-                now()->greaterThanOrEqualTo(
-                    \Carbon\Carbon::parse($dangKy->ngay_lap)->addHours(72)
-                )
-            ) {
+        // Gói mới đăng ký có trạng thái "không hoạt động" cho đến khi thanh toán.
+        // Vì vậy không được chặn hủy chỉ dựa trên trạng thái đăng ký.
+        $trangThaiCoTheHuy = in_array($trangThaiGoi, [
+            'không hoạt động', 'khong hoat dong', 'khong_hoat_dong', 'inactive',
+            'đang hoạt động', 'dang_hoat_dong', 'hoạt_động', 'hoat_dong'
+        ], true);
 
-                // Nếu vừa chạm quá hạn, xóa luôn dữ liệu.
-                DB::transaction(function () use ($id, $dangKy) {
+        if (!$trangThaiCoTheHuy) {
+            return redirect('/user/dashboard')
+                ->with('error', 'Trạng thái gói tập hiện tại không cho phép hủy.');
+        }
 
-                    if ($dangKy->hoa_don_id) {
-                        DB::table('chi_tiet_hoa_don')
-                            ->where(
-                                'hoa_don_id',
-                                $dangKy->hoa_don_id
-                            )
-                            ->delete();
+        if (!$hoaDon->ngay_lap) {
+            return redirect('/user/dashboard')
+                ->with('error', 'Hóa đơn không có ngày lập hợp lệ nên chưa thể xử lý hủy.');
+        }
 
-                        DB::table('hoa_don')
-                            ->where(
-                                'hoa_don_id',
-                                $dangKy->hoa_don_id
-                            )
-                            ->delete();
-                    }
+        $hanHuy = \Carbon\Carbon::parse($hoaDon->ngay_lap)->addHours(72);
 
-                    DB::table('dang_ky_goi_tap')
-                        ->where(
-                            'dang_ky_goi_tap_id',
-                            $id
-                        )
-                        ->delete();
-                });
-
-                return redirect('/packages')
-                    ->with(
-                        'error',
-                        'Gói đã quá 72 giờ chưa thanh toán nên hệ thống đã tự động hủy và xóa hóa đơn. Lịch sử gói vẫn được lưu.'
-                    );
-            }
-
-            // Còn trong 72 giờ => hủy và xóa hóa đơn.
-            DB::transaction(function () use ($id, $dangKy, $nguoiDungId) {
-
-                if ($dangKy->hoa_don_id) {
-
-                    DB::table('chi_tiet_hoa_don')
-                        ->where(
-                            'hoa_don_id',
-                            $dangKy->hoa_don_id
-                        )
-                        ->delete();
-
-                    DB::table('hoa_don')
-                        ->where(
-                            'hoa_don_id',
-                            $dangKy->hoa_don_id
-                        )
-                        ->delete();
-                }
+        if (now()->greaterThanOrEqualTo($hanHuy)) {
+            // Quá 72 giờ: giữ lịch sử đăng ký và hóa đơn, đánh dấu đã hủy.
+            DB::transaction(function () use ($id, $hoaDon, $nguoiDungId, $dangKy) {
+                DB::table('hoa_don')
+                    ->where('hoa_don_id', $hoaDon->hoa_don_id)
+                    ->where('trang_thai', 'chờ thanh toán')
+                    ->update(['trang_thai' => 'đã hủy']);
 
                 DB::table('dang_ky_goi_tap')
-                    ->where(
-                        'dang_ky_goi_tap_id',
-                        $id
-                    )
-                    ->update([
-                        'trang_thai' => 'đã hủy'
-                    ]);
+                    ->where('dang_ky_goi_tap_id', $id)
+                    ->where('hoi_vien_id', DB::table('hoi_vien')
+                        ->where('nguoi_dung_id', $nguoiDungId)
+                        ->value('hoi_vien_id'))
+                    ->update(['trang_thai' => 'đã hủy']);
 
                 DB::table('thong_bao')->insert([
                     'nguoi_dung_id' => $nguoiDungId,
-                    'tieu_de' => 'Hủy gói tập thành công',
-                    'noi_dung' =>
-                        'Bạn đã hủy gói "' .
-                        $dangKy->ten_goi .
-                        '". Hóa đơn liên quan đã được xóa.',
-                    'da_doc' => false,
+                    'tieu_de' => 'Gói tập đã tự động hủy',
+                    'noi_dung' => 'Gói "' . $dangKy->ten_goi . '" đã quá 72 giờ chưa thanh toán và được chuyển sang trạng thái đã hủy.',
+                    'da_doc' => 0,
                     'tao_luc' => now(),
                 ]);
             });
 
             return redirect('/user/dashboard')
-                ->with(
-                    'success',
-                    'Đã hủy gói "' . $dangKy->ten_goi . '". Hóa đơn đã được xóa.'
-                );
+                ->with('info', 'Gói tập đã quá 72 giờ chưa thanh toán nên hệ thống đã tự động hủy. Lịch sử và hóa đơn vẫn được giữ.');
+        }
+
+        DB::transaction(function () use ($id, $hoaDon, $nguoiDungId, $dangKy, $hoiVien) {
+            // Giữ hóa đơn và chi tiết hóa đơn để không mất lịch sử giao dịch.
+            DB::table('hoa_don')
+                ->where('hoa_don_id', $hoaDon->hoa_don_id)
+                ->where('hoi_vien_id', $hoiVien->hoi_vien_id)
+                ->update(['trang_thai' => 'đã hủy']);
+
+            DB::table('dang_ky_goi_tap')
+                ->where('dang_ky_goi_tap_id', $id)
+                ->where('hoi_vien_id', $hoiVien->hoi_vien_id)
+                ->update(['trang_thai' => 'đã hủy']);
+
+            DB::table('thong_bao')->insert([
+                'nguoi_dung_id' => $nguoiDungId,
+                'tieu_de' => 'Hủy gói tập thành công',
+                'noi_dung' => 'Bạn đã hủy gói "' . $dangKy->ten_goi . '". Hóa đơn được lưu lại với trạng thái đã hủy.',
+                'da_doc' => 0,
+                'tao_luc' => now(),
+            ]);
+        });
+
+        return redirect('/user/dashboard')
+            ->with('success', 'Đã hủy gói "' . $dangKy->ten_goi . '" thành công.');
     }
 
 }

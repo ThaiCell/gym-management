@@ -5296,210 +5296,10 @@ Route::post('/user/pt-schedule/create', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::post('/user/packages/{id}/cancel', function ($id) {
-
-    if (!session()->has('user')) {
-        return redirect('/login');
-    }
-
-    if (session('role_id') != 3) {
-        return redirect('/' . session('dashboard_path'));
-    }
-
-    $nguoiDungId = session('user')->nguoi_dung_id;
-
-    $hoiVien = DB::table('hoi_vien')
-        ->where('nguoi_dung_id', $nguoiDungId)
-        ->first();
-
-    if (!$hoiVien) {
-        return redirect('/user/dashboard')
-            ->with('error', 'Không tìm thấy hồ sơ hội viên.');
-    }
-
-    // Dọn dữ liệu quá hạn trước khi kiểm tra hủy.
-
-    $dangKy = DB::table('dang_ky_goi_tap')
-        ->join(
-            'goi_tap',
-            'dang_ky_goi_tap.goi_tap_id',
-            '=',
-            'goi_tap.goi_tap_id'
-        )
-        ->leftJoin(
-            'chi_tiet_hoa_don',
-            'dang_ky_goi_tap.goi_tap_id',
-            '=',
-            'chi_tiet_hoa_don.goi_tap_id'
-        )
-        ->leftJoin(
-            'hoa_don',
-            'chi_tiet_hoa_don.hoa_don_id',
-            '=',
-            'hoa_don.hoa_don_id'
-        )
-        ->where(
-            'dang_ky_goi_tap.dang_ky_goi_tap_id',
-            $id
-        )
-        ->where(
-            'dang_ky_goi_tap.hoi_vien_id',
-            $hoiVien->hoi_vien_id
-        )
-        ->select(
-            'dang_ky_goi_tap.*',
-            'goi_tap.ten_goi',
-            'hoa_don.hoa_don_id',
-            'hoa_don.ngay_lap',
-            'hoa_don.trang_thai as hoa_don_trang_thai'
-        )
-        ->orderByDesc('hoa_don.ngay_lap')
-        ->first();
-
-    if (!$dangKy) {
-        return redirect('/user/dashboard')
-            ->with('error', 'Gói tập này không còn tồn tại hoặc đã hết hạn.');
-    }
-
-    $trangThaiGoi = mb_strtolower(
-        trim($dangKy->trang_thai ?? '')
-    );
-
-    if (!in_array($trangThaiGoi, [
-        'đang hoạt động',
-        'dang_hoat_dong',
-        'hoạt_động',
-        'hoat_dong'
-    ], true)) {
-
-        return redirect('/user/dashboard')
-            ->with('error', 'Gói tập này không còn hoạt động.');
-    }
-
-    $trangThaiHoaDon = mb_strtolower(
-        trim($dangKy->hoa_don_trang_thai ?? '')
-    );
-
-    // Đã thanh toán => tuyệt đối không cho hủy.
-    if (in_array($trangThaiHoaDon, [
-        'đã thanh toán',
-        'da thanh toan',
-        'da_thanh_toan',
-        'paid'
-    ], true)) {
-
-        return redirect('/user/dashboard')
-            ->with(
-                'error',
-                'Gói tập đã thanh toán nên không thể hủy.'
-            );
-    }
-
-    // Chỉ cho hủy hóa đơn đang chờ thanh toán.
-    if (!in_array($trangThaiHoaDon, [
-        'chờ thanh toán',
-        'cho thanh toan',
-        'cho_thanh_toan',
-        'pending'
-    ], true)) {
-
-        return redirect('/user/dashboard')
-            ->with(
-                'error',
-                'Gói tập này không thể hủy ở trạng thái hiện tại.'
-            );
-    }
-
-    // Kiểm tra 72 giờ.
-    if (
-        !$dangKy->ngay_lap ||
-        now()->greaterThanOrEqualTo(
-            \Carbon\Carbon::parse($dangKy->ngay_lap)->addHours(72)
-        )
-    ) {
-
-        // Nếu vừa chạm quá hạn, xóa luôn dữ liệu.
-        DB::transaction(function () use ($id, $dangKy) {
-
-            if ($dangKy->hoa_don_id) {
-                DB::table('chi_tiet_hoa_don')
-                    ->where(
-                        'hoa_don_id',
-                        $dangKy->hoa_don_id
-                    )
-                    ->delete();
-
-                DB::table('hoa_don')
-                    ->where(
-                        'hoa_don_id',
-                        $dangKy->hoa_don_id
-                    )
-                    ->delete();
-            }
-
-            DB::table('dang_ky_goi_tap')
-                ->where(
-                    'dang_ky_goi_tap_id',
-                    $id
-                )
-                ->delete();
-        });
-
-        return redirect('/packages')
-            ->with(
-                'error',
-                'Gói đã quá 72 giờ chưa thanh toán nên hệ thống đã tự động hủy và xóa hóa đơn. Lịch sử gói vẫn được lưu.'
-            );
-    }
-
-    // Còn trong 72 giờ => hủy và xóa hóa đơn.
-    DB::transaction(function () use ($id, $dangKy, $nguoiDungId) {
-
-        if ($dangKy->hoa_don_id) {
-
-            DB::table('chi_tiet_hoa_don')
-                ->where(
-                    'hoa_don_id',
-                    $dangKy->hoa_don_id
-                )
-                ->delete();
-
-            DB::table('hoa_don')
-                ->where(
-                    'hoa_don_id',
-                    $dangKy->hoa_don_id
-                )
-                ->delete();
-        }
-
-        DB::table('dang_ky_goi_tap')
-            ->where(
-                'dang_ky_goi_tap_id',
-                $id
-            )
-            ->update([
-                'trang_thai' => 'đã hủy'
-            ]);
-
-        DB::table('thong_bao')->insert([
-            'nguoi_dung_id' => $nguoiDungId,
-            'tieu_de' => 'Hủy gói tập thành công',
-            'noi_dung' =>
-                'Bạn đã hủy gói "' .
-                $dangKy->ten_goi .
-                '". Hóa đơn liên quan đã được xóa.',
-            'da_doc' => false,
-            'tao_luc' => now(),
-        ]);
-    });
-
-    return redirect('/user/dashboard')
-        ->with(
-            'success',
-            'Đã hủy gói "' . $dangKy->ten_goi . '". Hóa đơn đã được xóa.'
-        );
-
-})->middleware(NoCache::class);
+Route::post(
+    '/user/packages/{id}/cancel',
+    [\App\Http\Controllers\PackageController::class, 'postUserPackagesIdCancel']
+)->middleware(NoCache::class);
 
 
 /*
@@ -7708,6 +7508,18 @@ Route::get('/staff/profile', function () {
 // ================================
 // HỒ SƠ HUẤN LUYỆN VIÊN
 // ================================
+
+/* TRAINER WORKSPACE - QUAN LY HOC VIEN, LICH, GIAO AN, NHAT KY, TIEN DO */
+Route::middleware(NoCache::class)->group(function () {
+    Route::get('/trainer/students', [\App\Http\Controllers\TrainerWorkspaceController::class, 'students']);
+    Route::get('/trainer/schedules', [\App\Http\Controllers\TrainerWorkspaceController::class, 'schedules']);
+    Route::get('/trainer/plans', [\App\Http\Controllers\TrainerWorkspaceController::class, 'plans']);
+    Route::post('/trainer/plans', [\App\Http\Controllers\TrainerWorkspaceController::class, 'savePlan']);
+    Route::get('/trainer/logs', [\App\Http\Controllers\TrainerWorkspaceController::class, 'logs']);
+    Route::post('/trainer/logs', [\App\Http\Controllers\TrainerWorkspaceController::class, 'saveLog']);
+    Route::get('/trainer/progress', [\App\Http\Controllers\TrainerWorkspaceController::class, 'progress']);
+    Route::post('/trainer/progress', [\App\Http\Controllers\TrainerWorkspaceController::class, 'saveProgress']);
+});
 
 Route::get('/trainer/profile', function () {
     if (!session()->has('user')) {

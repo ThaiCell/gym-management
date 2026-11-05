@@ -276,7 +276,8 @@
                 <div><small>GÓI BẠN ĐANG CHỌN</small><strong>{{ $goiPt->ten_goi_pt }}</strong></div>
                 <div><small>SỐ BUỔI / THỜI HẠN</small><strong>{{ $goiPt->so_buoi }} buổi · {{ $goiPt->thoi_han_ngay }}
                         ngày</strong></div>
-                <div><small>TỔNG GIÁ</small><strong class="price">{{ number_format($goiPt->gia, 0, ',', '.') }}₫</strong></div>
+                <div><small>TỔNG GIÁ</small><strong class="price">{{ number_format($goiPt->gia, 0, ',', '.') }}₫</strong>
+                </div>
             </section>
 
             @if ($ptList->count())
@@ -313,7 +314,7 @@
                         <div><strong id="selectedTrainer">Bạn chưa chọn huấn luyện viên</strong>
                             <p>Kiểm tra lựa chọn trước khi gửi yêu cầu đăng ký.</p>
                         </div>
-                        <button class="pt-submit" type="submit" id="submitPt" disabled>XÁC NHẬN ĐĂNG KÝ →</button>
+                        <button class="pt-submit" type="submit" id="submitPt" disabled>XÁC NHẬN ĐĂNG KÝ</button>
                     </div>
                 </form>
             @else
@@ -336,6 +337,5 @@
                 document.getElementById('submitPt').disabled = false;
             });
         });
-
     </script>
 @endsection

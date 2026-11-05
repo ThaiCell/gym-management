@@ -48,7 +48,7 @@ input:focus,select:focus,textarea:focus{border-color:#e50914!important;box-shado
 .content .class-btn-primary,.content .add-package-btn,.content .add-trainer-btn,.content .btn-save,
 .content .save-btn,.content .btn-filter,
 .content button[type="submit"]:not(.delete-btn):not(.class-btn-delete):not(.action-btn):not(.cancel-btn):not(.search-btn):not(.back-btn):not(.btn-reset) {
- color:#fff!important;background:#e50914!important;border:1px solid #e50914!important;
+ color:#fff!important;background:#252529 !important;border:1px solid #414149!important;
 }
 .content .class-btn-primary:hover,.content .add-package-btn:hover,.content .add-trainer-btn:hover,
 .content .btn-save:hover,.content .save-btn:hover,.content .btn-filter:hover,
@@ -162,3 +162,128 @@ button, input, select, textarea { font-family: inherit !important; }
 .content .pt-actions .pt-btn { min-width: 58px !important; }
 .content .pt-btn.pt-danger { background: rgba(229,9,20,.10) !important; color: #ff6871 !important; border: 1px solid rgba(229,9,20,.48) !important; }
 .content .pt-btn.pt-danger:hover { background: #e50914 !important; color: #fff !important; }
+
+
+/* =========================================================
+   FINAL OVERRIDE — Admin PT package buttons đồng nhất
+   Search = Edit (xám); Delete = đỏ; Add = xám.
+   Kích thước các nút PT dùng chung 36px.
+   ========================================================= */
+.content .pt-page .pt-head .pt-btn,
+.content .pt-page .pt-toolbar .pt-btn,
+.content .pt-page .pt-actions .pt-btn,
+.content .pt-page .pt-search button.pt-btn,
+.content .pt-page .pt-search button[type="submit"] {
+    box-sizing: border-box !important;
+    min-height: 36px !important;
+    height: 36px !important;
+    padding: 0 15px !important;
+    border-radius: 7px !important;
+    font: 700 12px/1.1 "Segoe UI", Roboto, Arial, sans-serif !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+}
+
+/* Search and Edit: same charcoal appearance */
+.content .pt-page .pt-search button.pt-btn,
+.content .pt-page .pt-search button[type="submit"],
+.content .pt-page .pt-actions .pt-btn:not(.pt-danger):not(.pt-primary),
+.content .pt-page .pt-head > .pt-btn {
+    background: #242428 !important;
+    background-color: #242428 !important;
+    color: #f2f2f2 !important;
+    border: 1px solid #414149 !important;
+    box-shadow: none !important;
+}
+
+.content .pt-page .pt-search button.pt-btn:hover,
+.content .pt-page .pt-search button[type="submit"]:hover,
+.content .pt-page .pt-actions .pt-btn:not(.pt-danger):not(.pt-primary):hover,
+.content .pt-page .pt-head > .pt-btn:hover {
+    background: #34343a !important;
+    background-color: #34343a !important;
+    color: #fff !important;
+    border-color: #666 !important;
+}
+
+/* Delete: red; do not change its action or form */
+.content .pt-page .pt-actions .pt-btn.pt-danger {
+    background: rgba(229, 9, 20, .10) !important;
+    color: #ff6871 !important;
+    border: 1px solid rgba(229, 9, 20, .48) !important;
+}
+
+.content .pt-page .pt-actions .pt-btn.pt-danger:hover {
+    background: #e50914 !important;
+    color: #fff !important;
+    border-color: #e50914 !important;
+}
+
+/* Keep search field and button aligned */
+.content .pt-page .pt-search {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.content .pt-page .pt-search input {
+    min-height: 36px !important;
+    height: 36px !important;
+    box-sizing: border-box !important;
+}
+
+/* Nút Xóa màu đỏ — giữ đồng nhất với hệ màu GYMFIT */
+.content .pt-page .pt-actions .pt-btn.pt-danger {
+    background: rgba(229, 9, 20, .10) !important;
+    background-color: rgba(229, 9, 20, .10) !important;
+    color: #ff6871 !important;
+    border: 1px solid rgba(229, 9, 20, .48) !important;
+}
+
+.content .pt-page .pt-actions .pt-btn.pt-danger:hover {
+    background: #e50914 !important;
+    background-color: #e50914 !important;
+    color: #fff !important;
+    border-color: #e50914 !important;
+}
+
+/* =========================================================
+   ADMIN TRAINERS — nút Xóa đỏ giống trang Quản lý gói tập
+   Chỉ áp dụng cho control có class mang ý nghĩa delete/danger.
+   ========================================================= */
+.content .btn-delete,
+.content .btn-danger,
+.content .danger-btn,
+.content .trainer-delete,
+.content .trainer-btn-delete,
+.content button[class*="delete" i],
+.content a[class*="delete" i],
+.content button[class*="danger" i],
+.content a[class*="danger" i],
+.content .action-buttons .delete,
+.content .action-buttons .danger {
+    background: rgba(229, 9, 20, .10) !important;
+    background-color: rgba(229, 9, 20, .10) !important;
+    color: #ff6871 !important;
+    border: 1px solid rgba(229, 9, 20, .48) !important;
+    box-shadow: none !important;
+}
+
+.content .btn-delete:hover,
+.content .btn-danger:hover,
+.content .danger-btn:hover,
+.content .trainer-delete:hover,
+.content .trainer-btn-delete:hover,
+.content button[class*="delete" i]:hover,
+.content a[class*="delete" i]:hover,
+.content button[class*="danger" i]:hover,
+.content a[class*="danger" i]:hover,
+.content .action-buttons .delete:hover,
+.content .action-buttons .danger:hover {
+    background: #e50914 !important;
+    background-color: #e50914 !important;
+    color: #fff !important;
+    border-color: #e50914 !important;
+}
