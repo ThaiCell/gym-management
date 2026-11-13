@@ -368,6 +368,35 @@
             letter-spacing: .5px;
         }
 
+        /* Badge trạng thái đăng ký gói và hóa đơn */
+        .staff-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            max-width: 150px;
+            padding: 7px 13px;
+            border-radius: 20px;
+            background: rgba(229, 9, 20, .12);
+            border: 1px solid rgba(229, 9, 20, .35);
+            color: #ff4a52;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .2px;
+            line-height: 1.2;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .staff-badge {
+                max-width: 112px;
+                padding: 6px 9px;
+                font-size: 10px;
+                white-space: normal;
+            }
+        }
+
         .staff-empty {
             text-align: center;
             padding: 50px 20px;
